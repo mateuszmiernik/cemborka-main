@@ -137,6 +137,7 @@
   justify-content: space-between;
   padding-bottom: .9375rem;
   border: none;
+  gap: .75rem;
   /* margin-bottom: 1.5rem; */
 }
 
@@ -164,6 +165,20 @@
 }
 .tabs-section .tabs-content.active {
   display: block;
+}
+
+@media (min-width: 1024px) and (max-width: 1288px) {
+  .tabs-section .tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .75rem 1.25rem;
+    justify-content: initial;
+  }
+
+  .tabs-section .tabs button {
+    text-align: left;
+    justify-self: start;
+  }
 }
 
 /* --- Hide original mobile elements on desktop --- */

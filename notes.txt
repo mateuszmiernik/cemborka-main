@@ -1,3 +1,28 @@
 -> HAMBURGER MENU
 -> zdjecia rozmiary
 -> ikonki social mediow do podstrony 'O marce'
+-> formularz
+
+-> przycisk back - rozmiary
+
+
+podstrona models
+-> "ZŁOTAENETA" zawija sie na granicy desktop/mobile
+-> na iphonie odstep zdjec od linii jest za maly / inny niz na innym telefonie 
+
+
+
+-> letter-spacing: .03125rem; ->o tekstow (description itd.) - mobilne
+
+-> purchase-section - ma byc przyklejone (fixed) 
+
+-> linia przy purchase section ma byc jedna
+
+
+podstrona "O marce"
+-> .about-container {
+  padding: 3.4375rem clamp(2.8125rem, 6vw, 3.75rem) 2.8125rem;
+}
+
+link do FB uzupelnic
+-> <a href="#" class="about-social-placeholder" aria-label="Facebook">

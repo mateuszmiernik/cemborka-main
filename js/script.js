@@ -83,10 +83,10 @@ function renderMobileView(container, product) {
   const firstImage = product.galleryImages && product.galleryImages.length > 0 ? product.galleryImages[0] : product.mainImage;
 
   const tabsList = [
-    { id: 'konstrukcja-mob', label: 'KONSTRUKCJA', content: product.construction },
+    { id: 'szczegoly-mob', label: 'SZCZEGÓŁY', content: product.construction },
     { id: 'material-mob', label: 'MATERIAŁ', content: product.material },
-    { id: 'dostawa-mob', label: 'DOSTAWA', content: product.delivery },
-    { id: 'pielegnacja-mob', label: 'PIELĘGNACJA', content: product.care }
+    { id: 'pielegnacja-mob', label: 'PIELĘGNACJA', content: product.care },
+    { id: 'dostawa-mob', label: 'DOSTAWA', content: product.delivery }
   ];
 
   // Kontener dla widoku mobilnego
@@ -121,7 +121,7 @@ function renderMobileView(container, product) {
   footerActions.className = 'footer-actions'; // Ten kontener też będzie ukryty na desktopie
   footerActions.innerHTML = `
     <div class="tabs">
-      ${tabsList.map((tab, index) => `<button class="tab-button ${index === 0 ? 'active' : ''}" onclick="toggleMobileTab(this, '${tab.id}')">${tab.label}</button>`).join('')}
+      ${tabsList.map((tab) => `<button class="tab-button" onclick="toggleMobileTab(this, '${tab.id}')">${tab.label}</button>`).join('')}
       <div id="tabsContentContainer-mob">
         ${tabsList.map(tab => `<div class="tabs-content" id="${tab.id}">${tab.content}</div>`).join('')}
       </div>
@@ -141,7 +141,7 @@ function renderDesktopView(container, product) {
   const firstImage = product.galleryImages && product.galleryImages.length > 0 ? product.galleryImages[0] : product.mainImage;
 
   const tabsList = [
-    { id: 'konstrukcja-desk', label: 'KONSTRUKCJA', content: product.construction },
+    { id: 'szczegoly-desk', label: 'SZCZEGÓŁY', content: product.construction },
     { id: 'material-desk', label: 'MATERIAŁ', content: product.material },
     { id: 'pielegnacja-desk', label: 'PIELĘGNACJA', content: product.care },
     { id: 'dostawa-desk', label: 'PŁATNOŚĆ I DOSTAWA', content: product.delivery }
