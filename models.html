@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modele - CEMBORKA</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/desktop.css" media="(min-width: 1024px)">
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-container">
+            <button class="back-button hidden">
+                <img src="images/back-icon.png" alt="Wstecz" class="back-icon">
+            </button>
+            <a href="index.html" class="logo">
+                <img src="images/logo.png" alt="CEMBORKA Logo">
+            </a>
+            <button class="menu-button">
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- MODELS CONTAINER -->
+    <main class="models-container" id="modelsContainer">
+        <!-- Dynamicznie generowane sekcje modeli -->
+    </main>
+
+    <script src="js/data.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            renderModels();
+        });
+    </script>
+</body>
+</html>
