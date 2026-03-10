@@ -118,6 +118,14 @@ const products = [
   },
 ];
 
+// Konfiguracja wysylki formularza zamowienia.
+// Ustaw endpoint Cloudflare Worker (patrz project/order-worker.js).
+// Przyklad: 'https://cemborka-order.nazwauzytkownika.workers.dev'
+// Po migracji na Go: podmien na URL backendu – nic innego nie trzeba zmieniac.
+const ORDER_FORM_CONFIG = {
+  endpoint: 'https://soft-night-a202.cemborka.workers.dev'
+};
+
 // Funkcja do pobierania produktu po slug
 function getProductBySlug(slug) {
   return products.find(p => p.slug === slug);

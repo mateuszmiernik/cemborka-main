@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modele - CEMBORKA</title>
+    <title>Zamowienie - CEMBORKA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=add,check,close,keyboard_arrow_down" />
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/desktop.css" media="(min-width: 1024px)">
 </head>
-<body>
-    <!-- HEADER -->
+<body class="order-page">
     <header class="header">
         <div class="header-container">
             <button class="back-button hidden">
@@ -17,7 +19,7 @@
             <a href="index.html" class="logo">
                 <img src="images/logo.png" alt="CEMBORKA Logo">
             </a>
-            <button class="menu-button" aria-label="Menu" aria-expanded="false" type="button">
+            <button class="menu-button" aria-label="Menu">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -25,17 +27,9 @@
         </div>
     </header>
 
-    <!-- MODELS CONTAINER -->
-    <main class="models-container" id="modelsContainer">
-        <!-- Dynamicznie generowane sekcje modeli -->
-    </main>
+    <main class="order-container" id="orderFormContainer"></main>
 
     <script src="js/data.js"></script>
     <script src="js/script.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            renderModels();
-        });
-    </script>
 </body>
 </html>

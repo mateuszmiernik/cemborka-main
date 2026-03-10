@@ -44,6 +44,532 @@ function renderModels() {
   });
 }
 
+function getOrderProductLabel(product) {
+  return `${product.model} ${product.color}`.toUpperCase();
+}
+
+function getOrderSeedProduct() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const slug = urlParams.get('slug');
+  if (!slug) return null;
+
+  return getProductBySlug(slug);
+}
+
+function buildOrderModelOptions(selectedSlug) {
+  return products.map(product => {
+    const selectedAttr = product.slug === selectedSlug ? 'selected' : '';
+    return `<option value="${product.slug}" ${selectedAttr}>${getOrderProductLabel(product)}</option>`;
+  }).join('');
+}
+
+function buildOrderQuantityOptions(selectedQuantity) {
+  const maxQuantity = 10;
+  const numericQty = Number(selectedQuantity) || 1;
+
+  return Array.from({ length: maxQuantity }, (_, index) => {
+    const value = index + 1;
+    const selectedAttr = value === numericQty ? 'selected' : '';
+    return `<option value="${value}" ${selectedAttr}>x${value}</option>`;
+  }).join('');
+}
+
+let orderCustomSelectEventsBound = false;
+
+function closeAllOrderCustomSelects(exceptField) {
+  document.querySelectorAll('.order-field-select.is-open').forEach((field) => {
+    if (exceptField && field === exceptField) return;
+    field.classList.remove('is-open');
+
+    const trigger = field.querySelector('.order-custom-trigger');
+    if (trigger) trigger.setAttribute('aria-expanded', 'false');
+  });
+}
+
+function syncOrderCustomSelectUI(selectEl) {
+  const field = selectEl.closest('.order-field-select');
+  if (!field) return;
+
+  const selectedOption = selectEl.options[selectEl.selectedIndex];
+  const valueNode = field.querySelector('.order-custom-value');
+  if (valueNode && selectedOption) {
+    valueNode.textContent = selectedOption.textContent;
+  }
+
+  field.querySelectorAll('.order-custom-option').forEach((optionButton) => {
+    optionButton.classList.toggle('is-selected', optionButton.dataset.value === selectEl.value);
+  });
+}
+
+function setupOrderCustomSelect(selectEl) {
+  if (!selectEl || selectEl.dataset.customized === 'true') return;
+
+  const field = selectEl.closest('.order-field-select');
+  if (!field) return;
+
+  selectEl.classList.add('order-native-select');
+
+  const trigger = document.createElement('button');
+  trigger.type = 'button';
+  trigger.className = 'order-custom-trigger';
+  trigger.setAttribute('aria-haspopup', 'listbox');
+  trigger.setAttribute('aria-expanded', 'false');
+
+  const valueNode = document.createElement('span');
+  valueNode.className = 'order-custom-value';
+  trigger.appendChild(valueNode);
+
+  const menu = document.createElement('div');
+  menu.className = 'order-custom-menu';
+  menu.setAttribute('role', 'listbox');
+
+  Array.from(selectEl.options).forEach((optionEl) => {
+    const optionButton = document.createElement('button');
+    optionButton.type = 'button';
+    optionButton.className = 'order-custom-option';
+    optionButton.dataset.value = optionEl.value;
+    optionButton.textContent = optionEl.textContent;
+    optionButton.setAttribute('role', 'option');
+
+    if (optionEl.selected) {
+      optionButton.classList.add('is-selected');
+    }
+
+    optionButton.addEventListener('click', () => {
+      selectEl.value = optionEl.value;
+      selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+      closeAllOrderCustomSelects();
+    });
+
+    menu.appendChild(optionButton);
+  });
+
+  trigger.addEventListener('click', () => {
+    const isOpen = field.classList.contains('is-open');
+    closeAllOrderCustomSelects(field);
+
+    if (!isOpen) {
+      field.classList.add('is-open');
+      trigger.setAttribute('aria-expanded', 'true');
+    } else {
+      field.classList.remove('is-open');
+      trigger.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  trigger.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closeAllOrderCustomSelects();
+      return;
+    }
+
+    if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowDown') {
+      event.preventDefault();
+      if (!field.classList.contains('is-open')) {
+        closeAllOrderCustomSelects(field);
+        field.classList.add('is-open');
+        trigger.setAttribute('aria-expanded', 'true');
+      }
+    }
+  });
+
+  selectEl.addEventListener('change', () => syncOrderCustomSelectUI(selectEl));
+
+  field.appendChild(trigger);
+  field.appendChild(menu);
+
+  syncOrderCustomSelectUI(selectEl);
+  selectEl.dataset.customized = 'true';
+}
+
+function initializeOrderCustomSelects(root) {
+  const scope = root || document;
+  scope.querySelectorAll('.order-field-select select').forEach((selectEl) => {
+    setupOrderCustomSelect(selectEl);
+  });
+
+  if (!orderCustomSelectEventsBound) {
+    document.addEventListener('click', (event) => {
+      if (!event.target.closest('.order-field-select')) {
+        closeAllOrderCustomSelects();
+      }
+    });
+    orderCustomSelectEventsBound = true;
+  }
+}
+
+function createOrderItemRow(selectedSlug, quantity) {
+  const row = document.createElement('div');
+  row.className = 'order-item-row';
+
+  row.innerHTML = `
+    <div class="order-field order-field-select">
+      <label>Model</label>
+      <select class="order-model-select" name="orderModel[]" required>
+        ${buildOrderModelOptions(selectedSlug)}
+      </select>
+      <span class="order-select-icon material-symbols-outlined" aria-hidden="true">keyboard_arrow_down</span>
+    </div>
+    <div class="order-field order-field-select order-quantity-field">
+      <label>Ilość</label>
+      <select class="order-quantity-select" name="orderQuantity[]" required>
+        ${buildOrderQuantityOptions(quantity)}
+      </select>
+      <span class="order-select-icon material-symbols-outlined" aria-hidden="true">keyboard_arrow_down</span>
+    </div>
+    <button type="button" class="remove-order-row" aria-label="Usuń tę torebkę">
+      <span class="order-icon material-symbols-outlined" aria-hidden="true">close</span>
+    </button>
+  `;
+
+  return row;
+}
+
+function updateOrderRemoveButtonsState() {
+  const rows = document.querySelectorAll('.order-item-row');
+  const isSingleRow = rows.length <= 1;
+
+  rows.forEach((row) => {
+    const removeButton = row.querySelector('.remove-order-row');
+    if (!removeButton) return;
+
+    removeButton.disabled = isSingleRow;
+    removeButton.classList.toggle('is-disabled', isSingleRow);
+  });
+}
+
+function normalizeOrderFieldValue(field) {
+  if (!field || typeof field.value !== 'string') return '';
+  return field.value.trim();
+}
+
+function isValidOrderPhone(phoneValue) {
+  const compact = phoneValue.replace(/[\s-]/g, '');
+  return /^\d{9}$/.test(compact) || /^48\d{9}$/.test(compact) || /^\+48\d{9}$/.test(compact);
+}
+
+function isValidOrderEmail(emailValue) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(emailValue);
+}
+
+function setOrderFieldInvalidState(field, isInvalid) {
+  const fieldWrapper = field.closest('.order-field');
+  if (!fieldWrapper) return;
+
+  fieldWrapper.classList.toggle('has-error', isInvalid);
+  field.setAttribute('aria-invalid', isInvalid ? 'true' : 'false');
+}
+
+function clearOrderFormErrors(form) {
+  form.querySelectorAll('.order-field.has-error').forEach((fieldWrapper) => {
+    fieldWrapper.classList.remove('has-error');
+  });
+
+  form.querySelectorAll('[aria-invalid="true"]').forEach((field) => {
+    field.setAttribute('aria-invalid', 'false');
+  });
+
+  const errorNode = form.querySelector('#orderFormError');
+  if (errorNode) {
+    errorNode.hidden = true;
+    errorNode.textContent = '';
+  }
+}
+
+function validateOrderForm(form) {
+  const requiredFields = Array.from(form.querySelectorAll('[required]'));
+  const invalidFields = [];
+
+  requiredFields.forEach((field) => {
+    const value = normalizeOrderFieldValue(field);
+    let isInvalid = value.length === 0;
+
+    if (!isInvalid && field.id === 'customerEmail') {
+      isInvalid = !isValidOrderEmail(value);
+    }
+
+    if (!isInvalid && field.id === 'customerPhone') {
+      isInvalid = !isValidOrderPhone(value);
+    }
+
+    setOrderFieldInvalidState(field, isInvalid);
+
+    if (isInvalid) {
+      invalidFields.push(field);
+    }
+  });
+
+  const errorNode = form.querySelector('#orderFormError');
+  if (errorNode) {
+    if (invalidFields.length > 0) {
+      errorNode.textContent = 'Formularz nie jest poprawnie uzupełniony. Uzupełnij wszystkie wymagane pola i sprawdź format e-maila oraz telefonu.';
+      errorNode.hidden = false;
+    } else {
+      errorNode.hidden = true;
+      errorNode.textContent = '';
+    }
+  }
+
+  return {
+    isValid: invalidFields.length === 0,
+    firstInvalidField: invalidFields[0] || null
+  };
+}
+
+function setOrderSubmitState(form, isSubmitting) {
+  const submitButton = form.querySelector('.order-submit-button');
+  if (!submitButton) return;
+
+  submitButton.disabled = isSubmitting;
+  submitButton.textContent = isSubmitting ? 'WYSYŁAM...' : 'WYŚLIJ';
+}
+
+function showOrderSubmitError(form, message) {
+  const submitErrorNode = form.querySelector('#orderSubmitError');
+  if (!submitErrorNode) return;
+
+  submitErrorNode.textContent = message;
+  submitErrorNode.hidden = false;
+}
+
+function clearOrderSubmitError(form) {
+  const submitErrorNode = form.querySelector('#orderSubmitError');
+  if (!submitErrorNode) return;
+
+  submitErrorNode.hidden = true;
+  submitErrorNode.textContent = '';
+}
+
+function buildOrderItemsPayload(form) {
+  return Array.from(form.querySelectorAll('.order-item-row')).map((row, index) => {
+    const modelSelect = row.querySelector('.order-model-select');
+    const quantitySelect = row.querySelector('.order-quantity-select');
+
+    const modelLabel = modelSelect?.options[modelSelect.selectedIndex]?.textContent?.trim() || '';
+    const modelSlug = modelSelect?.value || '';
+    const quantityValue = quantitySelect?.value || '';
+
+    return {
+      lp: index + 1,
+      modelSlug,
+      modelLabel,
+      quantity: Number(quantityValue) || 1
+    };
+  });
+}
+
+function buildOrderMailPayload(form) {
+  const customerName = normalizeOrderFieldValue(form.querySelector('#customerName'));
+  const customerEmail = normalizeOrderFieldValue(form.querySelector('#customerEmail'));
+  const customerAddress = normalizeOrderFieldValue(form.querySelector('#customerAddress'));
+  const customerPhone = normalizeOrderFieldValue(form.querySelector('#customerPhone'));
+  const deliverySelect = form.querySelector('#deliveryMethod');
+  const deliveryMethod = deliverySelect?.value || '';
+  const deliveryLabel = deliverySelect?.options[deliverySelect.selectedIndex]?.textContent?.trim() || '';
+  const orderItems = buildOrderItemsPayload(form);
+
+  // Czysty payload strukturalny – Go/backend sam formatuje maila z tych danych.
+  return {
+    customerName,
+    customerEmail,
+    customerPhone,
+    customerAddress,
+    deliveryMethod,
+    deliveryLabel,
+    orderItems
+  };
+}
+
+async function submitOrderFormData(form) {
+  const endpoint = (typeof ORDER_FORM_CONFIG !== 'undefined' && ORDER_FORM_CONFIG.endpoint)
+    ? ORDER_FORM_CONFIG.endpoint.trim()
+    : '';
+
+  if (!endpoint) {
+    throw new Error('ORDER_FORM_ENDPOINT_MISSING');
+  }
+
+  const payload = buildOrderMailPayload(form);
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    throw new Error('ORDER_FORM_SUBMIT_FAILED');
+  }
+
+  return { ok: true };
+}
+
+function renderOrderSuccessState(container) {
+  if (!container) return;
+
+  container.classList.add('is-success');
+  container.innerHTML = `
+    <section class="order-success-panel" aria-live="polite">
+      <span class="material-symbols-outlined order-success-check" aria-hidden="true">check</span>
+      <p class="order-success-thanks">Dziękujemy!</p>
+      <h2 class="order-success-title">FORMULARZ<br>WYSŁANY!</h2>
+      <img src="images/bag.png" alt="Ilustracja torebki" class="order-success-image">
+    </section>
+  `;
+}
+
+function renderOrderForm() {
+  const container = document.getElementById('orderFormContainer');
+  if (!container) return;
+
+  const initialProduct = getOrderSeedProduct();
+  if (!initialProduct) {
+    window.location.href = 'models.html';
+    return;
+  }
+
+  container.innerHTML = `
+    <section class="order-hero">
+      <h1 class="order-title">KUPUJĘ!</h1>
+      <p class="order-subtitle">Miło nam że chcesz kupić nasz produkt!<br>Możesz to zrobić przez poniższy formularz!</p>
+    </section>
+
+    <form id="orderForm" class="order-form" novalidate>
+      <div id="orderItems" class="order-items"></div>
+      <button type="button" id="addOrderRow" class="add-order-row" aria-label="Dodaj kolejną torebkę">
+        <span class="order-icon material-symbols-outlined" aria-hidden="true">add</span>
+      </button>
+
+      <div class="order-field order-field-select order-delivery-field">
+        <label for="deliveryMethod">Sposób dostawy</label>
+        <select id="deliveryMethod" name="deliveryMethod" required>
+          <option value="inpost-kurier">InPost Kurier (18zł)</option>
+          <option value="paczkomat-dpd">Paczkomat DPD (15 zł)</option>
+        </select>
+        <span class="order-select-icon material-symbols-outlined" aria-hidden="true">keyboard_arrow_down</span>
+      </div>
+
+      <div class="order-field order-field-data">
+        <label for="customerName">Imię i Nazwisko</label>
+        <input type="text" id="customerName" name="customerName" autocomplete="name" required>
+      </div>
+
+      <div class="order-field order-field-data">
+        <label for="customerEmail">E-mail</label>
+        <input type="email" id="customerEmail" name="customerEmail" autocomplete="email" autocapitalize="off" spellcheck="false" required>
+      </div>
+
+      <div class="order-field order-field-data">
+        <label for="customerAddress">Adres do wysyłki lub numer Paczkomatu</label>
+        <input type="text" id="customerAddress" name="customerAddress" autocomplete="street-address" required>
+      </div>
+
+      <div class="order-field order-field-data">
+        <label for="customerPhone">Telefon</label>
+        <input type="tel" id="customerPhone" name="customerPhone" inputmode="tel" autocomplete="tel" placeholder="+48 123 456 789" pattern="^(\\+48|48)?[\\s\\-]*\\d(?:[\\s\\-]*\\d){8}$" title="Podaj numer telefonu, np. +48 123 456 789" required>
+      </div>
+
+      <p id="orderFormError" class="order-form-error" role="alert" aria-live="polite" hidden></p>
+
+      <p class="order-payment-info">Możliwy sposoby płatność: Blik / przelew</p>
+
+      <button type="submit" class="order-submit-button">WYŚLIJ</button>
+      <p id="orderSubmitError" class="order-submit-error" role="alert" aria-live="polite" hidden></p>
+      <p class="order-disclaimer">Po wysłaniu formularza, dostaniesz od nas informację zwrotną z finalizacją zamówienia i szczegółami płatności.</p>
+    </form>
+  `;
+
+  container.classList.remove('is-success');
+
+  const itemsContainer = document.getElementById('orderItems');
+  const addRowButton = document.getElementById('addOrderRow');
+  const orderForm = document.getElementById('orderForm');
+
+  itemsContainer.appendChild(createOrderItemRow(initialProduct.slug, 1));
+  initializeOrderCustomSelects(container);
+  updateOrderRemoveButtonsState();
+
+  addRowButton.addEventListener('click', () => {
+    const newRow = createOrderItemRow(products[0].slug, 1);
+    itemsContainer.appendChild(newRow);
+    initializeOrderCustomSelects(newRow);
+    updateOrderRemoveButtonsState();
+  });
+
+  itemsContainer.addEventListener('click', (event) => {
+    const removeButton = event.target.closest('.remove-order-row');
+    if (!removeButton || removeButton.disabled) return;
+
+    const row = removeButton.closest('.order-item-row');
+    if (row) {
+      row.remove();
+      updateOrderRemoveButtonsState();
+    }
+  });
+
+  orderForm.addEventListener('input', (event) => {
+    const field = event.target;
+    if (!(field instanceof HTMLInputElement) && !(field instanceof HTMLSelectElement)) return;
+
+    if (!field.hasAttribute('required')) return;
+
+    const value = normalizeOrderFieldValue(field);
+    let isInvalid = value.length === 0;
+
+    if (!isInvalid && field.id === 'customerEmail') {
+      isInvalid = !isValidOrderEmail(value);
+    }
+
+    if (!isInvalid && field.id === 'customerPhone') {
+      isInvalid = !isValidOrderPhone(value);
+    }
+
+    setOrderFieldInvalidState(field, isInvalid);
+  });
+
+  orderForm.addEventListener('change', (event) => {
+    const field = event.target;
+    if (!(field instanceof HTMLSelectElement)) return;
+    if (!field.hasAttribute('required')) return;
+
+    setOrderFieldInvalidState(field, normalizeOrderFieldValue(field).length === 0);
+  });
+
+  orderForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    clearOrderFormErrors(orderForm);
+    clearOrderSubmitError(orderForm);
+
+    const result = validateOrderForm(orderForm);
+    if (!result.isValid) {
+      result.firstInvalidField?.focus({ preventScroll: true });
+      result.firstInvalidField?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    try {
+      setOrderSubmitState(orderForm, true);
+      const response = await submitOrderFormData(orderForm);
+
+      if (!response?.ok) {
+        throw new Error('Submit failed');
+      }
+
+      renderOrderSuccessState(container);
+    } catch (error) {
+      if (error instanceof Error && error.message === 'ORDER_FORM_ENDPOINT_MISSING') {
+        showOrderSubmitError(orderForm, 'Wysylka formularza nie jest jeszcze skonfigurowana. Ustaw endpoint w js/data.js (ORDER_FORM_CONFIG.endpoint).');
+      } else {
+        showOrderSubmitError(orderForm, 'Nie udało się wysłać formularza. Spróbuj ponownie za chwilę.');
+      }
+    } finally {
+      setOrderSubmitState(orderForm, false);
+    }
+  });
+}
+
 // Renderowanie szczegółów produktu
 function renderProductDetail() {
   // Pobieramy slug z URL
@@ -128,7 +654,7 @@ function renderMobileView(container, product) {
     </div>
     <div class="purchase-section">
       <span class="price">${product.price} zł</span>
-      <a href="mailto:cemborka@example.com?subject=Zapytanie o torebkę ${product.model} ${product.color}" class="buy-button">KUP</a>
+      <a href="order.html?slug=${encodeURIComponent(product.slug)}" class="buy-button">KUP</a>
     </div>
   `;
   container.appendChild(footerActions);
@@ -159,7 +685,6 @@ function renderDesktopView(container, product) {
         ${product.galleryImages.length > 1 ? `
           <button class="gallery-arrow prev" onclick="changeDesktopImage(-1)"><img src="images/back-icon.png" alt="Wstecz" class="back-icon"></button>
           <button class="gallery-arrow next" onclick="changeDesktopImage(1)"><img src="images/back-icon.png" alt="Dalej" class="back-icon back-icon-next"></button>
-          <div class="gallery-counter">1 / ${product.galleryImages.length}</div>
         ` : ''}
       </div>
     </div>
@@ -176,7 +701,7 @@ function renderDesktopView(container, product) {
       <p class="description">${product.description}</p>
       <div class="purchase-section">
         <span class="price">${product.price} zł</span>
-        <a href="mailto:cemborka@example.com?subject=Zapytanie o torebkę ${product.model} ${product.color}" class="buy-button">KUP</a>
+        <a href="order.html?slug=${encodeURIComponent(product.slug)}" class="buy-button">KUP</a>
       </div>
       <div class="tabs-section">
         <div class="tabs">
@@ -205,6 +730,12 @@ function setupDesktopGallery() {
     totalDesktopImages = images.length;
     currentDesktopImageIndex = 0;
 
+  images.forEach((img) => {
+    if (!img.complete) {
+      img.addEventListener('load', syncDesktopGalleryArrowOffsets, { once: true });
+    }
+  });
+
     updateDesktopGallery();
 }
 
@@ -225,21 +756,54 @@ function updateDesktopGallery() {
     if (!galleryContainer) return;
 
     const images = galleryContainer.querySelectorAll('.gallery-image');
-    const counter = galleryContainer.querySelector('.gallery-counter');
 
     images.forEach((img, index) => {
         img.classList.toggle('active', index === currentDesktopImageIndex);
     });
 
-    if (counter) {
-        counter.textContent = `${currentDesktopImageIndex + 1} / ${totalDesktopImages}`;
-    }
+    syncDesktopGalleryArrowOffsets();
 }
+
+  function syncDesktopGalleryArrowOffsets() {
+    if (!window.matchMedia('(min-width: 1024px)').matches) return;
+
+    const galleryContainer = document.querySelector('.desktop-gallery-container');
+    if (!galleryContainer) return;
+
+    const activeImage = galleryContainer.querySelector('.gallery-image.active');
+    if (!activeImage) return;
+
+    const containerWidth = galleryContainer.clientWidth;
+    const containerHeight = galleryContainer.clientHeight;
+    const naturalWidth = activeImage.naturalWidth;
+    const naturalHeight = activeImage.naturalHeight;
+
+    if (!containerWidth || !containerHeight || !naturalWidth || !naturalHeight) return;
+
+    const scale = Math.min(containerWidth / naturalWidth, containerHeight / naturalHeight);
+    const renderedWidth = naturalWidth * scale;
+    const sideGap = Math.max(0, (containerWidth - renderedWidth) / 2);
+
+    galleryContainer.style.setProperty('--gallery-side-gap', `${sideGap}px`);
+  }
 
 function initializeTabs() {
     // Ta funkcja może być pusta, jeśli używamy `onclick` bezpośrednio w HTML,
     // lub można tu przenieść logikę z `toggleTab` dla lepszej praktyki.
     // Na razie zostawiamy `onclick` dla prostoty.
+}
+
+function scrollMobileProductPageToBottom(footerElement) {
+  if (!footerElement) return;
+  if (window.matchMedia('(min-width: 1024px)').matches) return;
+
+  const purchaseSection = footerElement.querySelector('.purchase-section');
+  if (!purchaseSection) return;
+
+  window.scrollTo({
+    top: document.documentElement.scrollHeight,
+    behavior: 'smooth'
+  });
 }
 
 // Dedykowana funkcja dla zakładek mobilnych
@@ -253,14 +817,18 @@ function toggleMobileTab(buttonEl, tabId) {
 
   const isCurrentlyActive = buttonEl.classList.contains('active');
 
-  // Ukryj wszystko
   allContents.forEach(c => c.classList.remove('active'));
   allButtons.forEach(b => b.classList.remove('active'));
   
-  // Jeśli nie była aktywna, pokaż ją
   if (!isCurrentlyActive) {
     if (targetContent) targetContent.classList.add('active');
     buttonEl.classList.add('active');
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        scrollMobileProductPageToBottom(footer);
+      });
+    });
   }
 }
 
@@ -288,6 +856,17 @@ function toggleDesktopTab(buttonEl, tabId) {
 function getParentPageUrl() {
   const path = window.location.pathname.toLowerCase();
 
+  if (path.includes('order.html')) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const slug = urlParams.get('slug');
+
+    if (slug) {
+      return `product.html?slug=${encodeURIComponent(slug)}`;
+    }
+
+    return 'models.html';
+  }
+
   if (path.includes('product.html')) {
     return 'models.html';
   }
@@ -300,7 +879,135 @@ function getParentPageUrl() {
     return 'index.html';
   }
 
+  if (path.includes('contact.html')) {
+    return 'index.html';
+  }
+
   return null;
+}
+
+function prefersReducedMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+function navigateWithPageTransition(targetUrl) {
+  if (!targetUrl) return;
+
+  if (prefersReducedMotion()) {
+    window.location.href = targetUrl;
+    return;
+  }
+
+  document.body.classList.add('page-transition-leave');
+
+  window.setTimeout(() => {
+    window.location.href = targetUrl;
+  }, 220);
+}
+
+function isAnimatableInternalLink(linkEl) {
+  if (!linkEl) return false;
+
+  const href = linkEl.getAttribute('href');
+  if (!href || href.startsWith('#')) return false;
+
+  if (linkEl.hasAttribute('download')) return false;
+
+  const target = linkEl.getAttribute('target');
+  if (target && target.toLowerCase() === '_blank') return false;
+
+  if (/^(mailto:|tel:|javascript:)/i.test(href)) return false;
+
+  const destination = new URL(linkEl.href, window.location.href);
+  if (destination.origin !== window.location.origin) return false;
+
+  const currentWithoutHash = `${window.location.origin}${window.location.pathname}${window.location.search}`;
+  const destinationWithoutHash = `${destination.origin}${destination.pathname}${destination.search}`;
+
+  return currentWithoutHash !== destinationWithoutHash;
+}
+
+function setupPageTransitions() {
+  if (!prefersReducedMotion()) {
+    document.body.classList.add('page-transition-enter');
+  }
+
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest('a');
+    if (!isAnimatableInternalLink(link)) return;
+
+    event.preventDefault();
+    navigateWithPageTransition(link.href);
+  });
+}
+
+function setupHamburgerMenu() {
+  const menuButton = document.querySelector('.menu-button');
+  if (!menuButton) return;
+
+  let menuOverlay = document.getElementById('mobileMenuOverlay');
+  if (!menuOverlay) {
+    menuOverlay = document.createElement('aside');
+    menuOverlay.id = 'mobileMenuOverlay';
+    menuOverlay.className = 'mobile-menu-overlay';
+    menuOverlay.setAttribute('aria-hidden', 'true');
+    menuOverlay.innerHTML = `
+      <nav class="mobile-menu-panel" aria-label="Menu główne">
+        <a href="models.html" class="mobile-menu-link">DOSTĘPNE MODELE</a>
+        <a href="about.html" class="mobile-menu-link">O MARCE</a>
+        <a href="contact.html" class="mobile-menu-link">KONTAKT</a>
+      </nav>
+    `;
+    document.body.appendChild(menuOverlay);
+  }
+
+  const closeMenu = () => {
+    menuOverlay.classList.remove('is-open');
+    menuOverlay.setAttribute('aria-hidden', 'true');
+    menuButton.classList.remove('is-active');
+    menuButton.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('menu-open');
+  };
+
+  const openMenu = () => {
+    menuOverlay.classList.add('is-open');
+    menuOverlay.setAttribute('aria-hidden', 'false');
+    menuButton.classList.add('is-active');
+    menuButton.setAttribute('aria-expanded', 'true');
+    document.body.classList.add('menu-open');
+  };
+
+  menuButton.setAttribute('aria-expanded', 'false');
+  menuButton.setAttribute('aria-controls', 'mobileMenuOverlay');
+
+  menuButton.addEventListener('click', (event) => {
+    event.preventDefault();
+
+    const isOpen = menuOverlay.classList.contains('is-open');
+    if (isOpen) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  });
+
+  menuOverlay.addEventListener('click', (event) => {
+    if (event.target === menuOverlay) {
+      closeMenu();
+    }
+  });
+
+  menuOverlay.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      closeMenu();
+    });
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && menuOverlay.classList.contains('is-open')) {
+      closeMenu();
+    }
+  });
 }
 
 function setupBackButtonNavigation() {
@@ -318,20 +1025,34 @@ function setupBackButtonNavigation() {
   backButton.classList.remove('hidden');
   backButton.addEventListener('click', function(event) {
     event.preventDefault();
-    window.location.href = parentPageUrl;
+    navigateWithPageTransition(parentPageUrl);
   });
 }
 
 
 // Polepsz nawigację wstecz
 document.addEventListener('DOMContentLoaded', function() {
+  setupPageTransitions();
+  setupHamburgerMenu();
   setupBackButtonNavigation();
   
   // Uruchomienie renderowania po załadowaniu DOM
   if (document.getElementById('productContainer')) {
     renderProductDetail();
   }
+
+  if (document.getElementById('orderFormContainer')) {
+    if (new URLSearchParams(window.location.search).has('debugSuccess')) {
+      const c = document.getElementById('orderFormContainer');
+      renderOrderSuccessState(c);
+    } else {
+      renderOrderForm();
+    }
+  }
+
   if (document.getElementById('modelsContainer')) {
     renderModels();
   }
+
+  window.addEventListener('resize', syncDesktopGalleryArrowOffsets);
 });

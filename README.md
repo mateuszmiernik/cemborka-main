@@ -61,6 +61,41 @@ Wszystkie dane są w pliku `js/data.js` w tablicy `products`. Każdy produkt zaw
 - ✅ Header ze strzałką wstecz
 - ✅ Brak frameworków - czysty HTML/CSS/JS
 
+## Wysylka formularza zamowienia na maila (Cloudflare Worker + Resend)
+
+Formularz wysyla dane zamowienia przez Cloudflare Worker (darmowy) do Resend, ktory wysyla maila.
+Po migracji na Go wystarczy zmienic jeden URL – frontend nie wymaga zadnych zmian.
+
+### Konfiguracja (jednorazowo, ~5 minut)
+
+1. Zaloz konto na https://workers.cloudflare.com (darmowe, bez karty).
+2. Stworz nowy Worker, wklej caly plik `project/order-worker.js` i kliknij "Deploy".
+3. W zakladce Worker → Settings → Variables dodaj dwie zmienne:
+   - `RESEND_API_KEY`  →  klucz API z resend.com
+   - `MAIL_TO`         →  Twoj adres email (tu beda przychodzic zamowienia)
+4. Skopiuj URL Workera i wklej do `js/data.js`:
+
+```javascript
+const ORDER_FORM_CONFIG = {
+  endpoint: 'https://cemborka-order.nazwauzytkownika.workers.dev'
+};
+```
+
+5. W Resend zweryfikuj domene nadawcy lub na poczatek uzyj `onboarding@resend.dev`.
+
+### Dane przesylane w zamowieniu
+- dane klienta: imie i nazwisko, email, telefon, adres/paczkomat
+- sposob dostawy
+- lista torebek (model + ilosc)
+
+### Limity (darmowe plany)
+- Cloudflare Workers: 100 000 zadan dziennie
+- Resend: 3 000 maili miesiecznie
+
+### Migracja na Go
+Zmien tylko `ORDER_FORM_CONFIG.endpoint` w `js/data.js` na URL backendu Go.
+Struktura JSON payloadu jest opisana w `project/order_handler.go`.
+
 ## Przystosowanie do Golanga
 
 Aby przerobić na Golanga:
