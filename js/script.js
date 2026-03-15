@@ -115,6 +115,14 @@ function setupOrderCustomSelect(selectEl) {
   trigger.setAttribute('aria-haspopup', 'listbox');
   trigger.setAttribute('aria-expanded', 'false');
 
+  const fieldLabel = field.querySelector('label');
+  if (fieldLabel) {
+    fieldLabel.addEventListener('click', (event) => {
+      event.preventDefault();
+      trigger.click();
+    });
+  }
+
   const valueNode = document.createElement('span');
   valueNode.className = 'order-custom-value';
   trigger.appendChild(valueNode);
@@ -468,7 +476,7 @@ function renderOrderForm() {
 
       <div class="order-field order-field-data">
         <label for="customerPhone">Telefon</label>
-        <input type="tel" id="customerPhone" name="customerPhone" inputmode="tel" autocomplete="tel" placeholder="+48 123 456 789" pattern="^(\\+48|48)?[\\s\\-]*\\d(?:[\\s\\-]*\\d){8}$" title="Podaj numer telefonu, np. +48 123 456 789" required>
+        <input type="tel" id="customerPhone" name="customerPhone" inputmode="tel" autocomplete="tel" placeholder="(+48) 123 456 789" pattern="^(\\+48|48)?[\\s\\-]*\\d(?:[\\s\\-]*\\d){8}$" title="Podaj numer telefonu, np. +48 123 456 789" required>
       </div>
 
       <p id="orderFormError" class="order-form-error" role="alert" aria-live="polite" hidden></p>
@@ -514,6 +522,7 @@ function renderOrderForm() {
     if (!(field instanceof HTMLInputElement) && !(field instanceof HTMLSelectElement)) return;
 
     if (!field.hasAttribute('required')) return;
+    if (orderForm.dataset.validationAttempted !== 'true') return;
 
     const value = normalizeOrderFieldValue(field);
     let isInvalid = value.length === 0;
@@ -533,12 +542,14 @@ function renderOrderForm() {
     const field = event.target;
     if (!(field instanceof HTMLSelectElement)) return;
     if (!field.hasAttribute('required')) return;
+    if (orderForm.dataset.validationAttempted !== 'true') return;
 
     setOrderFieldInvalidState(field, normalizeOrderFieldValue(field).length === 0);
   });
 
   orderForm.addEventListener('submit', async (event) => {
     event.preventDefault();
+    orderForm.dataset.validationAttempted = 'true';
     clearOrderFormErrors(orderForm);
     clearOrderSubmitError(orderForm);
 
@@ -603,9 +614,6 @@ function renderProductDetail() {
 }
 
 function renderMobileView(container, product) {
-  const allModelProducts = getProductsByModel()[product.model] || [];
-  const otherColorsCount = allModelProducts.length - 1;
-  const otherColorsText = otherColorsCount > 0 ? `Dostępna w ${otherColorsCount} ${otherColorsCount === 1 ? 'innym kolorze' : 'innych kolorach'}` : '';
   const firstImage = product.galleryImages && product.galleryImages.length > 0 ? product.galleryImages[0] : product.mainImage;
 
   const tabsList = [
@@ -630,7 +638,6 @@ function renderMobileView(container, product) {
         <div class="color-title">
           <span class="label">kolor</span>
           <span class="name">${product.color}</span>
-          ${otherColorsText ? `<span class="other-colors">${otherColorsText}</span>` : ''}
         </div>
         <p class="description">${product.description}</p>
       </div>
@@ -661,9 +668,6 @@ function renderMobileView(container, product) {
 }
 
 function renderDesktopView(container, product) {
-  const allModelProducts = getProductsByModel()[product.model] || [];
-  const otherColorsCount = allModelProducts.length - 1;
-  const otherColorsText = otherColorsCount > 0 ? `Dostępna w ${otherColorsCount} ${otherColorsCount === 1 ? 'innym kolorze' : 'innych kolorach'}` : '';
   const firstImage = product.galleryImages && product.galleryImages.length > 0 ? product.galleryImages[0] : product.mainImage;
 
   const tabsList = [
@@ -696,7 +700,6 @@ function renderDesktopView(container, product) {
       <div class="color-title">
         <span class="label">kolor</span>
         <span class="name">${product.color}</span>
-        ${otherColorsText ? `<span class="other-colors">${otherColorsText}</span>` : ''}
       </div>
       <p class="description">${product.description}</p>
       <div class="purchase-section">
