@@ -1,3 +1,59 @@
+function buildProductDetails(materialType) {
+  const items = [
+    materialType === 'morowa'
+      ? '<strong>Konstrukcja:</strong> posiada miękkie a zarazem usztywniające wypełnienie podkreślające trapezowy kształt torby.'
+      : null,
+    '<strong>Regulacja:</strong> mechanizm rączki opiera się na ozdobnej kokardzie. Aby zmienić długość, wystarczy ją rozwiązać, ściągnąć lub rozciągnąć rączkę do dowolnej długości i ponownie zawiązać.',
+    '<strong>Komfort:</strong> rączka torby posiada miękkie wypełnienie, co nadaje dodatkowego komfortu przy noszeniu.',
+    '<strong>Wnętrze:</strong> dwie funkcjonalne kieszonki - jedna zamykana na zamek, druga otwarta na drobiazgi.',
+    '<strong>Produkcja:</strong> zaprojektowana i uszyta w Polsce'
+  ].filter(Boolean);
+
+  return `
+    <ul>
+      ${items.map((item) => `<li>${item}</li>`).join('')}
+    </ul>
+  `;
+}
+
+function buildDeliveryDetails(model) {
+  const productName = model === 'Faworytka' ? 'FAWORYTKĘ' : 'FAWORYTĘ';
+  const items = [
+    'Paczkomaty InPost / Automat DPD / Kurier InPost.',
+    `Wysyłka zagraniczna: Napisz do nas na maila - chętnie wyślemy ${productName} w dowolne miejsce na świecie.`
+  ];
+
+  return `
+    <ul>
+      ${items.map((item) => `<li>${item}</li>`).join('')}
+    </ul>
+  `;
+}
+
+function buildModelDescription(model) {
+  if (model === 'Faworytka') {
+    return 'FAWORYTKA to mniejsza siostra FAWORYTY. FAWORYTKA to model o unikalnym i wyrazistym designie, w którym świat geometrii spotyka się z organiczną miękkością. O nieoczywistym charakterze torby decyduje autorska rączka. Ten dekoracyjny detal w przemyślany sposób łączy ozdobną formę z funkcjonalnością, skrywając wewnątrz mechanizm regulacji jej długości. FAWORYTKA naturalnie dopasuje się do odważnych stylizacji, ale również świetnie sprawdzi się w minimalistycznych outfitów, stając się najmocniejszym akcentem, który zdefiniuje cały Twój look. Zaprojektowana i uszyta w Polsce.';
+  }
+
+  return 'FAWORYTA to model o unikalnym i wyrazistym designie, w którym świat geometrii spotyka się z organiczną miękkością. O nieoczywistym charakterze torby decyduje autorska rączka. Ten dekoracyjny detal w przemyślany sposób łączy ozdobną formę z funkcjonalnością, skrywając wewnątrz mechanizm regulacji jej długości. FAWORYTA naturalnie dopasuje się do odważnych stylizacji, ale również świetnie sprawdzi się w minimalistycznych outfitów, stając się najmocniejszym akcentem, który zdefiniuje cały Twój look. Zaprojektowana i uszyta w Polsce.';
+}
+
+function buildMaterialDetails(materialType) {
+  const whyPolyesterText = 'Chcemy tworzyć torby, które są nie tylko piękne, ale także funkcjonalne. Materiał syntetyczny, jakim jest poliester, oferuje dużą wytrzymałość, co jest kluczowe, ponieważ torba jest narażona na wiele testów codzienności. Dlatego nasz wybór to „świadomy poliester”. Nasza pierwsza kolekcja powstała z wykorzystaniem materiałów pozostałych z wcześniejszych kolekcji tkanin, co odzwierciedla nasze zaangażowanie w świadome podejście do surowców.';
+
+  const materialIntro =
+    materialType === 'morowa'
+      ? 'Torba stworzona z tkaniny Moiré, unikalnego materiału o charakterystycznym, mieniącym się wzorze, który przypomina słoje drewna lub falującą wodę.'
+      : 'Torba stworzona z tafty poliestrowej, która opalizuje na dwa kolory, a jej barwa zależy od kąta padania światła.';
+
+  return `
+    <p style="margin: 0 0 0.5rem 0;"><strong>Skład:</strong> poliester* + bawełna</p>
+    <p style="margin: 0 0 0.5rem 0;">${materialIntro}</p>
+    <p class="material-polyester-heading"><strong>*Dlaczego poliester?</strong></p>
+    <p class="material-polyester-copy">${whyPolyesterText}</p>
+  `;
+}
+
 // Dane produktów
 const products = [
   {
@@ -5,116 +61,157 @@ const products = [
     slug: 'faworyta-jagoda',
     model: 'Faworyta',
     color: 'Jagoda',
+    materialType: 'morowa',
     price: 530,
-    mainImage: 'images/faworyta-jagoda-main.jpg',
-    galleryImages: [],
-    description: 'CEMBORKA to torebki o unikalnym, wyrazistym i nieoczywistym designie. Projektowane i produkowane w Polsce. Idealne dopełnienie minimalistycznych stylizacji, w których podkreślają indywidualność, ale także świetnie sprawdzają się do minimalistycznych zestawów, stając się najmocniejszym akcentem, który definiuje całą stylizację.',
-    construction: 'Sztywna konstrukcja zamykana na magnes, w środku kieszonka.',
-    material: 'Tkanina z recyklingu, certyfikat GRS. Skład: 69% PES, 31% PO. Podszewka: 100% bawełna.',
-    delivery: 'Wysyłka w ciągu 2-3 dni roboczych.',
-    care: 'Czyścić wilgotną szmatką, nie prać w pralce.',
+    mainImage: 'images/faworyta/faworyta-jagoda-main.webp',
+    galleryImages: [
+      'images/faworyta/faworyta-jagoda-main.webp',
+      'images/faworyta/faworyta-jagoda-1.webp',
+      'images/faworyta/faworyta-jagoda-2.webp',
+      'images/faworyta/faworyta-jagoda-3.webp',
+    ],
+    description: buildModelDescription('Faworyta'),
+    details: buildProductDetails('morowa'),
+    material: buildMaterialDetails('morowa'),
+    delivery: buildDeliveryDetails('Faworyta'),
+    care: 'W przypadku zabrudzenia czyścić na sucho (rolką lub szczotką). Miejscowe plamy usuń lekko wilgotną ściereczką i łagodnym mydłem. Nie pierz w pralce. W razie zamoczenia susz równomiernie.',
   },
   {
     id: 'faworyta-zlota-reneta',
     slug: 'faworyta-zlota-reneta',
     model: 'Faworyta',
     color: 'Złota Reneta',
+    materialType: 'taftowa',
     price: 490,
-    mainImage: 'images/faworyta-zlota-reneta-main.jpg',
-    galleryImages: [],
-    description: 'Opis dla torebki Złota Reneta.',
-    construction: 'Info o konstrukcji.',
-    material: 'Info o materiale.',
-    delivery: 'Info o dostawie.',
-    care: 'Info o pielęgnacji.',
+    mainImage: 'images/faworyta/faworyta-zlota-reneta-main.webp',
+    galleryImages: [
+      'images/faworyta/faworyta-zlota-reneta-main.webp',
+      'images/faworyta/faworyta-zlota-reneta-1.webp',
+      'images/faworyta/faworyta-zlota-reneta-2.webp',
+      'images/faworyta/faworyta-zlota-reneta-3.webp',
+    ],
+    description: buildModelDescription('Faworyta'),
+    details: buildProductDetails('taftowa'),
+    material: buildMaterialDetails('taftowa'),
+    delivery: buildDeliveryDetails('Faworyta'),
+    care: 'W przypadku zabrudzenia czyścić na sucho (rolką lub szczotką). Miejscowe plamy usuń lekko wilgotną ściereczką i łagodnym mydłem. Nie pierz w pralce. W razie zamoczenia susz równomiernie.',
   },
   {
     id: 'faworyta-malwa',
     slug: 'faworyta-malwa',
     model: 'Faworyta',
     color: 'Malwa',
+    materialType: 'taftowa',
     price: 530,
-    mainImage: 'images/faworyta-malwa-main.jpg',
-    galleryImages: [],
-    description: 'Opis dla torebki Malwa.',
-    construction: 'Info o konstrukcji.',
-    material: 'Info o materiale.',
-    delivery: 'Info o dostawie.',
-    care: 'Info o pielęgnacji.',
+    mainImage: 'images/faworyta/faworyta-malwa-main.webp',
+    galleryImages: [
+      'images/faworyta/faworyta-malwa-main.webp',
+      'images/faworyta/faworyta-malwa-1.webp',
+      'images/faworyta/faworyta-malwa-2.webp',
+      'images/faworyta/faworyta-malwa-3.webp',
+    ],
+    description: buildModelDescription('Faworyta'),
+    details: buildProductDetails('taftowa'),
+    material: buildMaterialDetails('taftowa'),
+    delivery: buildDeliveryDetails('Faworyta'),
+    care: 'W przypadku zabrudzenia czyścić na sucho (rolką lub szczotką). Miejscowe plamy usuń lekko wilgotną ściereczką i łagodnym mydłem. Nie pierz w pralce. W razie zamoczenia susz równomiernie.',
   },
   {
     id: 'faworyta-pieprz',
     slug: 'faworyta-pieprz',
     model: 'Faworyta',
     color: 'Pieprz',
+    materialType: 'morowa',
     price: 530,
-    mainImage: 'images/faworyta-pieprz-main.jpg',
-    galleryImages: [],
-    description: 'Opis dla torebki Pieprz.',
-    construction: 'Info o konstrukcji.',
-    material: 'Info o materiale.',
-    delivery: 'Info o dostawie.',
-    care: 'Info o pielęgnacji.',
+    mainImage: 'images/faworyta/faworyta-pieprz-main.webp',
+    galleryImages: [
+      'images/faworyta/faworyta-pieprz-main.webp',
+      'images/faworyta/faworyta-pieprz-1.webp',
+      'images/faworyta/faworyta-pieprz-2.webp',
+      'images/faworyta/faworyta-pieprz-3.webp',
+    ],
+    description: buildModelDescription('Faworyta'),
+    details: buildProductDetails('morowa'),
+    material: buildMaterialDetails('morowa'),
+    delivery: buildDeliveryDetails('Faworyta'),
+    care: 'W przypadku zabrudzenia czyścić na sucho (rolką lub szczotką). Miejscowe plamy usuń lekko wilgotną ściereczką i łagodnym mydłem. Nie pierz w pralce. W razie zamoczenia susz równomiernie.',
   },
   {
     id: 'faworyta-mak',
     slug: 'faworyta-mak',
     model: 'Faworyta',
     color: 'Mak',
+    materialType: 'morowa',
     price: 530,
-    mainImage: 'images/faworyta-mak-main.jpg',
+    mainImage: 'images/faworyta/faworyta-mak-main.webp',
     galleryImages: [
-      'images/faworyta-mak-1.jpg',
-      'images/faworyta-mak-2.jpg',
-      'images/faworyta-mak-3.jpg'
+      'images/faworyta/faworyta-mak-main.webp',
+      'images/faworyta/faworyta-mak-1.webp',
+      'images/faworyta/faworyta-mak-2.webp',
+      'images/faworyta/faworyta-mak-3.webp',
     ],
-    description: 'FAWORYTA to torebka o unikalnym, wyrazistym i nieoczywistym designie. Projektowana i produkowana w Polsce. Idealne dopełnienie minimalistycznych stylizacji, w których podkreśla indywidualność, ale także świetnie sprawdza się do minimalistycznych zestawów, stając się najmocniejszym akcentem, który definiuje całą stylizację.',
-    construction: 'Sztywna konstrukcja zamykana na magnes, w środku kieszonka.',
-    material: 'Tkanina z recyklingu, certyfikat GRS. Skład: 69% PES, 31% PO. Podszewka: 100% bawełna.',
-    delivery: 'Wysyłka w ciągu 2-3 dni roboczych.',
-    care: 'Czyścić wilgotną szmatką, nie prać w pralce.',
+    description: buildModelDescription('Faworyta'),
+    details: buildProductDetails('morowa'),
+    material: buildMaterialDetails('morowa'),
+    delivery: buildDeliveryDetails('Faworyta'),
+    care: 'W przypadku zabrudzenia czyścić na sucho (rolką lub szczotką). Miejscowe plamy usuń lekko wilgotną ściereczką i łagodnym mydłem. Nie pierz w pralce. W razie zamoczenia susz równomiernie.'
   },
   {
     id: 'faworyta-sliwka',
     slug: 'faworyta-sliwka',
     model: 'Faworyta',
     color: 'Śliwka',
+    materialType: 'taftowa',
     price: 530,
-    mainImage: 'images/faworyta-sliwka-main.jpg',
-    galleryImages: [],
-    description: 'Opis dla torebki Śliwka.',
-    construction: 'Info o konstrukcji.',
-    material: 'Info o materiale.',
-    delivery: 'Info o dostawie.',
-    care: 'Info o pielęgnacji.',
+    mainImage: 'images/faworyta/faworyta-sliwka-main.webp',
+    galleryImages: [
+      'images/faworyta/faworyta-sliwka-main.webp',
+      'images/faworyta/faworyta-sliwka-1.webp',
+      'images/faworyta/faworyta-sliwka-2.webp',
+      'images/faworyta/faworyta-sliwka-3.webp',
+    ],
+    description: buildModelDescription('Faworyta'),
+    details: buildProductDetails('taftowa'),
+    material: buildMaterialDetails('taftowa'),
+    delivery: buildDeliveryDetails('Faworyta'),
+    care: 'W przypadku zabrudzenia czyścić na sucho (rolką lub szczotką). Miejscowe plamy usuń lekko wilgotną ściereczką i łagodnym mydłem. Nie pierz w pralce. W razie zamoczenia susz równomiernie.',
   },
   {
     id: 'faworytka-malwa',
     slug: 'faworytka-malwa',
     model: 'Faworytka',
     color: 'Malwa',
+    materialType: 'taftowa',
     price: 530,
-    mainImage: 'images/faworytka-malwa-main.jpg',
-    galleryImages: [],
-    description: 'Opis dla torebki Faworytka Malwa.',
-    construction: 'Info o konstrukcji.',
-    material: 'Info o materiale.',
-    delivery: 'Info o dostawie.',
-    care: 'Info o pielęgnacji.',
+    mainImage: 'images/faworytka/faworytka-malwa-main.webp',
+    galleryImages: [
+      'images/faworytka/faworytka-malwa-main.webp',
+      'images/faworytka/faworytka-malwa-1.webp',
+      'images/faworytka/faworytka-malwa-2.webp',
+    ],
+    description: buildModelDescription('Faworytka'),
+    details: buildProductDetails('taftowa'),
+    material: buildMaterialDetails('taftowa'),
+    delivery: buildDeliveryDetails('Faworytka'),
+    care: 'W przypadku zabrudzenia czyścić na sucho (rolką lub szczotką). Miejscowe plamy usuń lekko wilgotną ściereczką i łagodnym mydłem. Nie pierz w pralce. W razie zamoczenia susz równomiernie.',
   },
   {
     id: 'faworytka-sliwka',
     slug: 'faworytka-sliwka',
     model: 'Faworytka',
     color: 'Śliwka',
+    materialType: 'taftowa',
     price: 530,
-    mainImage: 'images/faworytka-sliwka-main.jpg',
-    galleryImages: [],
-    description: 'Opis dla torebki Faworytka Śliwka.',
-    construction: 'Info o konstrukcji.',
-    material: 'Info o materiale.',
-    delivery: 'Info o dostawie.',
-    care: 'Info o pielęgnacji.',
+    mainImage: 'images/faworytka/faworytka-sliwka-main.webp',
+    galleryImages: [
+      'images/faworytka/faworytka-sliwka-main.webp',
+      'images/faworytka/faworytka-sliwka-1.webp',
+    ],
+    description: buildModelDescription('Faworytka'),
+    details: buildProductDetails('taftowa'),
+    material: buildMaterialDetails('taftowa'),
+    delivery: buildDeliveryDetails('Faworytka'),
+    care: 'W przypadku zabrudzenia czyścić na sucho (rolką lub szczotką). Miejscowe plamy usuń lekko wilgotną ściereczką i łagodnym mydłem. Nie pierz w pralce. W razie zamoczenia susz równomiernie.',
   },
 ];
 

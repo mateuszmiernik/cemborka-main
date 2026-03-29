@@ -44,7 +44,7 @@ Wszystkie dane są w pliku `js/data.js` w tablicy `products`. Każdy produkt zaw
   mainImage: 'images/...',       // główne zdjęcie
   galleryImages: [...],          // tablica galerii
   description: '...',            // opis
-  construction: '...',           // zakładka Konstrukcja
+  details: '...',           // zakładka Konstrukcja
   material: '...',              // zakładka Materiał
   delivery: '...',              // zakładka Dostawa
   care: '...'                   // zakładka Pielęgnacja

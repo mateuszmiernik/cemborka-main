@@ -282,34 +282,52 @@ function clearOrderFormErrors(form) {
     errorNode.hidden = true;
     errorNode.textContent = '';
   }
+
+  const consentErrorNode = form.querySelector('#orderConsentError');
+  if (consentErrorNode) {
+    consentErrorNode.hidden = true;
+    consentErrorNode.textContent = '';
+  }
 }
 
 function validateOrderForm(form) {
   const requiredFields = Array.from(form.querySelectorAll('[required]'));
-  const invalidFields = [];
+  const invalidDataFields = [];
+  let consentField = null;
+  let isConsentInvalid = false;
 
   requiredFields.forEach((field) => {
-    const value = normalizeOrderFieldValue(field);
-    let isInvalid = value.length === 0;
+    let isInvalid = false;
 
-    if (!isInvalid && field.id === 'customerEmail') {
-      isInvalid = !isValidOrderEmail(value);
-    }
+    if (field instanceof HTMLInputElement && field.type === 'checkbox') {
+      consentField = field;
+      isInvalid = !field.checked;
+      isConsentInvalid = isInvalid;
+    } else {
+      const value = normalizeOrderFieldValue(field);
+      isInvalid = value.length === 0;
 
-    if (!isInvalid && field.id === 'customerPhone') {
-      isInvalid = !isValidOrderPhone(value);
+      if (!isInvalid && field.id === 'customerEmail') {
+        isInvalid = !isValidOrderEmail(value);
+      }
+
+      if (!isInvalid && field.id === 'customerPhone') {
+        isInvalid = !isValidOrderPhone(value);
+      }
     }
 
     setOrderFieldInvalidState(field, isInvalid);
 
-    if (isInvalid) {
-      invalidFields.push(field);
+    if (isInvalid && !(field instanceof HTMLInputElement && field.type === 'checkbox')) {
+      invalidDataFields.push(field);
     }
   });
 
   const errorNode = form.querySelector('#orderFormError');
+  const consentErrorNode = form.querySelector('#orderConsentError');
+
   if (errorNode) {
-    if (invalidFields.length > 0) {
+    if (invalidDataFields.length > 0) {
       errorNode.textContent = 'Formularz nie jest poprawnie uzupełniony. Uzupełnij wszystkie wymagane pola i sprawdź format e-maila oraz telefonu.';
       errorNode.hidden = false;
     } else {
@@ -318,9 +336,14 @@ function validateOrderForm(form) {
     }
   }
 
+  if (consentErrorNode) {
+    consentErrorNode.hidden = true;
+    consentErrorNode.textContent = '';
+  }
+
   return {
-    isValid: invalidFields.length === 0,
-    firstInvalidField: invalidFields[0] || null
+    isValid: invalidDataFields.length === 0 && !isConsentInvalid,
+    firstInvalidField: invalidDataFields[0] || (isConsentInvalid ? consentField : null)
   };
 }
 
@@ -441,7 +464,7 @@ function renderOrderForm() {
   container.innerHTML = `
     <section class="order-hero">
       <h1 class="order-title">KUPUJĘ!</h1>
-      <p class="order-subtitle">Miło nam że chcesz kupić nasz produkt!<br>Możesz to zrobić przez poniższy formularz!</p>
+      <p class="order-subtitle">Miło nam, że chcesz kupić nasz produkt!<br>Możesz to zrobić przez poniższy formularz!</p>
     </section>
 
     <form id="orderForm" class="order-form" novalidate>
@@ -461,27 +484,35 @@ function renderOrderForm() {
 
       <div class="order-field order-field-data">
         <label for="customerName">Imię i Nazwisko</label>
-        <input type="text" id="customerName" name="customerName" autocomplete="name" required>
+        <input class="order-input" type="text" id="customerName" name="customerName" autocomplete="name" required>
       </div>
 
       <div class="order-field order-field-data">
         <label for="customerEmail">E-mail</label>
-        <input type="email" id="customerEmail" name="customerEmail" autocomplete="email" autocapitalize="off" spellcheck="false" required>
+        <input class="order-input" type="email" id="customerEmail" name="customerEmail" autocomplete="email" autocapitalize="off" spellcheck="false" required>
       </div>
 
       <div class="order-field order-field-data">
         <label for="customerAddress">Adres do wysyłki lub numer Paczkomatu</label>
-        <input type="text" id="customerAddress" name="customerAddress" autocomplete="street-address" required>
+        <input class="order-input" type="text" id="customerAddress" name="customerAddress" autocomplete="street-address" required>
       </div>
 
       <div class="order-field order-field-data">
         <label for="customerPhone">Telefon</label>
-        <input type="tel" id="customerPhone" name="customerPhone" inputmode="tel" autocomplete="tel" placeholder="(+48) 123 456 789" pattern="^(\\+48|48)?[\\s\\-]*\\d(?:[\\s\\-]*\\d){8}$" title="Podaj numer telefonu, np. +48 123 456 789" required>
+        <input class="order-input" type="tel" id="customerPhone" name="customerPhone" inputmode="tel" autocomplete="tel" placeholder="" pattern="^(\\+48|48)?[\\s\\-]*\\d(?:[\\s\\-]*\\d){8}$" title="Podaj numer telefonu, np. +48 123 456 789" required>
+      </div>
+
+      <div class="order-field order-consent-field">
+        <label class="order-consent-label" for="orderConsent">
+          <input type="checkbox" id="orderConsent" name="orderConsent" required>
+          <span>Akceptuję <a href="terms.html" target="_blank" rel="noopener">Regulamin</a> i <a href="privacy.html" target="_blank" rel="noopener">Politykę Prywatności</a> sklepu CEMBORKA</span>
+        </label>
       </div>
 
       <p id="orderFormError" class="order-form-error" role="alert" aria-live="polite" hidden></p>
+      <p id="orderConsentError" class="order-form-error" role="alert" aria-live="polite" hidden></p>
 
-      <p class="order-payment-info">Możliwy sposoby płatność: Blik / przelew</p>
+      <p class="order-payment-info">Możliwy sposób płatność: Blik / przelew</p>
 
       <button type="submit" class="order-submit-button">WYŚLIJ</button>
       <p id="orderSubmitError" class="order-submit-error" role="alert" aria-live="polite" hidden></p>
@@ -524,6 +555,11 @@ function renderOrderForm() {
     if (!field.hasAttribute('required')) return;
     if (orderForm.dataset.validationAttempted !== 'true') return;
 
+    if (field instanceof HTMLInputElement && field.type === 'checkbox') {
+      setOrderFieldInvalidState(field, !field.checked);
+      return;
+    }
+
     const value = normalizeOrderFieldValue(field);
     let isInvalid = value.length === 0;
 
@@ -540,11 +576,23 @@ function renderOrderForm() {
 
   orderForm.addEventListener('change', (event) => {
     const field = event.target;
-    if (!(field instanceof HTMLSelectElement)) return;
+    if (!(field instanceof HTMLSelectElement) && !(field instanceof HTMLInputElement)) return;
     if (!field.hasAttribute('required')) return;
     if (orderForm.dataset.validationAttempted !== 'true') return;
 
-    setOrderFieldInvalidState(field, normalizeOrderFieldValue(field).length === 0);
+    const isInvalid = field instanceof HTMLInputElement && field.type === 'checkbox'
+      ? !field.checked
+      : normalizeOrderFieldValue(field).length === 0;
+
+    setOrderFieldInvalidState(field, isInvalid);
+
+    if (field instanceof HTMLInputElement && field.type === 'checkbox') {
+      const consentErrorNode = orderForm.querySelector('#orderConsentError');
+      if (consentErrorNode && field.checked) {
+        consentErrorNode.hidden = true;
+        consentErrorNode.textContent = '';
+      }
+    }
   });
 
   orderForm.addEventListener('submit', async (event) => {
@@ -617,7 +665,7 @@ function renderMobileView(container, product) {
   const firstImage = product.galleryImages && product.galleryImages.length > 0 ? product.galleryImages[0] : product.mainImage;
 
   const tabsList = [
-    { id: 'szczegoly-mob', label: 'SZCZEGÓŁY', content: product.construction },
+    { id: 'szczegoly-mob', label: 'SZCZEGÓŁY', content: product.details },
     { id: 'material-mob', label: 'MATERIAŁ', content: product.material },
     { id: 'pielegnacja-mob', label: 'PIELĘGNACJA', content: product.care },
     { id: 'dostawa-mob', label: 'DOSTAWA', content: product.delivery }
@@ -638,6 +686,7 @@ function renderMobileView(container, product) {
         <div class="color-title">
           <span class="label">kolor</span>
           <span class="name">${product.color}</span>
+          <span class="status">dostępna</span>
         </div>
         <p class="description">${product.description}</p>
       </div>
@@ -671,10 +720,10 @@ function renderDesktopView(container, product) {
   const firstImage = product.galleryImages && product.galleryImages.length > 0 ? product.galleryImages[0] : product.mainImage;
 
   const tabsList = [
-    { id: 'szczegoly-desk', label: 'SZCZEGÓŁY', content: product.construction },
+    { id: 'szczegoly-desk', label: 'SZCZEGÓŁY', content: product.details },
     { id: 'material-desk', label: 'MATERIAŁ', content: product.material },
     { id: 'pielegnacja-desk', label: 'PIELĘGNACJA', content: product.care },
-    { id: 'dostawa-desk', label: 'PŁATNOŚĆ I DOSTAWA', content: product.delivery }
+    { id: 'dostawa-desk', label: 'DOSTAWA', content: product.delivery }
   ];
 
   const desktopLayout = document.createElement('div');
@@ -700,6 +749,7 @@ function renderDesktopView(container, product) {
       <div class="color-title">
         <span class="label">kolor</span>
         <span class="name">${product.color}</span>
+        <span class="status">dostępna</span>
       </div>
       <p class="description">${product.description}</p>
       <div class="purchase-section">
@@ -711,7 +761,7 @@ function renderDesktopView(container, product) {
           ${tabsList.map((tab, index) => `<button class="tab-button" onclick="toggleDesktopTab(this, '${tab.id}')">${tab.label}</button>`).join('')}
         </div>
         <div class="tabs-content-container">
-          ${tabsList.map((tab, index) => `<div id="${tab.id}" class="tabs-content"><p>${tab.content}</p></div>`).join('')}
+          ${tabsList.map((tab, index) => `<div id="${tab.id}" class="tabs-content">${tab.content}</div>`).join('')}
         </div>
       </div>
     </div>
@@ -946,7 +996,8 @@ function setupPageTransitions() {
 
 function setupHamburgerMenu() {
   const menuButton = document.querySelector('.menu-button');
-  if (!menuButton) return;
+  const header = document.querySelector('.header');
+  if (!menuButton || !header) return;
 
   let menuOverlay = document.getElementById('mobileMenuOverlay');
   if (!menuOverlay) {
@@ -954,6 +1005,7 @@ function setupHamburgerMenu() {
     menuOverlay.id = 'mobileMenuOverlay';
     menuOverlay.className = 'mobile-menu-overlay';
     menuOverlay.setAttribute('aria-hidden', 'true');
+    menuOverlay.inert = true;
     menuOverlay.innerHTML = `
       <nav class="mobile-menu-panel" aria-label="Menu główne">
         <a href="models.html" class="mobile-menu-link">DOSTĘPNE MODELE</a>
@@ -967,17 +1019,21 @@ function setupHamburgerMenu() {
   const closeMenu = () => {
     menuOverlay.classList.remove('is-open');
     menuOverlay.setAttribute('aria-hidden', 'true');
+    menuOverlay.inert = true;
     menuButton.classList.remove('is-active');
     menuButton.setAttribute('aria-expanded', 'false');
     document.body.classList.remove('menu-open');
+    header.classList.remove('is-fixed-on-menu-open');
   };
 
   const openMenu = () => {
     menuOverlay.classList.add('is-open');
     menuOverlay.setAttribute('aria-hidden', 'false');
+    menuOverlay.inert = false;
     menuButton.classList.add('is-active');
     menuButton.setAttribute('aria-expanded', 'true');
     document.body.classList.add('menu-open');
+    header.classList.add('is-fixed-on-menu-open');
   };
 
   menuButton.setAttribute('aria-expanded', 'false');
@@ -1032,9 +1088,19 @@ function setupBackButtonNavigation() {
   });
 }
 
+function markSafariBrowser() {
+  const userAgent = navigator.userAgent;
+  const isSafari = /Safari/i.test(userAgent)
+    && !/Chrome|Chromium|Edg|OPR|CriOS|FxiOS|Firefox/i.test(userAgent);
+
+  if (isSafari) {
+    document.documentElement.classList.add('is-safari');
+  }
+}
 
 // Polepsz nawigację wstecz
 document.addEventListener('DOMContentLoaded', function() {
+  markSafariBrowser();
   setupPageTransitions();
   setupHamburgerMenu();
   setupBackButtonNavigation();
