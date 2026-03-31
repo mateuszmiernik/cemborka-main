@@ -659,6 +659,64 @@ function renderProductDetail() {
   // Po dodaniu obu widoków do DOM, inicjalizujemy galerię i zakładki
   setupDesktopGallery();
   initializeTabs();
+  setupDesktopDescriptionExpand();
+}
+
+function buildDesktopDescriptionMarkup(descriptionText) {
+  const text = (descriptionText || '').trim();
+  const marker = 'długości.';
+  const markerIndex = text.indexOf(marker);
+
+  if (markerIndex === -1) {
+    return `<p class="description">${text}</p>`;
+  }
+
+  const splitEnd = markerIndex + marker.length;
+  const shortText = text.slice(0, splitEnd).trim();
+  const longText = text.slice(splitEnd).trim();
+
+  if (!longText) {
+    return `<p class="description">${text}</p>`;
+  }
+
+  return `
+    <p class="description description-collapsible">
+      <span class="description-short">${shortText}</span><span class="description-more" hidden> ${longText}<button type="button" class="description-collapse-inline" aria-expanded="true" aria-label="Zwiń opis" hidden>...</button></span>
+    </p>
+    <button type="button" class="description-expand-button" aria-expanded="false" aria-label="Rozwiń opis">...</button>
+  `;
+}
+
+function setupDesktopDescriptionExpand() {
+  document.querySelectorAll('.description.description-collapsible').forEach((descriptionNode) => {
+    if (descriptionNode.dataset.bound === 'true') return;
+
+    const expandButton = descriptionNode.nextElementSibling;
+    const hiddenPart = descriptionNode.querySelector('.description-more');
+    const collapseButton = descriptionNode.querySelector('.description-collapse-inline');
+
+    if (!(expandButton instanceof HTMLButtonElement)) return;
+    if (!(hiddenPart instanceof HTMLElement)) return;
+    if (!(collapseButton instanceof HTMLButtonElement)) return;
+
+    expandButton.addEventListener('click', () => {
+      hiddenPart.hidden = false;
+      collapseButton.hidden = false;
+      descriptionNode.classList.add('is-expanded');
+      expandButton.hidden = true;
+      expandButton.setAttribute('aria-expanded', 'true');
+    });
+
+    collapseButton.addEventListener('click', () => {
+      hiddenPart.hidden = true;
+      collapseButton.hidden = true;
+      descriptionNode.classList.remove('is-expanded');
+      expandButton.hidden = false;
+      expandButton.setAttribute('aria-expanded', 'false');
+    });
+
+    descriptionNode.dataset.bound = 'true';
+  });
 }
 
 function renderMobileView(container, product) {
@@ -751,7 +809,7 @@ function renderDesktopView(container, product) {
         <span class="name">${product.color}</span>
         <span class="status">dostępna</span>
       </div>
-      <p class="description">${product.description}</p>
+      ${buildDesktopDescriptionMarkup(product.description)}
       <div class="purchase-section">
         <span class="price">${product.price} zł</span>
         <a href="order.html?slug=${encodeURIComponent(product.slug)}" class="buy-button">KUP</a>

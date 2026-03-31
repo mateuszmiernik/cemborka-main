@@ -48,6 +48,8 @@ podstrona produktu:
     - ogarnac ogolnie te podstrone pod wzgledem zmian wielkosci zdjecia itd. 
     - hover na przycisk KUP (do ustalenia) / w hamburger menu / na logo CEMBORKA / hamburger menu ikona / taby (szczegoly itd.) / na przycisk BACK i przy zdjeciach na karuzeli / przycisk wyslij w formularzu
   ~~-> tam gdzie bylo ile sztuk jest to jednak beda statusy: Dostepne, dostepne wkrotce, niedostepne (uwaga do DAMIANA)~~
+  -> troche szersza prawa kolumna na najwiekszym ekranie.. zeby tekst sie lepiej zawijal
+
 
 podstrona "O marce":
   -> .about-container {

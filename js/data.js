@@ -32,10 +32,10 @@ function buildDeliveryDetails(model) {
 
 function buildModelDescription(model) {
   if (model === 'Faworytka') {
-    return 'FAWORYTKA to mniejsza siostra FAWORYTY. FAWORYTKA to model o unikalnym i wyrazistym designie, w którym świat geometrii spotyka się z organiczną miękkością. O nieoczywistym charakterze torby decyduje autorska rączka. Ten dekoracyjny detal w przemyślany sposób łączy ozdobną formę z funkcjonalnością, skrywając wewnątrz mechanizm regulacji jej długości. FAWORYTKA naturalnie dopasuje się do odważnych stylizacji, ale również świetnie sprawdzi się w minimalistycznych outfitów, stając się najmocniejszym akcentem, który zdefiniuje cały Twój look. Zaprojektowana i uszyta w Polsce.';
+    return 'FAWORYTKA to mniejsza siostra FAWORYTY. FAWORYTKA to model, w którym świat geometrii spotyka się z organiczną miękkością. O nieoczywistym charakterze torby decyduje autorska rączka. Ten dekoracyjny detal łączy ozdobną formę z funkcjonalnością, skrywając wewnątrz mechanizm regulacji jej długości. FAWORYTKA naturalnie dopasuje się do odważnych stylizacji, ale również świetnie sprawdzi się w minimalistycznych outfitów, stając się najmocniejszym akcentem, który zdefiniuje cały Twój look. Zaprojektowana i uszyta w Polsce.';
   }
 
-  return 'FAWORYTA to model o unikalnym i wyrazistym designie, w którym świat geometrii spotyka się z organiczną miękkością. O nieoczywistym charakterze torby decyduje autorska rączka. Ten dekoracyjny detal w przemyślany sposób łączy ozdobną formę z funkcjonalnością, skrywając wewnątrz mechanizm regulacji jej długości. FAWORYTA naturalnie dopasuje się do odważnych stylizacji, ale również świetnie sprawdzi się w minimalistycznych outfitów, stając się najmocniejszym akcentem, który zdefiniuje cały Twój look. Zaprojektowana i uszyta w Polsce.';
+  return 'FAWORYTA to model, w którym świat geometrii spotyka się z organiczną miękkością. O nieoczywistym charakterze torby decyduje autorska rączka. Ten dekoracyjny detal łączy ozdobną formę z funkcjonalnością, skrywając wewnątrz mechanizm regulacji jej długości. FAWORYTA naturalnie dopasuje się do odważnych stylizacji, ale również świetnie sprawdzi się w minimalistycznych outfitów, stając się najmocniejszym akcentem, który zdefiniuje cały Twój look. Zaprojektowana i uszyta w Polsce.';
 }
 
 function buildMaterialDetails(materialType) {
@@ -47,8 +47,8 @@ function buildMaterialDetails(materialType) {
       : 'Torba stworzona z tafty poliestrowej, która opalizuje na dwa kolory, a jej barwa zależy od kąta padania światła.';
 
   return `
-    <p style="margin: 0 0 0.5rem 0;"><strong>Skład:</strong> poliester* + bawełna</p>
-    <p style="margin: 0 0 0.5rem 0;">${materialIntro}</p>
+    <p style="margin: 0 0 .5rem 0;"><strong>Skład:</strong> poliester* + bawełna</p>
+    <p style="margin: 0 0 .5rem 0;">${materialIntro}</p>
     <p class="material-polyester-heading"><strong>*Dlaczego poliester?</strong></p>
     <p class="material-polyester-copy">${whyPolyesterText}</p>
   `;
