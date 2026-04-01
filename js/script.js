@@ -1057,6 +1057,8 @@ function setupHamburgerMenu() {
   const header = document.querySelector('.header');
   if (!menuButton || !header) return;
 
+  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+
   let menuOverlay = document.getElementById('mobileMenuOverlay');
   if (!menuOverlay) {
     menuOverlay = document.createElement('aside');
@@ -1096,6 +1098,19 @@ function setupHamburgerMenu() {
 
   menuButton.setAttribute('aria-expanded', 'false');
   menuButton.setAttribute('aria-controls', 'mobileMenuOverlay');
+
+  menuOverlay.querySelectorAll('.mobile-menu-link').forEach((link) => {
+    const href = link.getAttribute('href') || '';
+    const targetPage = href.split('/').pop();
+    const isCurrent = targetPage === currentPage;
+
+    link.classList.toggle('is-current', isCurrent);
+    if (isCurrent) {
+      link.setAttribute('aria-current', 'page');
+    } else {
+      link.removeAttribute('aria-current');
+    }
+  });
 
   menuButton.addEventListener('click', (event) => {
     event.preventDefault();

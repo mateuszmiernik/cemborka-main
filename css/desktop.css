@@ -246,6 +246,17 @@ body.product-page .product-image-column {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: opacity 0.2s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.product-details-column .buy-button:hover {
+  opacity: 0.6;
+}
+
+.product-details-column .buy-button:active {
+  opacity: 1;
+  background-color: var(--text-color);
+  color: var(--bg-color);
 }
 
 .product-details-column .tabs-section {
@@ -492,7 +503,14 @@ body.product-page .desktop-gallery-container .gallery-image {
   font-size: 2rem;
   cursor: pointer;
   padding: 0.4rem;
-  transition: background-color 0.2s;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.desktop-gallery-container .gallery-arrow:hover,
+.desktop-gallery-container .gallery-arrow:focus-visible {
+  opacity: 1;
+  outline: none;
 }
 
 .desktop-gallery-container .gallery-arrow.prev {

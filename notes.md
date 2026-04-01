@@ -13,7 +13,7 @@ glowna podstrona:
   ~~-> przycisk ogarnac na jakis ladniejszy~~
   ~~-> usiasc ze zdjeciem ucietym albo samemu uciac~~
   ~~-> bedzie napis "statement bags"~~ przy poprawkach do II wersji
-  -> powiekszyc hamburgera
+  ~~-> powiekszyc hamburgera~~
   -> zeby na safari przycisk byl wyzej na laptopie (potestowac jeszcze) i na chromie troche obnizyc!! (na dole jest co dodal)
     @media (min-width: 1024px) {
     html.is-safari .cta-container {
@@ -81,6 +81,7 @@ RAZEM:
   -> podstrona 'kontakt' (grafike dodac torebki)
   -> ustawic Mete - od nowa, czy tak jak jest na tej tymczasowej? - przy opisach Kamila ma dac nowe
   -> KONTAKT (desktop)
+  -> polityka i regulamin (mobile + dekstop)
 
   ~~-> HAMBURGER MENU - sprwadzic jak ma dzialac przy scrollu -> zamrozic header, aby szedl przy scrollu~~
   ~~-> checkbox~~
@@ -94,7 +95,8 @@ KAMILA
 ~~-> menu hamburger~~
 ~~-> opisy zdjec~~
 -> zdjecia MOODBOARDy (mniejszy rozmiar)
--> nazwy podstron jak jest strona wlaczona jako zakladka w przegladarce
+-> nazwy podstron jak jest strona wlaczona jako zakladka w przegladarce + opisy (na mailu masz)
+-> FB oraz TIKTOK
 
 
 INFO DO STYLOW:
