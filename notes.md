@@ -71,10 +71,10 @@ podstrona kontakt:
 
 
 RAZEM:
+  ~~-> ustawic Mete - od nowa, czy tak jak jest na tej tymczasowej? - przy opisach Kamila ma dac nowe~~
   -> strona glowna
   -> podstrona produktu jak sie klika na zdjecie to przyblizenie (POKAZAC)
   -> podstrona 'kontakt' (DESKTOP)
-  ~~-> ustawic Mete - od nowa, czy tak jak jest na tej tymczasowej? - przy opisach Kamila ma dac nowe~~
   -> polityka i regulamin (mobile + desktop)
 
   ~~-> HAMBURGER MENU - sprwadzic jak ma dzialac przy scrollu -> zamrozic header, aby szedl przy scrollu~~

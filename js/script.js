@@ -74,6 +74,124 @@ function buildOrderQuantityOptions(selectedQuantity) {
   }).join('');
 }
 
+const ORDER_FORM_DRAFT_STORAGE_KEY = 'cemborka-order-form-draft';
+
+function canUseSessionStorage() {
+  try {
+    return typeof window !== 'undefined' && typeof window.sessionStorage !== 'undefined';
+  } catch {
+    return false;
+  }
+}
+
+function readOrderFormDraft() {
+  if (!canUseSessionStorage()) return null;
+
+  try {
+    const rawDraft = window.sessionStorage.getItem(ORDER_FORM_DRAFT_STORAGE_KEY);
+    if (!rawDraft) return null;
+
+    const parsedDraft = JSON.parse(rawDraft);
+    return parsedDraft && typeof parsedDraft === 'object' ? parsedDraft : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeOrderFormDraft(form) {
+  if (!canUseSessionStorage() || !(form instanceof HTMLFormElement)) return;
+
+  const deliveryMethod = form.querySelector('#deliveryMethod');
+  const customerName = form.querySelector('#customerName');
+  const customerEmail = form.querySelector('#customerEmail');
+  const customerAddress = form.querySelector('#customerAddress');
+  const customerPhone = form.querySelector('#customerPhone');
+  const orderConsent = form.querySelector('#orderConsent');
+
+  const draft = {
+    items: buildOrderItemsPayload(form).map((item) => ({
+      slug: item.modelSlug,
+      quantity: item.quantity
+    })),
+    deliveryMethod: deliveryMethod instanceof HTMLSelectElement ? deliveryMethod.value : '',
+    customerName: customerName instanceof HTMLInputElement ? customerName.value : '',
+    customerEmail: customerEmail instanceof HTMLInputElement ? customerEmail.value : '',
+    customerAddress: customerAddress instanceof HTMLInputElement ? customerAddress.value : '',
+    customerPhone: customerPhone instanceof HTMLInputElement ? customerPhone.value : '',
+    orderConsent: orderConsent instanceof HTMLInputElement ? orderConsent.checked : false
+  };
+
+  try {
+    window.sessionStorage.setItem(ORDER_FORM_DRAFT_STORAGE_KEY, JSON.stringify(draft));
+  } catch {
+    // Ignorujemy błąd zapisu, żeby nie blokować formularza.
+  }
+}
+
+function clearOrderFormDraft() {
+  if (!canUseSessionStorage()) return;
+
+  try {
+    window.sessionStorage.removeItem(ORDER_FORM_DRAFT_STORAGE_KEY);
+  } catch {
+    // Ignorujemy błąd czyszczenia, żeby nie blokować formularza.
+  }
+}
+
+function getOrderDraftItems(draft, fallbackSlug) {
+  const fallbackItems = [{ slug: fallbackSlug, quantity: 1 }];
+  if (!draft || !Array.isArray(draft.items) || draft.items.length === 0) return fallbackItems;
+
+  const validItems = draft.items.filter((item) => {
+    if (!item || typeof item !== 'object') return false;
+    if (typeof item.slug !== 'string' || !getProductBySlug(item.slug)) return false;
+
+    const quantity = Number(item.quantity);
+    return Number.isFinite(quantity) && quantity >= 1;
+  });
+
+  return validItems.length > 0 ? validItems : fallbackItems;
+}
+
+function applyOrderFormDraft(form, draft) {
+  if (!(form instanceof HTMLFormElement) || !draft || typeof draft !== 'object') return;
+
+  const deliveryMethod = form.querySelector('#deliveryMethod');
+  const customerName = form.querySelector('#customerName');
+  const customerEmail = form.querySelector('#customerEmail');
+  const customerAddress = form.querySelector('#customerAddress');
+  const customerPhone = form.querySelector('#customerPhone');
+  const orderConsent = form.querySelector('#orderConsent');
+
+  if (deliveryMethod instanceof HTMLSelectElement && typeof draft.deliveryMethod === 'string') {
+    const optionExists = Array.from(deliveryMethod.options).some((option) => option.value === draft.deliveryMethod);
+    if (optionExists) {
+      deliveryMethod.value = draft.deliveryMethod;
+      syncOrderCustomSelectUI(deliveryMethod);
+    }
+  }
+
+  if (customerName instanceof HTMLInputElement && typeof draft.customerName === 'string') {
+    customerName.value = draft.customerName;
+  }
+
+  if (customerEmail instanceof HTMLInputElement && typeof draft.customerEmail === 'string') {
+    customerEmail.value = draft.customerEmail;
+  }
+
+  if (customerAddress instanceof HTMLInputElement && typeof draft.customerAddress === 'string') {
+    customerAddress.value = draft.customerAddress;
+  }
+
+  if (customerPhone instanceof HTMLInputElement && typeof draft.customerPhone === 'string') {
+    customerPhone.value = draft.customerPhone;
+  }
+
+  if (orderConsent instanceof HTMLInputElement) {
+    orderConsent.checked = draft.orderConsent === true;
+  }
+}
+
 let orderCustomSelectEventsBound = false;
 
 function closeAllOrderCustomSelects(exceptField) {
@@ -440,6 +558,7 @@ async function submitOrderFormData(form) {
 function renderOrderSuccessState(container) {
   if (!container) return;
 
+  clearOrderFormDraft();
   container.classList.add('is-success');
   container.innerHTML = `
     <section class="order-success-panel" aria-live="polite">
@@ -525,9 +644,14 @@ function renderOrderForm() {
   const itemsContainer = document.getElementById('orderItems');
   const addRowButton = document.getElementById('addOrderRow');
   const orderForm = document.getElementById('orderForm');
+  const orderDraft = readOrderFormDraft();
 
-  itemsContainer.appendChild(createOrderItemRow(initialProduct.slug, 1));
+  getOrderDraftItems(orderDraft, initialProduct.slug).forEach((item) => {
+    itemsContainer.appendChild(createOrderItemRow(item.slug, item.quantity));
+  });
+
   initializeOrderCustomSelects(container);
+  applyOrderFormDraft(orderForm, orderDraft);
   updateOrderRemoveButtonsState();
 
   addRowButton.addEventListener('click', () => {
@@ -535,6 +659,7 @@ function renderOrderForm() {
     itemsContainer.appendChild(newRow);
     initializeOrderCustomSelects(newRow);
     updateOrderRemoveButtonsState();
+    writeOrderFormDraft(orderForm);
   });
 
   itemsContainer.addEventListener('click', (event) => {
@@ -545,12 +670,15 @@ function renderOrderForm() {
     if (row) {
       row.remove();
       updateOrderRemoveButtonsState();
+      writeOrderFormDraft(orderForm);
     }
   });
 
   orderForm.addEventListener('input', (event) => {
     const field = event.target;
     if (!(field instanceof HTMLInputElement) && !(field instanceof HTMLSelectElement)) return;
+
+    writeOrderFormDraft(orderForm);
 
     if (!field.hasAttribute('required')) return;
     if (orderForm.dataset.validationAttempted !== 'true') return;
@@ -577,6 +705,9 @@ function renderOrderForm() {
   orderForm.addEventListener('change', (event) => {
     const field = event.target;
     if (!(field instanceof HTMLSelectElement) && !(field instanceof HTMLInputElement)) return;
+
+    writeOrderFormDraft(orderForm);
+
     if (!field.hasAttribute('required')) return;
     if (orderForm.dataset.validationAttempted !== 'true') return;
 
