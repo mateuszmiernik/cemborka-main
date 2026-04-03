@@ -632,7 +632,7 @@ body.home-page .home-container {
 
   .product-card:hover .product-info,
   .product-card:focus-visible .product-info {
-    opacity: 0.5;
+    opacity: 0.8;
   }
 }
 
@@ -1841,7 +1841,7 @@ body.product-lightbox-open {
   letter-spacing: .0313rem;
   text-align: center;
   opacity: .9;
-  margin: 3rem 0 1rem;
+  margin: 2.8rem 0 1rem;
 }
 
 .order-form-error {
@@ -1850,7 +1850,7 @@ body.product-lightbox-open {
   letter-spacing: .02rem;
   color: var(--accent-red);
   text-align: left;
-  margin: -0.25rem 0 1.25rem;
+  margin: -0.2 0 0.5rem;
 }
 
 .order-submit-button {
@@ -1998,6 +1998,11 @@ body.product-lightbox-open {
     font-size: 1.5rem;
     letter-spacing: 0.08rem;
     padding: .4rem;
+  }
+
+  .order-disclaimer {
+    max-width: 31rem;
+    margin: .9375rem auto 0;
   }
 
   .order-container.is-success {
