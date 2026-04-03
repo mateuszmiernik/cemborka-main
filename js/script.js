@@ -1,3 +1,22 @@
+function getSiteBasePath() {
+  if (typeof window === 'undefined') return '/';
+
+  if (/github\.io$/i.test(window.location.hostname)) {
+    const segments = window.location.pathname.split('/').filter(Boolean);
+    if (segments.length > 0) {
+      return `/${segments[0]}/`;
+    }
+  }
+
+  return '/';
+}
+
+function toSitePath(path = '') {
+  const normalizedPath = String(path).replace(/^\/+/, '');
+  const basePath = getSiteBasePath();
+  return normalizedPath ? `${basePath}${normalizedPath}` : basePath;
+}
+
 // Renderowanie listy modeli
 function renderModels() {
   const container = document.getElementById('modelsContainer');
@@ -35,7 +54,7 @@ function renderModels() {
     items.forEach(product => {
       const productCard = document.createElement('a');
       productCard.className = 'product-card';
-      productCard.href = `/produkt/?slug=${product.slug}`;
+      productCard.href = `${toSitePath('produkt/')}?slug=${encodeURIComponent(product.slug)}`;
       
       productCard.innerHTML = `
         <div class="image-wrapper">
@@ -577,7 +596,7 @@ function renderOrderSuccessState(container) {
       <span class="material-symbols-outlined order-success-check" aria-hidden="true">check</span>
       <p class="order-success-thanks">Dziękujemy!</p>
       <h2 class="order-success-title">FORMULARZ<br>WYSŁANY!</h2>
-      <img src="/images/bag.png" alt="Ilustracja torebki" class="order-success-image">
+      <img src="${toSitePath('images/bag.png')}" alt="Ilustracja torebki" class="order-success-image">
     </section>
   `;
 }
@@ -588,7 +607,7 @@ function renderOrderForm() {
 
   const initialProduct = getOrderSeedProduct();
   if (!initialProduct) {
-    window.location.href = '/modele/';
+    window.location.href = toSitePath('modele/');
     return;
   }
 
@@ -636,7 +655,7 @@ function renderOrderForm() {
       <div class="order-field order-consent-field">
         <label class="order-consent-label" for="orderConsent">
           <input type="checkbox" id="orderConsent" name="orderConsent" required>
-          <span>Akceptuję <a href="/regulamin/" target="_blank" rel="noopener">Regulamin</a> i <a href="/polityka-prywatnosci/" target="_blank" rel="noopener">Politykę Prywatności</a> sklepu CEMBORKA</span>
+          <span>Akceptuję <a href="${toSitePath('regulamin/')}" target="_blank" rel="noopener">Regulamin</a> i <a href="${toSitePath('polityka-prywatnosci/')}" target="_blank" rel="noopener">Politykę Prywatności</a> sklepu CEMBORKA</span>
         </label>
       </div>
 
@@ -779,14 +798,14 @@ function renderProductDetail() {
   const slug = urlParams.get('slug');
   
   if (!slug) {
-    window.location.href = '/modele/';
+    window.location.href = toSitePath('modele/');
     return;
   }
   
   const product = getProductBySlug(slug);
   
   if (!product) {
-    window.location.href = '/modele/';
+    window.location.href = toSitePath('modele/');
     return;
   }
   
@@ -831,11 +850,11 @@ function createProductLightbox() {
       </button>
       <div class="product-lightbox-stage">
         <button type="button" class="product-lightbox-arrow prev" aria-label="Poprzednie zdjęcie">
-          <img src="/images/back-icon.png" alt="" class="back-icon">
+          <img src="${toSitePath('images/back-icon.png')}" alt="" class="back-icon">
         </button>
         <img src="" alt="" class="product-lightbox-image">
         <button type="button" class="product-lightbox-arrow next" aria-label="Następne zdjęcie">
-          <img src="/images/back-icon.png" alt="" class="back-icon back-icon-next">
+          <img src="${toSitePath('images/back-icon.png')}" alt="" class="back-icon back-icon-next">
         </button>
       </div>
       <p class="product-lightbox-counter" aria-live="polite"></p>
@@ -1170,7 +1189,7 @@ function renderMobileView(container, product) {
     </div>
     <div class="purchase-section">
       <span class="price">${product.price} zł</span>
-      <a href="/zamowienie/?slug=${encodeURIComponent(product.slug)}" class="buy-button">KUP</a>
+      <a href="${toSitePath('zamowienie/')}?slug=${encodeURIComponent(product.slug)}" class="buy-button">KUP</a>
     </div>
   `;
   container.appendChild(footerActions);
@@ -1196,8 +1215,8 @@ function renderDesktopView(container, product) {
           <img src="${imgSrc}" alt="${product.model} ${product.color} - zdjęcie ${index + 1}" class="gallery-image ${index === 0 ? 'active' : ''}" data-index="${index}" data-product-image-index="${index}">
         `).join('')}
         ${product.galleryImages.length > 1 ? `
-          <button class="gallery-arrow prev" onclick="changeDesktopImage(-1)"><img src="/images/back-icon.png" alt="Wstecz" class="back-icon"></button>
-          <button class="gallery-arrow next" onclick="changeDesktopImage(1)"><img src="/images/back-icon.png" alt="Dalej" class="back-icon back-icon-next"></button>
+          <button class="gallery-arrow prev" onclick="changeDesktopImage(-1)"><img src="${toSitePath('images/back-icon.png')}" alt="Wstecz" class="back-icon"></button>
+          <button class="gallery-arrow next" onclick="changeDesktopImage(1)"><img src="${toSitePath('images/back-icon.png')}" alt="Dalej" class="back-icon back-icon-next"></button>
         ` : ''}
       </div>
     </div>
@@ -1214,7 +1233,7 @@ function renderDesktopView(container, product) {
       ${buildDesktopDescriptionMarkup(product.description)}
       <div class="purchase-section">
         <span class="price">${product.price} zł</span>
-        <a href="/zamowienie/?slug=${encodeURIComponent(product.slug)}" class="buy-button">KUP</a>
+        <a href="${toSitePath('zamowienie/')}?slug=${encodeURIComponent(product.slug)}" class="buy-button">KUP</a>
       </div>
       <div class="tabs-section">
         <div class="tabs">
@@ -1374,26 +1393,26 @@ function getParentPageUrl() {
     const slug = urlParams.get('slug');
 
     if (slug) {
-      return `/produkt/?slug=${encodeURIComponent(slug)}`;
+      return `${toSitePath('produkt/')}?slug=${encodeURIComponent(slug)}`;
     }
 
-    return '/modele/';
+    return toSitePath('modele/');
   }
 
   if (path.includes('/produkt')) {
-    return '/modele/';
+    return toSitePath('modele/');
   }
 
   if (path.includes('/modele')) {
-    return '/';
+    return toSitePath();
   }
 
   if (path.includes('/o-marce')) {
-    return '/';
+    return toSitePath();
   }
 
   if (path.includes('/kontakt')) {
-    return '/';
+    return toSitePath();
   }
 
   return null;
@@ -1472,9 +1491,9 @@ function setupHamburgerMenu() {
     menuOverlay.inert = true;
     menuOverlay.innerHTML = `
       <nav class="mobile-menu-panel" aria-label="Menu główne">
-        <a href="/modele/" class="mobile-menu-link">DOSTĘPNE MODELE</a>
-        <a href="/o-marce/" class="mobile-menu-link">O MARCE</a>
-        <a href="/kontakt/" class="mobile-menu-link">KONTAKT</a>
+        <a href="${toSitePath('modele/')}" class="mobile-menu-link">DOSTĘPNE MODELE</a>
+        <a href="${toSitePath('o-marce/')}" class="mobile-menu-link">O MARCE</a>
+        <a href="${toSitePath('kontakt/')}" class="mobile-menu-link">KONTAKT</a>
       </nav>
     `;
     document.body.appendChild(menuOverlay);

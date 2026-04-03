@@ -14,23 +14,39 @@
     <meta property="og:url" content="https://www.cemborka.com/o-marce/">
     <meta property="og:image" content="https://www.cemborka.com/images/hero.webp">
     <meta property="og:image:alt" content="CEMBORKA - O marce">
-    <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96">
-    <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg">
-    <link rel="shortcut icon" href="/favicon/favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+    <script>
+        (function () {
+            var host = window.location.hostname;
+            var path = window.location.pathname;
+            var base = '/';
+
+            if (/github\.io$/i.test(host)) {
+                var segments = path.split('/').filter(Boolean);
+                if (segments.length > 0) {
+                    base = '/' + segments[0] + '/';
+                }
+            }
+
+            document.write('<base href="' + base + '">');
+        })();
+    </script>
+    <link rel="icon" type="image/png" href="favicon/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg">
+    <link rel="shortcut icon" href="favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
     <meta name="apple-mobile-web-app-title" content="CEMBORKA">
-    <link rel="manifest" href="/favicon/site.webmanifest">
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/desktop.css" media="(min-width: 64rem)">
+    <link rel="manifest" href="favicon/site.webmanifest">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/desktop.css" media="(min-width: 64rem)">
 </head>
 <body>
     <header class="header">
         <div class="header-container">
             <button class="back-button hidden">
-                <img src="/images/back-icon.png" alt="Wstecz" class="back-icon">
+                <img src="images/back-icon.png" alt="Wstecz" class="back-icon">
             </button>
-            <a href="/" class="logo">
-                <img src="/images/logo.png" alt="CEMBORKA Logo">
+            <a href="./" class="logo">
+                <img src="images/logo.png" alt="CEMBORKA Logo">
             </a>
             <button class="menu-button" aria-label="Menu" aria-expanded="false" type="button">
                 <span></span>
@@ -52,12 +68,12 @@
         </section>
 
         <section class="about-moodboard-desktop" aria-label="Moodboard Cemborka desktop">
-            <img src="/images/MOODBOARD-04.webp" alt="Moodboard 04" class="about-moodboard-image">
-            <img src="/images/MOODBOARD-05.webp" alt="Moodboard 05" class="about-moodboard-image">
-            <img src="/images/MOODBOARD-06.webp" alt="Moodboard 06" class="about-moodboard-image">
-            <img src="/images/MOODBOARD-01.webp" alt="Moodboard 01" class="about-moodboard-image">
-            <img src="/images/MOODBOARD-02.webp" alt="Moodboard 02" class="about-moodboard-image">
-            <img src="/images/MOODBOARD-03.webp" alt="Moodboard 03" class="about-moodboard-image">
+            <img src="images/MOODBOARD-04.webp" alt="Moodboard 04" class="about-moodboard-image">
+            <img src="images/MOODBOARD-05.webp" alt="Moodboard 05" class="about-moodboard-image">
+            <img src="images/MOODBOARD-06.webp" alt="Moodboard 06" class="about-moodboard-image">
+            <img src="images/MOODBOARD-01.webp" alt="Moodboard 01" class="about-moodboard-image">
+            <img src="images/MOODBOARD-02.webp" alt="Moodboard 02" class="about-moodboard-image">
+            <img src="images/MOODBOARD-03.webp" alt="Moodboard 03" class="about-moodboard-image">
         </section>
 
         <section class="about-copy-desktop">
@@ -67,9 +83,9 @@
         </section>
 
         <section class="about-moodboard" aria-label="Moodboard Cemborka część 1">
-            <img src="/images/MOODBOARD-01.webp" alt="Moodboard 01" class="about-moodboard-image">
-            <img src="/images/MOODBOARD-02.webp" alt="Moodboard 02" class="about-moodboard-image">
-            <img src="/images/MOODBOARD-03.webp" alt="Moodboard 03" class="about-moodboard-image">
+            <img src="images/MOODBOARD-01.webp" alt="Moodboard 01" class="about-moodboard-image">
+            <img src="images/MOODBOARD-02.webp" alt="Moodboard 02" class="about-moodboard-image">
+            <img src="images/MOODBOARD-03.webp" alt="Moodboard 03" class="about-moodboard-image">
         </section>
 
         <section class="about-outro">
@@ -82,27 +98,27 @@
         </section>
 
         <section class="about-moodboard about-moodboard-second" aria-label="Moodboard Cemborka część 2">
-            <img src="/images/MOODBOARD-04.webp" alt="Moodboard 04" class="about-moodboard-image">
-            <img src="/images/MOODBOARD-05.webp" alt="Moodboard 05" class="about-moodboard-image">
-            <img src="/images/MOODBOARD-06.webp" alt="Moodboard 06" class="about-moodboard-image">
+            <img src="images/MOODBOARD-04.webp" alt="Moodboard 04" class="about-moodboard-image">
+            <img src="images/MOODBOARD-05.webp" alt="Moodboard 05" class="about-moodboard-image">
+            <img src="images/MOODBOARD-06.webp" alt="Moodboard 06" class="about-moodboard-image">
         </section>
 
         <section class="about-footer" id="kontakt">
-            <h2 class="about-footer-title"><a href="/kontakt/">KONTAKT</a></h2>
+            <h2 class="about-footer-title"><a href="kontakt/">KONTAKT</a></h2>
             <div class="about-socials" aria-label="Social media placeholders">
                 <a href="https://www.facebook.com/profile.php?id=61576414753630" class="about-social-placeholder" aria-label="Facebook">
-                    <img src="/images/fb-icon.png" alt="fb-icon" class="">
+                    <img src="images/fb-icon.png" alt="fb-icon" class="">
                 </a>
                 <a href="https://www.tiktok.com/@cemborka" class="about-social-placeholder" aria-label="TikTok">
-                    <img src="/images/tiktok-icon.png" alt="tiktok-icon" class="">
+                    <img src="images/tiktok-icon.png" alt="tiktok-icon" class="">
                 </a>
                 <a href="https://www.instagram.com/cemborka/" class="about-social-placeholder" aria-label="Instagram">
-                    <img src="/images/insta-icon.png" alt="instagram-icon" class="">
+                    <img src="images/insta-icon.png" alt="instagram-icon" class="">
                 </a>
             </div>
         </section>
     </main>
 
-    <script src="/js/script.js"></script>
+    <script src="js/script.js"></script>
 </body>
 </html>

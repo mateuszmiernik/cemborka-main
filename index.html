@@ -14,12 +14,28 @@
     <meta property="og:url" content="https://www.cemborka.com/">
     <meta property="og:image" content="https://www.cemborka.com/images/hero.webp">
     <meta property="og:image:alt" content="Modelka z torebką CEMBORKA">
-    <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96">
-    <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg">
-    <link rel="shortcut icon" href="/favicon/favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+    <script>
+        (function () {
+            var host = window.location.hostname;
+            var path = window.location.pathname;
+            var base = '/';
+
+            if (/github\.io$/i.test(host)) {
+                var segments = path.split('/').filter(Boolean);
+                if (segments.length > 0) {
+                    base = '/' + segments[0] + '/';
+                }
+            }
+
+            document.write('<base href="' + base + '">');
+        })();
+    </script>
+    <link rel="icon" type="image/png" href="favicon/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg">
+    <link rel="shortcut icon" href="favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
     <meta name="apple-mobile-web-app-title" content="CEMBORKA">
-    <link rel="manifest" href="/favicon/site.webmanifest">
+    <link rel="manifest" href="favicon/site.webmanifest">
     <script>
         (function () {
             if (window.location.protocol === 'file:') return;
@@ -30,17 +46,17 @@
             window.history.replaceState(null, '', normalizedUrl || '/');
         })();
     </script>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="home-page">
     <!-- HEADER -->
     <header class="header">
         <div class="header-container">
             <button class="back-button hidden">
-                <img src="/images/back-icon.png" alt="Wstecz" class="back-icon">
+                <img src="images/back-icon.png" alt="Wstecz" class="back-icon">
             </button>
-            <a href="/" class="logo">
-                <img src="/images/logo.png" alt="CEMBORKA Logo">
+            <a href="./" class="logo">
+                <img src="images/logo.png" alt="CEMBORKA Logo">
             </a>
             <button class="menu-button" aria-label="Menu" aria-expanded="false" type="button">
                 <span></span>
@@ -53,13 +69,13 @@
     <!-- HOME CONTAINER -->
     <main class="home-container">
         <div class="hero-image-container">
-            <img src="/images/hero.webp" alt="Modelka z torebką CEMBORKA" class="hero-image">
+            <img src="images/hero.webp" alt="Modelka z torebką CEMBORKA" class="hero-image">
         </div>
         <div class="cta-container">
-            <a href="/modele/" class="cta-button">ZOBACZ DOSTĘPNE MODELE</a>
+            <a href="modele/" class="cta-button">ZOBACZ DOSTĘPNE MODELE</a>
         </div>
     </main>
 
-    <script src="/js/script.js"></script>
+    <script src="js/script.js"></script>
 </body>
 </html>
