@@ -17,6 +17,21 @@ function toSitePath(path = '') {
   return normalizedPath ? `${basePath}${normalizedPath}` : basePath;
 }
 
+function resolveAssetPath(assetPath = '') {
+  const normalizedAssetPath = String(assetPath).trim();
+  if (!normalizedAssetPath) return '';
+
+  if (/^(?:[a-z]+:)?\/\//i.test(normalizedAssetPath) || /^(data:|blob:)/i.test(normalizedAssetPath)) {
+    return normalizedAssetPath;
+  }
+
+  if (normalizedAssetPath.startsWith('/')) {
+    return toSitePath(normalizedAssetPath.slice(1));
+  }
+
+  return normalizedAssetPath;
+}
+
 // Renderowanie listy modeli
 function renderModels() {
   const container = document.getElementById('modelsContainer');
@@ -58,7 +73,7 @@ function renderModels() {
       
       productCard.innerHTML = `
         <div class="image-wrapper">
-          <img src="${product.mainImage}" alt="${product.model} ${product.color}">
+          <img src="${resolveAssetPath(product.mainImage)}" alt="${product.model} ${product.color}">
         </div>
         <div class="product-info">
           <span class="color-label">kolor</span>
@@ -1030,7 +1045,7 @@ function setupProductImageZoom(product, container) {
 
   const images = (product.galleryImages && product.galleryImages.length > 0 ? product.galleryImages : [product.mainImage])
     .map((src, index) => ({
-      src,
+      src: resolveAssetPath(src),
       alt: `${product.model} ${product.color} - zdjęcie ${index + 1}`
     }));
 
@@ -1161,7 +1176,7 @@ function renderMobileView(container, product) {
         <span class="name">${product.model}</span>
       </div>
       <div class="product-content">
-        <img src="${firstImage}" alt="${product.model} ${product.color} - zdjęcie 1" class="main-image" data-product-image-index="0">
+        <img src="${resolveAssetPath(firstImage)}" alt="${product.model} ${product.color} - zdjęcie 1" class="main-image" data-product-image-index="0">
         <div class="color-title">
           <span class="label">kolor</span>
           <span class="name">${product.color}</span>
@@ -1172,7 +1187,7 @@ function renderMobileView(container, product) {
     </div>
     ${(product.galleryImages && product.galleryImages.length > 1) ? `
       <div class="gallery">
-        ${product.galleryImages.slice(1).map((imgSrc, index) => `<img src="${imgSrc}" alt="${product.model} ${product.color} - zdjęcie ${index + 2}" class="gallery-image" data-product-image-index="${index + 1}">`).join('')}
+        ${product.galleryImages.slice(1).map((imgSrc, index) => `<img src="${resolveAssetPath(imgSrc)}" alt="${product.model} ${product.color} - zdjęcie ${index + 2}" class="gallery-image" data-product-image-index="${index + 1}">`).join('')}
       </div>
     ` : ''}
   `;
@@ -1196,8 +1211,6 @@ function renderMobileView(container, product) {
 }
 
 function renderDesktopView(container, product) {
-  const firstImage = product.galleryImages && product.galleryImages.length > 0 ? product.galleryImages[0] : product.mainImage;
-
   const tabsList = [
     { id: 'szczegoly-desk', label: 'SZCZEGÓŁY', content: product.details },
     { id: 'material-desk', label: 'MATERIAŁ', content: product.material },
@@ -1212,7 +1225,7 @@ function renderDesktopView(container, product) {
     <div class="product-image-column">
       <div class="desktop-gallery-container">
         ${product.galleryImages.map((imgSrc, index) => `
-          <img src="${imgSrc}" alt="${product.model} ${product.color} - zdjęcie ${index + 1}" class="gallery-image ${index === 0 ? 'active' : ''}" data-index="${index}" data-product-image-index="${index}">
+          <img src="${resolveAssetPath(imgSrc)}" alt="${product.model} ${product.color} - zdjęcie ${index + 1}" class="gallery-image ${index === 0 ? 'active' : ''}" data-index="${index}" data-product-image-index="${index}">
         `).join('')}
         ${product.galleryImages.length > 1 ? `
           <button class="gallery-arrow prev" onclick="changeDesktopImage(-1)"><img src="${toSitePath('images/back-icon.png')}" alt="Wstecz" class="back-icon"></button>
