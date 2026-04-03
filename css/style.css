@@ -574,6 +574,15 @@ body.home-page .home-container {
   margin-left: -0.1rem;
 }
 
+.model-intro {
+  margin: 1rem 0 0;
+  font-size: .875rem;
+  letter-spacing: .0313rem;
+  line-height: 1.25;
+  /* max-width: 26rem; */
+  text-align: center;
+}
+
 .products-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1397,7 +1406,7 @@ body.product-lightbox-open {
 
   .model-title {
     padding-bottom: 1rem;
-    margin-bottom: 4.6875rem;
+    margin-bottom: 0;
     text-align: center;
   }
 
@@ -1407,6 +1416,13 @@ body.product-lightbox-open {
 
   .model-title .name {
     font-size: 4rem;
+  }
+
+  .model-intro {
+    margin: 1.375rem auto 1.8rem;
+    max-width: 50rem;
+    font-size: .9375rem;
+    text-align: center;
   }
 
   .products-grid {

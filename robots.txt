@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /zamowienie/
+
+Sitemap: https://www.cemborka.com/sitemap.xml

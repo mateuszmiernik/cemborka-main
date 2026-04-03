@@ -97,7 +97,7 @@ INFO DO STYLOW:
   PASKI - border-bottom:
     -> border-bottom: .0469rem solid var(--text-color);
 
-  -> letter-spacing: .03125rem; -> o tekstow (description itd.) - mobilne
+  -> letter-spacing: .0313rem; -> o tekstow (description itd.) - mobilne
 
   14 px font-size oraz letter-spacing oraz line-height
   line-height: 1.25;
@@ -110,7 +110,7 @@ INFO DO STYLOW:
 
   .order-subtitle {
     font-size: 1rem
-    letter-spacing: 0.5723px;
+    letter-spacing: .5728px;
 
   line-height: 1.35;
 
@@ -233,9 +233,17 @@ Jeśli chcesz, mogę od razu zrobić ultra-szybki tuning:
 
 
 
-
-
-
-
 NEW FEATURES:
   -> powiadomienie kiedy bedzie dostepna torebka
+
+
+FEEDBACK CHAT:
+  Krytyczne: formularz zamówienia najpewniej nie zadziała po publikacji, jeśli nie dopiszesz produkcyjnej domeny do CORS. W order-worker.js:24 dozwolone są tylko originy lokalne, a frontend wysyła zamówienia na worker ustawiony w data.js:223. Trzeba dodać co najmniej https://www.cemborka.com, a jeśli używasz też wersji bez www, to również https://cemborka.com.
+
+  Średnie: po zmianie adresów z starych .html na nowe ścieżki typu o-marce i modele nie masz w repo żadnej konfiguracji przekierowań serwera. Nowe adresy są już poprawnie wystawione w sitemap.xml, ale stare linki z Google, zapisanych zakładek albo wcześniejszych udostępnień będą zwracały 404, jeśli hosting nie zrobi redirectów. To nie psuje nowej wersji strony, ale psuje ciągłość po migracji URL-i.
+
+  Niskie: w produkcyjnym kodzie nadal jest aktywny przełącznik debugowy ?debugSuccess=1, który pokazuje ekran sukcesu bez wysyłki formularza. Jest to w script.js:1581. To nie jest luka krytyczna, ale to typowy debug, którego nie potrzebujesz na żywej stronie.
+
+  Niskie: maile wychodzą z adresu testowego Resend onboarding@resend.dev w order-worker.js:78. Do testów to jest OK, ale przy publikacji lepiej przejść na własny, zweryfikowany adres nadawcy, bo wygląda to bardziej profesjonalnie i zwykle daje lepszą dostarczalność.
+
+  Opcjonalne: masz Open Graph i canonicale, ale nie widzę Twitter Card meta. Reprezentatywnie w index.html:6 są tagi OG, ale brak twitterowych. To nie blokuje publikacji.

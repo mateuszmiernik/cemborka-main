@@ -6,16 +6,25 @@ Czysty HTML, CSS i JavaScript - gotowy do przerobienia na Golanga.
 
 ```
 cemborka-html/
-├── index.html          # Strona główna
-├── models.html         # Lista modeli
-├── product.html        # Szczegóły produktu
+├── index.html                  # Strona główna
+├── modele/index.html           # Lista modeli
+├── produkt/index.html          # Szczegóły produktu
+├── o-marce/index.html          # O marce
+├── kontakt/index.html          # Kontakt
+├── zamowienie/index.html       # Formularz zamówienia
+├── polityka-prywatnosci/index.html   # Polityka prywatności
+├── regulamin/index.html              # Regulamin
 ├── css/
-│   └── style.css       # Wszystkie style CSS
+│   ├── style.css                # Bazowe style mobile-first
+│   └── desktop.css              # Nadpisania i layout desktopowy
+├── favicon/                     # Favicony i manifest PWA
 ├── js/
-│   ├── data.js         # Dane produktów (baza danych)
-│   └── script.js       # Logika JavaScript
-├── fonts/              # Czcionki Degular
-└── images/             # Obrazki produktów
+│   ├── data.js                  # Dane produktów i konfiguracja endpointu
+│   └── script.js                # Renderowanie widoków i interakcje
+├── fonts/                       # Czcionki Degular
+├── images/                      # Obrazki produktów i assety UI
+├── robots.txt                   # Instrukcje dla crawlerów
+└── sitemap.xml                  # Mapa strony do indeksacji
 ```
 
 ## Uruchomienie
@@ -26,9 +35,19 @@ cemborka-html/
 
 ## Nawigacja
 
-- `index.html` → Strona główna z przyciskiem "ZOBACZ DOSTĘPNE MODELE"
-- `models.html` → Lista wszystkich modeli i produktów w siatce 2x2
-- `product.html?slug=faworyta-jagoda` → Szczegóły konkretnego produktu
+- `/` → Strona główna z przyciskiem "ZOBACZ DOSTĘPNE MODELE"
+- `/modele/` → Lista wszystkich modeli i produktów w siatce 2x2
+- `/produkt/?slug=faworyta-jagoda` → Szczegóły konkretnego produktu
+- `/o-marce/`, `/kontakt/`, `/zamowienie/`, `/polityka-prywatnosci/`, `/regulamin/` → pozostałe podstrony
+
+## Style
+
+Projekt jest utrzymany w układzie mobile-first:
+
+- `css/style.css` zawiera bazowe style dla mobile oraz wspólne komponenty.
+- `css/desktop.css` zawiera desktopowe nadpisania i układy aktywowane przez `media="(min-width: 1024px)"`.
+
+Ta separacja jest celowa. Jeśli wszystko działa poprawnie, nie warto jej teraz porządkować agresywnie, bo łatwo naruszyć zależności między widokiem mobilnym i desktopowym.
 
 ## Dane produktów
 
@@ -41,7 +60,7 @@ Wszystkie dane są w pliku `js/data.js` w tablicy `products`. Każdy produkt zaw
   model: 'Faworyta',              // nazwa modelu
   color: 'Jagoda',               // kolor
   price: 530,                     // cena
-  mainImage: 'images/...',       // główne zdjęcie
+  mainImage: '/images/...',      // główne zdjęcie
   galleryImages: [...],          // tablica galerii
   description: '...',            // opis
   details: '...',           // zakładka Konstrukcja
@@ -69,7 +88,7 @@ Po migracji na Go wystarczy zmienic jeden URL – frontend nie wymaga zadnych zm
 ### Konfiguracja (jednorazowo, ~5 minut)
 
 1. Zaloz konto na https://workers.cloudflare.com (darmowe, bez karty).
-2. Stworz nowy Worker, wklej caly plik `project/order-worker.js` i kliknij "Deploy".
+2. Stworz nowy Worker, wklej caly plik `backend/order-worker.js` i kliknij "Deploy".
 3. W zakladce Worker → Settings → Variables dodaj dwie zmienne:
    - `RESEND_API_KEY`  →  klucz API z resend.com
    - `MAIL_TO`         →  Twoj adres email (tu beda przychodzic zamowienia)
@@ -94,7 +113,7 @@ const ORDER_FORM_CONFIG = {
 
 ### Migracja na Go
 Zmien tylko `ORDER_FORM_CONFIG.endpoint` w `js/data.js` na URL backendu Go.
-Struktura JSON payloadu jest opisana w `project/order_handler.go`.
+Struktura JSON payloadu jest opisana w `backend/order_handler.go`.
 
 ## Przystosowanie do Golanga
 

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modele - CEMBORKA</title>
+    <meta name="description" content="Zobacz dostępne modele torebek CEMBORKA. Odkryj swój model!">
+    <link rel="canonical" href="https://www.cemborka.com/modele/">
+    <meta property="og:locale" content="pl_PL">
+    <meta property="og:site_name" content="CEMBORKA">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Modele - CEMBORKA">
+    <meta property="og:description" content="Zobacz dostępne modele torebek CEMBORKA. Odkryj swój model!">
+    <meta property="og:url" content="https://www.cemborka.com/modele/">
+    <meta property="og:image" content="https://www.cemborka.com/images/hero.webp">
+    <meta property="og:image:alt" content="Modele torebek CEMBORKA">
+    <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg">
+    <link rel="shortcut icon" href="/favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-title" content="CEMBORKA">
+    <link rel="manifest" href="/favicon/site.webmanifest">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/desktop.css" media="(min-width: 1024px)">
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-container">
+            <button class="back-button hidden">
+                <img src="/images/back-icon.png" alt="Wstecz" class="back-icon">
+            </button>
+            <a href="/" class="logo">
+                <img src="/images/logo.png" alt="CEMBORKA Logo">
+            </a>
+            <button class="menu-button" aria-label="Menu" aria-expanded="false" type="button">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- MODELS CONTAINER -->
+    <main class="models-container" id="modelsContainer">
+        <!-- Dynamicznie generowane sekcje modeli -->
+    </main>
+
+    <script src="/js/data.js"></script>
+    <script src="/js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            renderModels();
+        });
+    </script>
+</body>
+</html>
