@@ -593,11 +593,6 @@ body.home-page .home-container {
 
 .product-card {
   cursor: pointer;
-  transition: opacity 0.2s ease;
-}
-
-.product-card:hover {
-  opacity: 0.8;
 }
 
 .product-card .image-wrapper {
@@ -614,6 +609,8 @@ body.home-page .home-container {
   aspect-ratio: 3 / 4;
   margin-bottom: .5rem;
   object-fit: cover;
+  transform: scale(1);
+  transition: transform 0.28s ease;
 }
 
 .product-info {
@@ -623,6 +620,20 @@ body.home-page .home-container {
   /* padding-top: 0.5rem 0; */
   row-gap: 0;
   column-gap: 0.9375rem;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .product-card:hover img,
+  .product-card:focus-visible img {
+    transform: scale(1.035);
+  }
+
+  .product-card:hover .product-info,
+  .product-card:focus-visible .product-info {
+    opacity: 0.5;
+  }
 }
 
 .product-info .color-label {

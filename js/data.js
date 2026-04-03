@@ -44,8 +44,8 @@ function buildMaterialDetails(materialType) {
       : 'Torba stworzona z tafty poliestrowej, która opalizuje na dwa kolory, a jej barwa zależy od kąta padania światła.';
 
   return `
-    <p style="margin: 0 0 .5rem 0;"><strong>Skład:</strong> poliester* + bawełna</p>
-    <p style="margin: 0 0 .5rem 0;">${materialIntro}</p>
+    <p style="margin: 0 0 8px 0;"><strong>Skład:</strong> poliester* + bawełna</p>
+    <p style="margin: 0 0 8px 0;">${materialIntro}</p>
     <p class="material-polyester-heading"><strong>*Dlaczego poliester?</strong></p>
     <p class="material-polyester-copy">${whyPolyesterText}</p>
   `;
@@ -201,8 +201,8 @@ const products = [
     price: 450,
     mainImage: '/images/faworytka/faworytka-sliwka-main.webp',
     galleryImages: [
-      '/images/faworytka/faworytka-sliwka-1.webp',
       '/images/faworytka/faworytka-sliwka-main.webp',
+      '/images/faworytka/faworytka-sliwka-1.webp',
     ],
     description: buildModelDescription('Faworytka'),
     details: buildProductDetails('taftowa'),
