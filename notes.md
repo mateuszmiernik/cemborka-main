@@ -1,6 +1,4 @@
--> zdjecia rozmiary
--> link do FB i TIK TOKa uzupelnic
-  <a href="#" class="about-social-placeholder" aria-label="Facebook">
+~~-> link do FB i TIK TOKa uzupelnic~~
 -> paski scrollowane
 
 ~~-> na telefonie jak klikam w przyciski to sie robi taki obszar elementu widoczny po kliknieciu (ANDROID tylko)~~
@@ -38,50 +36,46 @@ podstrona models
 
 
 podstrona produktu:
-  -> opisy: zmienilem:
-      'Produkcja: wykonane ręcznie w Polsce'
-      dopytac o ‘MATERIAŁ’
-  -> odleglosci gapy od zdjec itd.
+  ~~-> opisy: zmienilem: 'Produkcja: wykonane ręcznie w Polsce' ; dopytac o ‘MATERIAŁ’~~
+  
   -> Desktop
     podstrona produktu:
-    - tylko wtedy tez jak klikam na tab np. Szczegoły to da sie, zeby pod wcisnietym pojawial sie ow tekst?
-    - ogarnac ogolnie te podstrone pod wzgledem zmian wielkosci zdjecia itd. 
-    - hover na przycisk KUP (do ustalenia) / w hamburger menu / na logo CEMBORKA / hamburger menu ikona / taby (szczegoly itd.) / na przycisk BACK i przy zdjeciach na karuzeli / przycisk wyslij w formularzu
+    ~~- tylko wtedy tez jak klikam na tab np. Szczegoły to da sie, zeby pod wcisnietym pojawial sie ow tekst?~~
+    ~~- hover na przycisk KUP (do ustalenia) / w hamburger menu / na logo CEMBORKA / hamburger menu ikona / taby (szczegoly itd.) / na przycisk BACK i przy zdjeciach na karuzeli / przycisk wyslij w formularzu~~
   ~~-> tam gdzie bylo ile sztuk jest to jednak beda statusy: Dostepne, dostepne wkrotce, niedostepne (uwaga do DAMIANA)~~
-  -> troche szersza prawa kolumna na najwiekszym ekranie.. zeby tekst sie lepiej zawijal
+    -> troche szersza prawa kolumna na najwiekszym ekranie.. zeby tekst sie lepiej zawijal
+    -> ogarnac ogolnie te podstrone pod wzgledem zmian wielkosci zdjecia itd. 
+    -> odleglosci gapy od zdjec itd.
+    ~~~-> jak sie klika na zdjecie to przyblizenie (POKAZAC)~~
 
 
 podstrona "O marce":
-  -> .about-container {
-    padding: 3.4375rem clamp(2.8125rem, 6vw, 3.75rem) 2.8125rem;
-  }
+
 
 podstrona formularza:
   ~~-> autouzupelnienie sie robi tlo fieldow na bialo~~
   ~~-> iPhone pole Sposob dostawy jak sie klika na selecta troche powyzej to wyskakuje po staremu optionsy~~
   ~~-> co sie dzieje po kliknieciu WYSLIJ - (grafika na mailu) + walidacja na WYSLIJ~~
-  -> RODO: Jeśli zbierasz dane osobowe (imię, adres), dodaj checkbox z informacją, że użytkownik zgadza się na ich przetwarzanie w celu realizacji zamówienia. --> Pamiętaj, żeby pod samym formularzem zamówienia dodać małe okienko (checkbox) z tekstem: "Akceptuję Regulamin i Politykę Prywatności sklepu CEMBORKA". Bez tego Twoja strona nie będzie spełniać wymogów prawnych.
+  ~~-> RODO: Jeśli zbierasz dane osobowe (imię, adres), dodaj checkbox z informacją, że użytkownik zgadza się na ich przetwarzanie w celu realizacji zamówienia. --> Pamiętaj, żeby pod samym formularzem zamówienia dodać małe okienko (checkbox) z tekstem: "Akceptuję Regulamin i Politykę Prywatności sklepu CEMBORKA". Bez tego Twoja strona nie będzie spełniać wymogów prawnych.~~
   ~~-> wykasowac placeholder na telefon~~
-  -> tu stanelismy .order-custom-trigger 
-  -> w selectcie na dropdownach na safari po najechaniu robi sie letter spacing wiekszy .. sprawdzic
+  -> w selectcie na dropdownach na SAFARI po najechaniu robi sie letter spacing wiekszy .. sprawdzic
 
 
 podstrona order:
-  -> renderOrderSuccessState(document.querySelector('.order-container'))
+  (DEBUGGING) -> renderOrderSuccessState(document.querySelector('.order-container')) 
 
 podstrona kontakt:
--> iphone margines prawy jest cos zle, sprawdzic
+  -> iphone margines prawy jest cos zle, sprawdzic
 
 
 
 
 RAZEM:
   -> strona glowna
-  -> .product-info .color-name - letter spacing i font-size
-  -> podstrona 'kontakt' (grafike dodac torebki)
-  -> ustawic Mete - od nowa, czy tak jak jest na tej tymczasowej? - przy opisach Kamila ma dac nowe
-  -> KONTAKT (desktop)
-  -> polityka i regulamin (mobile + dekstop)
+  -> podstrona produktu jak sie klika na zdjecie to przyblizenie (POKAZAC)
+  -> podstrona 'kontakt' (DESKTOP)
+  ~~-> ustawic Mete - od nowa, czy tak jak jest na tej tymczasowej? - przy opisach Kamila ma dac nowe~~
+  -> polityka i regulamin (mobile + desktop)
 
   ~~-> HAMBURGER MENU - sprwadzic jak ma dzialac przy scrollu -> zamrozic header, aby szedl przy scrollu~~
   ~~-> checkbox~~
@@ -94,9 +88,9 @@ KAMILA
 ~~-> poprawione ikonki~~
 ~~-> menu hamburger~~
 ~~-> opisy zdjec~~
--> zdjecia MOODBOARDy (mniejszy rozmiar)
--> nazwy podstron jak jest strona wlaczona jako zakladka w przegladarce + opisy (na mailu masz)
--> FB oraz TIKTOK
+~~-> zdjecia MOODBOARDy (mniejszy rozmiar)~~
+~~-> nazwy podstron jak jest strona wlaczona jako zakladka w przegladarce + opisy (na mailu masz)~~
+~~-> FB oraz TIKTOK~~
 
 
 INFO DO STYLOW:

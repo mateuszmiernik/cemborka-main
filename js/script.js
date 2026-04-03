@@ -660,6 +660,265 @@ function renderProductDetail() {
   setupDesktopGallery();
   initializeTabs();
   setupDesktopDescriptionExpand();
+  setupProductImageZoom(product, container);
+}
+
+let productLightboxState = {
+  images: [],
+  index: 0
+};
+
+let productLightboxTouchState = {
+  startX: 0,
+  startY: 0,
+  isTracking: false
+};
+
+function createProductLightbox() {
+  const lightbox = document.createElement('div');
+  lightbox.className = 'product-lightbox';
+  lightbox.hidden = true;
+  lightbox.setAttribute('aria-hidden', 'true');
+
+  lightbox.innerHTML = `
+    <div class="product-lightbox-backdrop" data-lightbox-close="true"></div>
+    <div class="product-lightbox-dialog" role="dialog" aria-modal="true" aria-label="Podgląd zdjęcia produktu">
+      <button type="button" class="product-lightbox-close" aria-label="Zamknij podgląd zdjęcia">
+        <span class="order-icon material-symbols-outlined" aria-hidden="true">close</span>
+      </button>
+      <div class="product-lightbox-stage">
+        <button type="button" class="product-lightbox-arrow prev" aria-label="Poprzednie zdjęcie">
+          <img src="images/back-icon.png" alt="" class="back-icon">
+        </button>
+        <img src="" alt="" class="product-lightbox-image">
+        <button type="button" class="product-lightbox-arrow next" aria-label="Następne zdjęcie">
+          <img src="images/back-icon.png" alt="" class="back-icon back-icon-next">
+        </button>
+      </div>
+      <p class="product-lightbox-counter" aria-live="polite"></p>
+    </div>
+  `;
+
+  const stage = lightbox.querySelector('.product-lightbox-stage');
+  const imageNode = lightbox.querySelector('.product-lightbox-image');
+  if (stage instanceof HTMLElement) {
+    stage.addEventListener('touchstart', handleProductLightboxTouchStart, { passive: true });
+    stage.addEventListener('touchend', handleProductLightboxTouchEnd, { passive: true });
+    stage.addEventListener('touchcancel', resetProductLightboxTouchState, { passive: true });
+  }
+
+  if (imageNode instanceof HTMLImageElement) {
+    imageNode.addEventListener('load', syncProductLightboxArrowOffsets);
+  }
+
+  lightbox.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+
+    if (target.dataset.lightboxClose === 'true' || target.closest('.product-lightbox-close')) {
+      closeProductLightbox();
+      return;
+    }
+
+    const prevArrow = target.closest('.product-lightbox-arrow.prev');
+    if (prevArrow instanceof HTMLButtonElement) {
+      changeProductLightboxImage(-1);
+      prevArrow.blur();
+      return;
+    }
+
+    const nextArrow = target.closest('.product-lightbox-arrow.next');
+    if (nextArrow instanceof HTMLButtonElement) {
+      changeProductLightboxImage(1);
+      nextArrow.blur();
+    }
+  });
+
+  document.body.appendChild(lightbox);
+  return lightbox;
+}
+
+function handleProductLightboxTouchStart(event) {
+  const touch = event.changedTouches[0];
+  if (!touch) return;
+
+  productLightboxTouchState.startX = touch.clientX;
+  productLightboxTouchState.startY = touch.clientY;
+  productLightboxTouchState.isTracking = true;
+}
+
+function handleProductLightboxTouchEnd(event) {
+  if (!productLightboxTouchState.isTracking) return;
+
+  const touch = event.changedTouches[0];
+  if (!touch) {
+    resetProductLightboxTouchState();
+    return;
+  }
+
+  const deltaX = touch.clientX - productLightboxTouchState.startX;
+  const deltaY = touch.clientY - productLightboxTouchState.startY;
+  const absDeltaX = Math.abs(deltaX);
+  const absDeltaY = Math.abs(deltaY);
+
+  if (absDeltaX > 48 && absDeltaX > absDeltaY) {
+    changeProductLightboxImage(deltaX < 0 ? 1 : -1);
+  }
+
+  resetProductLightboxTouchState();
+}
+
+function resetProductLightboxTouchState() {
+  productLightboxTouchState.startX = 0;
+  productLightboxTouchState.startY = 0;
+  productLightboxTouchState.isTracking = false;
+}
+
+function ensureProductLightbox() {
+  return document.querySelector('.product-lightbox') || createProductLightbox();
+}
+
+function updateProductLightbox() {
+  const lightbox = ensureProductLightbox();
+  const imageNode = lightbox.querySelector('.product-lightbox-image');
+  const counterNode = lightbox.querySelector('.product-lightbox-counter');
+  const prevButton = lightbox.querySelector('.product-lightbox-arrow.prev');
+  const nextButton = lightbox.querySelector('.product-lightbox-arrow.next');
+
+  if (!(imageNode instanceof HTMLImageElement)) return;
+  if (!(counterNode instanceof HTMLElement)) return;
+  if (!(prevButton instanceof HTMLButtonElement)) return;
+  if (!(nextButton instanceof HTMLButtonElement)) return;
+
+  const totalImages = productLightboxState.images.length;
+  const currentImage = productLightboxState.images[productLightboxState.index];
+  if (!currentImage) return;
+
+  imageNode.src = currentImage.src;
+  imageNode.alt = currentImage.alt;
+  counterNode.textContent = `${productLightboxState.index + 1} / ${totalImages}`;
+
+  const shouldShowNav = totalImages > 1;
+  prevButton.hidden = !shouldShowNav;
+  nextButton.hidden = !shouldShowNav;
+
+  requestAnimationFrame(syncProductLightboxArrowOffsets);
+}
+
+function openProductLightbox(images, startIndex) {
+  if (!Array.isArray(images) || images.length === 0) return;
+
+  productLightboxState.images = images;
+  productLightboxState.index = Math.max(0, Math.min(startIndex, images.length - 1));
+
+  const lightbox = ensureProductLightbox();
+  lightbox.hidden = false;
+  lightbox.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('product-lightbox-open');
+
+  updateProductLightbox();
+}
+
+function closeProductLightbox() {
+  const lightbox = document.querySelector('.product-lightbox');
+  if (!(lightbox instanceof HTMLElement)) return;
+
+  lightbox.hidden = true;
+  lightbox.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('product-lightbox-open');
+  resetProductLightboxTouchState();
+}
+
+function syncProductLightboxArrowOffsets() {
+  const lightbox = document.querySelector('.product-lightbox');
+  if (!(lightbox instanceof HTMLElement) || lightbox.hidden) return;
+
+  const stage = lightbox.querySelector('.product-lightbox-stage');
+  const imageNode = lightbox.querySelector('.product-lightbox-image');
+
+  if (!(stage instanceof HTMLElement)) return;
+  if (!(imageNode instanceof HTMLImageElement)) return;
+
+  const stageRect = stage.getBoundingClientRect();
+  const imageRect = imageNode.getBoundingClientRect();
+
+  if (!stageRect.width || !imageRect.width) return;
+
+  const sideGap = Math.max(0, (stageRect.width - imageRect.width) / 2);
+  stage.style.setProperty('--product-lightbox-side-gap', `${sideGap}px`);
+}
+
+function changeProductLightboxImage(direction) {
+  const totalImages = productLightboxState.images.length;
+  if (totalImages <= 1) return;
+
+  productLightboxState.index += direction;
+
+  if (productLightboxState.index < 0) {
+    productLightboxState.index = totalImages - 1;
+  } else if (productLightboxState.index >= totalImages) {
+    productLightboxState.index = 0;
+  }
+
+  updateProductLightbox();
+}
+
+function setupProductImageZoom(product, container) {
+  if (!(container instanceof HTMLElement)) return;
+
+  const images = (product.galleryImages && product.galleryImages.length > 0 ? product.galleryImages : [product.mainImage])
+    .map((src, index) => ({
+      src,
+      alt: `${product.model} ${product.color} - zdjęcie ${index + 1}`
+    }));
+
+  container.querySelectorAll('[data-product-image-index]').forEach((imageNode) => {
+    if (!(imageNode instanceof HTMLElement) || imageNode.dataset.zoomBound === 'true') return;
+
+    imageNode.classList.add('is-zoomable');
+    imageNode.setAttribute('role', 'button');
+    imageNode.setAttribute('tabindex', '0');
+    imageNode.setAttribute('aria-label', 'Powiększ zdjęcie produktu');
+
+    const openZoom = () => {
+      const imageIndex = Number(imageNode.dataset.productImageIndex) || 0;
+      openProductLightbox(images, imageIndex);
+    };
+
+    imageNode.addEventListener('click', openZoom);
+    imageNode.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openZoom();
+      }
+    });
+
+    imageNode.dataset.zoomBound = 'true';
+  });
+
+  if (document.body.dataset.productLightboxKeyboardBound !== 'true') {
+    document.addEventListener('keydown', (event) => {
+      if (!document.body.classList.contains('product-lightbox-open')) return;
+
+      if (event.key === 'Escape') {
+        closeProductLightbox();
+        return;
+      }
+
+      if (event.key === 'ArrowLeft') {
+        changeProductLightboxImage(-1);
+        return;
+      }
+
+      if (event.key === 'ArrowRight') {
+        changeProductLightboxImage(1);
+      }
+    });
+
+    window.addEventListener('resize', syncProductLightboxArrowOffsets);
+
+    document.body.dataset.productLightboxKeyboardBound = 'true';
+  }
 }
 
 function buildDesktopDescriptionMarkup(descriptionText) {
@@ -740,7 +999,7 @@ function renderMobileView(container, product) {
         <span class="name">${product.model}</span>
       </div>
       <div class="product-content">
-        <img src="${firstImage}" alt="${product.model}" class="main-image">
+        <img src="${firstImage}" alt="${product.model} ${product.color} - zdjęcie 1" class="main-image" data-product-image-index="0">
         <div class="color-title">
           <span class="label">kolor</span>
           <span class="name">${product.color}</span>
@@ -751,7 +1010,7 @@ function renderMobileView(container, product) {
     </div>
     ${(product.galleryImages && product.galleryImages.length > 1) ? `
       <div class="gallery">
-        ${product.galleryImages.slice(1).map(imgSrc => `<img src="${imgSrc}" alt="Galeria ${product.model}" class="gallery-image">`).join('')}
+        ${product.galleryImages.slice(1).map((imgSrc, index) => `<img src="${imgSrc}" alt="${product.model} ${product.color} - zdjęcie ${index + 2}" class="gallery-image" data-product-image-index="${index + 1}">`).join('')}
       </div>
     ` : ''}
   `;
@@ -791,7 +1050,7 @@ function renderDesktopView(container, product) {
     <div class="product-image-column">
       <div class="desktop-gallery-container">
         ${product.galleryImages.map((imgSrc, index) => `
-          <img src="${imgSrc}" alt="${product.model} - zdjęcie ${index + 1}" class="gallery-image ${index === 0 ? 'active' : ''}" data-index="${index}">
+          <img src="${imgSrc}" alt="${product.model} ${product.color} - zdjęcie ${index + 1}" class="gallery-image ${index === 0 ? 'active' : ''}" data-index="${index}" data-product-image-index="${index}">
         `).join('')}
         ${product.galleryImages.length > 1 ? `
           <button class="gallery-arrow prev" onclick="changeDesktopImage(-1)"><img src="images/back-icon.png" alt="Wstecz" class="back-icon"></button>
