@@ -383,6 +383,7 @@ body.menu-open {
 }
 
 .contact-card .order-success-image {
+  width: 11rem;
   margin: 1.5rem auto 0;
 }
 
@@ -427,13 +428,13 @@ body.menu-open {
   .contact-title {
     font-size: 4rem;
     padding-bottom: 1.25rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.625rem;
     line-height: 1;
   }
 
   .contact-email {
-    font-size: 2.3125rem;
-    margin-bottom: 1.125rem;
+    font-size: 1.4375rem;
+    margin-bottom: 1.25rem;
   }
 
   .contact-socials {
@@ -441,8 +442,8 @@ body.menu-open {
   }
 
   .contact-social-link {
-    width: 2.625rem;
-    height: 2.625rem;
+    width: 2.25rem;
+    height: 2.25rem;
   }
 
   .contact-legal-links {
