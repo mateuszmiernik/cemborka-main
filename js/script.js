@@ -641,8 +641,9 @@ function renderOrderForm() {
       <div class="order-field order-field-select order-delivery-field">
         <label for="deliveryMethod">Sposób dostawy</label>
         <select id="deliveryMethod" name="deliveryMethod" required>
-          <option value="inpost-kurier">InPost Kurier (18zł)</option>
-          <option value="paczkomat-dpd">Paczkomat DPD (15 zł)</option>
+          <option value="dpd-pickup">Automat DPD Pickup (13 zł)</option>
+          <option value="inpost-kurier">InPost Kurier (20 zł)</option>
+          <option value="dpd-kurier">Kurier DPD (15 zł)</option>
         </select>
         <span class="order-select-icon material-symbols-outlined" aria-hidden="true">keyboard_arrow_down</span>
       </div>
@@ -658,7 +659,7 @@ function renderOrderForm() {
       </div>
 
       <div class="order-field order-field-data">
-        <label for="customerAddress">Adres do wysyłki lub numer Paczkomatu</label>
+        <label for="customerAddress">Adres do wysyłki lub numer automatu paczkowego</label>
         <input class="order-input" type="text" id="customerAddress" name="customerAddress" autocomplete="street-address" required>
       </div>
 

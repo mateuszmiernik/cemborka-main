@@ -10,7 +10,7 @@ glowna podstrona:
   ~~-> 100vh~~
   ~~-> przycisk ogarnac na jakis ladniejszy~~
   ~~-> usiasc ze zdjeciem ucietym albo samemu uciac~~
-  ~~-> bedzie napis "statement bags"~~ przy poprawkach do II wersji
+  ~~-> bedzie napis "statement bags"~~
   ~~-> powiekszyc hamburgera~~
   -> zeby na safari przycisk byl wyzej na laptopie (potestowac jeszcze) i na chromie troche obnizyc!! (na dole jest co dodal)
     @media (min-width: 1024px) {
@@ -73,7 +73,7 @@ podstrona kontakt:
 RAZEM:
   ~~-> ustawic Mete - od nowa, czy tak jak jest na tej tymczasowej? - przy opisach Kamila ma dac nowe~~
   -> strona glowna
-  -> podstrona produktu jak sie klika na zdjecie to przyblizenie (POKAZAC)
+  ~~-> podstrona produktu jak sie klika na zdjecie to przyblizenie (POKAZAC)~~
   -> podstrona 'kontakt' (DESKTOP)
   -> polityka i regulamin (mobile + desktop)
 
@@ -104,7 +104,7 @@ INFO DO STYLOW:
   font-size: .875rem;
   letter-spacing: .0313rem;
 
-  15px font-size: letter-spacing: .0335rem;
+  15px font-size: letter-spacing: .0335rem; line-height: 1.5;
 
   16 px font-size oraz letter-spacing
 
@@ -184,7 +184,6 @@ Propozycje description dla pozostałych stron: (PRZESLAC KAMILI)
 DAMIAN:
   -> tam gdzie bylo ile sztuk jest to jednak beda statusy: Dostepne, dostepne wkrotce, niedostepne (uwaga do DAMIANA) -> podstrona produktu <span class="other-colors">Dostępne</span>
   -> zmienic, aby na dropdownie nie dalo sie wybrac niedostpnej
-
   -> dostepne / dostepne wkrotce
 
 
@@ -247,3 +246,68 @@ FEEDBACK CHAT:
   Niskie: maile wychodzą z adresu testowego Resend onboarding@resend.dev w order-worker.js:78. Do testów to jest OK, ale przy publikacji lepiej przejść na własny, zweryfikowany adres nadawcy, bo wygląda to bardziej profesjonalnie i zwykle daje lepszą dostarczalność.
 
   Opcjonalne: masz Open Graph i canonicale, ale nie widzę Twitter Card meta. Reprezentatywnie w index.html:6 są tagi OG, ale brak twitterowych. To nie blokuje publikacji.
+
+  
+  DO USUNIECIA PRZED WYSLANIEM (potrzebne bylo, zeby na githubie dzialalo):
+
+    na razie chce testowac na githubie, zeby mi dzialalo
+
+Przerobię to tak, żeby działało jednocześnie na GitHub Pages pod adresem repo i później na własnej domenie, bez ręcznego przełączania ścieżek.
+
+Znalazłem źródło problemu: projekt jest teraz ustawiony pod root domeny, a GitHub Pages z repo działa pod podścieżką. Przepnę ścieżki tak, żeby działały i na github.io/nazwa-repo, i później na własnej domenie.
+
+Patch był za duży naraz, więc rozbijam to na mniejsze, pewne zmiany: najpierw dopinam mechanizm ścieżek, potem przepinam HTML-e i manifest.
+
+Najpierw dopinam JS i manifest, bo to obsługuje dynamiczne linki oraz część assetów niezależnie od konkretnej podstrony.
+
+Logika dynamicznych ścieżek jest już gotowa. Teraz przepinam HTML-e na base-relative adresy, bo bez tego GitHub Pages nadal nie załaduje CSS i assetów z podkatalogu repo.
+
+Trzy najważniejsze strony są już przepięte pod GitHub Pages. Dokańczam pozostałe podstrony tym samym wzorcem, żeby test całego serwisu był spójny.
+
+Została jeszcze o-marce z dużą liczbą assetów oraz jedna rzecz do sprawdzenia po całości. Dokańczam ten plik i potem zrobię szybki przegląd, czy nie zostały już żadne root-relative ścieżki, które psują GitHub Pages.
+
+Edited
+index.html+43-27
+Dopięte. Teraz robię końcowy przegląd: sprawdzę, czy zostały jeszcze jakieś ścieżki zaczynające się od /, które rozwalą test na GitHub Pages, i czy po zmianach nie ma błędów.
+
+GPT-5.4 • 0.9x
+
+
+
+
+2.
+
+Sprawdzę źródło ścieżek obrazów w danych i w renderze, bo to wygląda na konkretny błąd po przejściu na GitHub Pages pod podkatalogiem repo.
+
+Źródło problemu już mam: obrazy produktów z data.js dalej mają ścieżki od roota (/images/...), a GitHub Pages z repo potrzebuje prefiksu repo. Naprawię to centralnie w JS, żeby nie przepisywać całej bazy zdjęć.
+
+Edited
+script.js+20-7
+To było punktowe i centralne: wszystkie obrazy produktów z danych przechodzą teraz przez resolver ścieżek zgodny z GitHub Pages. Sprawdzam jeszcze plik i od razu powiem Ci, co z tym commitem zrobić.
+
+Checked script.js, no problems found
+
+Naprawiłem to. Problem był w js/data.js: obrazy produktów nadal miały ścieżki typu /images/..., a na GitHub Pages z repo to trafia poza katalog projektu. Dodałem więc w js/script.js jeden centralny resolver ścieżek i podpiąłem go wszędzie, gdzie renderują się zdjęcia produktów:
+
+karty na modele
+główne zdjęcie produktu
+galeria produktu
+lightbox
+Plik jest po zmianie bez błędów. Teraz zrób po prostu nowy commit i push, bo poprzedni commit miał jeszcze zepsute ścieżki obrazów. Jeśli po deployu GitHub Pages dalej przez chwilę pokazuje stare rzeczy, odczekaj parę minut i zrób twarde odświeżenie w przeglądarce.
+
+Jeśli chcesz, mogę teraz jeszcze zrobić jeden szybki przegląd tylko pod GitHub Pages i sprawdzić, czy nie został już żaden podobny przypadek dla assetów albo linków.
+
+function resolveAssetPath(assetPath = '') {
+  const normalizedAssetPath = String(assetPath).trim();
+  if (!normalizedAssetPath) return '';
+
+  if (/^(?:[a-z]+:)?\/\//i.test(normalizedAssetPath) || /^(data:|blob:)/i.test(normalizedAssetPath)) {
+    return normalizedAssetPath;
+  }
+
+  if (normalizedAssetPath.startsWith('/')) {
+    return toSitePath(normalizedAssetPath.slice(1));
+  }
+
+  return normalizedAssetPath;
+}

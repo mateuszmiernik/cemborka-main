@@ -16,7 +16,7 @@ function buildProductDetails(materialType) {
 function buildDeliveryDetails(model) {
   const productName = model === 'Faworytka' ? 'FAWORYTKĘ' : 'FAWORYTĘ';
   const items = [
-    'Paczkomaty InPost / Automat DPD / Kurier InPost.',
+    'Automat DPD Pickup - 13 zł / InPost Kurier - 20 zł / Kurier DPD - 15 zł.',
     `Wysyłka zagraniczna: Napisz do nas na maila - chętnie wyślemy ${productName} w dowolne miejsce na świecie.`
   ];
 
@@ -146,6 +146,8 @@ const products = [
       '/images/faworyta/faworyta-mak-2.webp',
       '/images/faworyta/faworyta-mak-3.webp',
       '/images/faworyta/faworyta-mak-main.webp',
+      '/images/faworyta/wymiary_mora_1.webp',
+      '/images/faworyta/wymiary_mora_2.webp',
     ],
     description: buildModelDescription('Faworyta'),
     details: buildProductDetails('morowa'),

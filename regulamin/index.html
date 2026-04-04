@@ -19,8 +19,13 @@
             var host = window.location.hostname;
             var path = window.location.pathname;
             var base = '/';
+            var localPageDirectories = ['kontakt', 'modele', 'o-marce', 'polityka-prywatnosci', 'produkt', 'regulamin', 'zamowienie'];
 
-            if (/github\.io$/i.test(host)) {
+            if (window.location.protocol === 'file:') {
+                var segments = path.split('/').filter(Boolean);
+                var parentDir = decodeURIComponent(segments[segments.length - 2] || '');
+                base = localPageDirectories.indexOf(parentDir) !== -1 ? '../' : './';
+            } else if (/github\.io$/i.test(host)) {
                 var segments = path.split('/').filter(Boolean);
                 if (segments.length > 0) {
                     base = '/' + segments[0] + '/';
@@ -57,28 +62,61 @@
     </header>
 
     <main class="legal-container">
-        <h1>Regulamin Sklepu Internetowego CEMBORKA</h1>
-        <p><strong>Data wejścia w życie: 23 marca 2026</strong></p>
+        <section class="legal-intro" aria-labelledby="termsTitle">
+            <h1 id="termsTitle" class="legal-title">Regulamin</h1>
+            <p class="legal-subtitle">sklepu internetowego CEMBORKA</p>
+        </section>
 
-        <h2>1. Postanowienia ogólne</h2>
-        <p>Sklep internetowy CEMBORKA, dostępny pod adresem www.cemborka.com, prowadzony jest przez Kamilę Cembor, zamieszkałą przy ul. Sienkiewicza 28, 16-300 Augustów, prowadzącą działalność nierejestrowaną zgodnie z art. 5 ustawy Prawo przedsiębiorców.</p>
+        <div class="legal-divider" aria-hidden="true"></div>
 
-        <h2>2. Składanie zamówień</h2>
-        <p>2.1. Informacje o produktach na stronie nie stanowią oferty w rozumieniu Kodeksu Cywilnego, a jedynie zaproszenie do zawarcia umowy.</p>
-        <p>2.2. Przesłanie formularza zamówienia na stronie stanowi zapytanie o dostępność i wycenę. Po jego otrzymaniu Sprzedawca kontaktuje się z Klientem mailowo, aby potwierdzić ostateczną cenę, koszty dostawy oraz przewidywany termin realizacji.</p>
-        <p>2.3. Do zawarcia umowy sprzedaży dochodzi w momencie potwierdzenia przez Klienta warunków ustalonych w korespondencji e-mail.</p>
+        <div class="legal-content">
+            <p class="legal-effective-date">Data wejścia w życie: 23 marca 2026</p>
 
-        <h2>3. Płatności i dostawa</h2>
-        <p>3.1. Płatność odbywa się przelewem na rachunek bankowy lub Blikiem (metodą wskazaną w wiadomości e-mail potwierdzającej zamówienie).</p>
-        <p>3.2. Czas realizacji zamówienia jest ustalany indywidualnie dla każdego zakupu i liczony jest od momentu zaksięgowania wpłaty na koncie Sprzedawcy.</p>
-        <p>3.3. Dostawa realizowana jest wyłącznie za pośrednictwem firm kurierskich lub do paczkomatów na adres lub do punktu wskazanego przez Klienta.</p>
+            <section class="legal-section" aria-labelledby="terms-section-1">
+                <h2 id="terms-section-1">1. Postanowienia ogólne</h2>
+                <p>Sklep internetowy CEMBORKA, dostępny pod adresem www.cemborka.com, prowadzony jest przez Kamilę Cembor, zamieszkałą przy ul. Sienkiewicza 28, 16-300 Augustów, prowadzącą działalność nierejestrowaną zgodnie z art. 5 ustawy Prawo przedsiębiorców.</p>
+            </section>
 
-        <h2>4. Zwroty i reklamacje</h2>
-        <p>4.1. Klient (konsument) ma prawo do zwrotu towaru w ciągu 14 dni od otrzymania przesyłki bez podania przyczyny. Koszt odesłania towaru ponosi Klient.</p>
-        <p>4.2. Reklamacje dotyczące wad towaru prosimy składać na adres e-mail: <a href="mailto:cemborka.studio@gmail.com">cemborka.studio@gmail.com</a>. Sprzedawca rozpatrzy reklamację w ciągu 14 dni.</p>
+            <section class="legal-section" aria-labelledby="terms-section-2">
+                <h2 id="terms-section-2">2. Składanie zamówień</h2>
+                <p>2.1. Informacje o produktach na stronie nie stanowią oferty w rozumieniu Kodeksu Cywilnego, a jedynie zaproszenie do zawarcia umowy.</p>
+                <p>2.2. Przesłanie formularza zamówienia na stronie stanowi zapytanie o dostępność i wycenę. Po jego otrzymaniu Sprzedawca kontaktuje się z Klientem mailowo, aby potwierdzić ostateczną cenę, koszty dostawy oraz przewidywany termin realizacji.</p>
+                <p>2.3. Do zawarcia umowy sprzedaży dochodzi w momencie potwierdzenia przez Klienta warunków ustalonych w korespondencji e-mail.</p>
+            </section>
 
-        <h2>5. Ochrona danych osobowych</h2>
-        <p>Administratorem danych osobowych podanych w formularzu jest Kamila Cembor. Dane przetwarzane są wyłącznie w celu obsługi zapytania i realizacji zamówienia.</p>
+            <section class="legal-section" aria-labelledby="terms-section-3">
+                <h2 id="terms-section-3">3. Płatności i dostawa</h2>
+                <p>3.1. Płatność odbywa się przelewem na rachunek bankowy lub Blikiem (metodą wskazaną w wiadomości e-mail potwierdzającej zamówienie).</p>
+                <p>3.2. Czas realizacji zamówienia jest ustalany indywidualnie dla każdego zakupu i liczony jest od momentu zaksięgowania wpłaty na koncie Sprzedawcy.</p>
+                <p>3.3. Dostawa realizowana jest wyłącznie za pośrednictwem firm kurierskich lub do paczkomatów na adres lub do punktu wskazanego przez Klienta.</p>
+            </section>
+
+            <section class="legal-section" aria-labelledby="terms-section-4">
+                <h2 id="terms-section-4">4. Zwroty i reklamacje</h2>
+                <p>4.1. Klient (konsument) ma prawo do zwrotu towaru w ciągu 14 dni od otrzymania przesyłki bez podania przyczyny. Koszt odesłania towaru ponosi Klient.</p>
+                <p>4.2. Reklamacje dotyczące wad towaru prosimy składać na adres e-mail: <a href="mailto:cemborka.studio@gmail.com">cemborka.studio@gmail.com</a>. Sprzedawca rozpatrzy reklamację w ciągu 14 dni.</p>
+            </section>
+
+            <section class="legal-section" aria-labelledby="terms-section-5">
+                <h2 id="terms-section-5">5. Ochrona danych osobowych</h2>
+                <p>Administratorem danych osobowych podanych w formularzu jest Kamila Cembor. Dane przetwarzane są wyłącznie w celu obsługi zapytania i realizacji zamówienia.</p>
+            </section>
+        </div>
+
+        <footer class="legal-footer">
+            <a href="kontakt/" class="legal-footer-title">Kontakt</a>
+            <div class="legal-socials" aria-label="Social media Cemborka">
+                <a href="https://www.facebook.com/profile.php?id=61576414753630" class="legal-social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+                    <img src="images/fb-icon.png" alt="Facebook">
+                </a>
+                <a href="https://www.tiktok.com/@cemborka" class="legal-social-link" aria-label="TikTok" target="_blank" rel="noopener noreferrer">
+                    <img src="images/tiktok-icon.png" alt="TikTok">
+                </a>
+                <a href="https://www.instagram.com/cemborka/" class="legal-social-link" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+                    <img src="images/insta-icon.png" alt="Instagram">
+                </a>
+            </div>
+        </footer>
     </main>
 
     <script src="js/script.js"></script>

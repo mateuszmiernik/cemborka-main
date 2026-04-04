@@ -19,8 +19,13 @@
             var host = window.location.hostname;
             var path = window.location.pathname;
             var base = '/';
+            var localPageDirectories = ['kontakt', 'modele', 'o-marce', 'polityka-prywatnosci', 'produkt', 'regulamin', 'zamowienie'];
 
-            if (/github\.io$/i.test(host)) {
+            if (window.location.protocol === 'file:') {
+                var segments = path.split('/').filter(Boolean);
+                var parentDir = decodeURIComponent(segments[segments.length - 2] || '');
+                base = localPageDirectories.indexOf(parentDir) !== -1 ? '../' : './';
+            } else if (/github\.io$/i.test(host)) {
                 var segments = path.split('/').filter(Boolean);
                 if (segments.length > 0) {
                     base = '/' + segments[0] + '/';
@@ -39,7 +44,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/desktop.css" media="(min-width: 1024px)">
 </head>
-<body class="legal-page">
+<body class="legal-page privacy-policy-page">
     <header class="header">
         <div class="header-container">
             <button class="back-button">
@@ -57,31 +62,65 @@
     </header>
 
     <main class="legal-container">
-        <h1>Polityka Prywatności</h1>
-        <p><strong>Data wejścia w życie: 23 marca 2026</strong></p>
+        <section class="legal-intro" aria-labelledby="privacyPolicyTitle">
+            <h1 id="privacyPolicyTitle" class="legal-title">Polityka Prywatności</h1>
+        </section>
 
-        <h2>1. Administrator Danych</h2>
-        <p>Administratorem Twoich danych osobowych jest Kamila Cembor, zamieszkała przy ul. Sienkiewicza 28, 16-300 Augustów.</p>
+        <div class="legal-divider" aria-hidden="true"></div>
 
-        <h2>2. Cel i podstawa przetwarzania danych</h2>
-        <p>Twoje dane osobowe (imię, nazwisko, adres e-mail, numer telefonu, adres dostawy) zbierane są wyłącznie w celu:</p>
-        <ul>
-            <li>obsługi zapytania ofertowego i ustalenia szczegółów zamówienia (art. 6 ust. 1 lit. b RODO),</li>
-            <li>realizacji umowy sprzedaży i wysyłki towaru,</li>
-            <li>wypełnienia obowiązków prawnych, w tym podatkowych i księgowych.</li>
-        </ul>
+        <div class="legal-content">
+            <p class="legal-effective-date">Data wejścia w życie: 23 marca 2026</p>
 
-        <h2>3. Odbiorcy danych</h2>
-        <p>Dostęp do Twoich danych mogą mieć podmioty wspierające realizację zamówienia: firmy kurierskie, operatorzy paczkomatów (w celu doręczenia paczki) oraz operatorzy płatności. Dane nie są przekazywane innym podmiotom trzecim.</p>
+            <section class="legal-section" aria-labelledby="privacy-section-1">
+                <h2 id="privacy-section-1">1. Administrator danych</h2>
+                <p>Administratorem Twoich danych osobowych jest Kamila Cembor, zamieszkała przy ul. Sienkiewicza 28, 16-300 Augustów.</p>
+            </section>
 
-        <h2>4. Okres przechowywania danych</h2>
-        <p>Dane będą przechowywane przez okres niezbędny do realizacji zamówienia oraz po jego zakończeniu – przez czas wymagany przepisami prawa podatkowego (zazwyczaj 5 lat) lub do czasu przedawnienia ewentualnych roszczeń.</p>
+            <section class="legal-section" aria-labelledby="privacy-section-2">
+                <h2 id="privacy-section-2">2. Cel i podstawa przetwarzania danych</h2>
+                <p>Twoje dane osobowe (imię, nazwisko, adres e-mail, numer telefonu, adres dostawy) zbierane są wyłącznie w celu:</p>
+                <ul>
+                    <li>obsługi zapytania ofertowego i ustalenia szczegółów zamówienia (art. 6 ust. 1 lit. b RODO),</li>
+                    <li>realizacji umowy sprzedaży i wysyłki towaru,</li>
+                    <li>wypełnienia obowiązków prawnych, w tym podatkowych i księgowych.</li>
+                </ul>
+            </section>
 
-        <h2>5. Twoje prawa</h2>
-        <p>Masz prawo do dostępu do swoich danych, ich sprostowania, usunięcia, ograniczenia przetwarzania oraz przenoszenia danych. Masz również prawo wnieść skargę do Prezesa Urzędu Ochrony Danych Osobowych (PUODO).</p>
+            <section class="legal-section" aria-labelledby="privacy-section-3">
+                <h2 id="privacy-section-3">3. Odbiorcy danych</h2>
+                <p>Dostęp do Twoich danych mogą mieć podmioty wspierające realizację zamówienia: firmy kurierskie, operatorzy paczkomatów (w celu doręczenia paczki) oraz operatorzy płatności. Dane nie są przekazywane innym podmiotom trzecim.</p>
+            </section>
 
-        <h2>6. Kontakt</h2>
-        <p>W sprawach dotyczących ochrony danych osobowych prosimy o kontakt pod adresem: <a href="mailto:cemborka.studio@gmail.com">cemborka.studio@gmail.com</a>.</p>
+            <section class="legal-section" aria-labelledby="privacy-section-4">
+                <h2 id="privacy-section-4">4. Okres przechowywania danych</h2>
+                <p>Dane będą przechowywane przez okres niezbędny do realizacji zamówienia oraz po jego zakończeniu - przez czas wymagany przepisami prawa podatkowego (zazwyczaj 5 lat) lub do czasu przedawnienia ewentualnych roszczeń.</p>
+            </section>
+
+            <section class="legal-section" aria-labelledby="privacy-section-5">
+                <h2 id="privacy-section-5">5. Twoje prawa</h2>
+                <p>Masz prawo do dostępu do swoich danych, ich sprostowania, usunięcia, ograniczenia przetwarzania oraz przenoszenia danych. Masz również prawo wnieść skargę do Prezesa Urzędu Ochrony Danych Osobowych (PUODO).</p>
+            </section>
+
+            <section class="legal-section" aria-labelledby="privacy-section-6">
+                <h2 id="privacy-section-6">6. Kontakt</h2>
+                <p>W sprawach dotyczących ochrony danych osobowych prosimy o kontakt pod adresem: <a href="mailto:cemborka.studio@gmail.com">cemborka.studio@gmail.com</a>.</p>
+            </section>
+        </div>
+
+        <footer class="legal-footer">
+            <a href="kontakt/" class="legal-footer-title">Kontakt</a>
+            <div class="legal-socials" aria-label="Social media Cemborka">
+                <a href="https://www.facebook.com/profile.php?id=61576414753630" class="legal-social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+                    <img src="images/fb-icon.png" alt="Facebook">
+                </a>
+                <a href="https://www.tiktok.com/@cemborka" class="legal-social-link" aria-label="TikTok" target="_blank" rel="noopener noreferrer">
+                    <img src="images/tiktok-icon.png" alt="TikTok">
+                </a>
+                <a href="https://www.instagram.com/cemborka/" class="legal-social-link" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+                    <img src="images/insta-icon.png" alt="Instagram">
+                </a>
+            </div>
+        </footer>
     </main>
 
     <script src="js/script.js"></script>
