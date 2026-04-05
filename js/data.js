@@ -27,12 +27,16 @@ function buildDeliveryDetails(model) {
   `;
 }
 
-function buildModelDescription(model) {
+function buildModelDescription(model, materialType) {
   if (model === 'Faworytka') {
-    return 'FAWORYTKA to mniejsza siostra FAWORYTY. FAWORYTKA to model, w którym świat geometrii spotyka się z organiczną miękkością. O nieoczywistym charakterze torby decyduje autorska rączka. Ten dekoracyjny detal łączy ozdobną formę z funkcjonalnością, skrywając wewnątrz mechanizm regulacji jej długości. FAWORYTKA naturalnie dopasuje się do odważnych stylizacji, ale również świetnie sprawdzi się w minimalistycznych outfitów, stając się najmocniejszym akcentem, który zdefiniuje cały Twój look. Zaprojektowana i uszyta w Polsce.';
+    return 'FAWORYTKA to mniejsza siostra FAWORYTY. To ten sam silny charakter, ale w bardziej kompaktowym rozmiarze. Posiada miękką, plastyczną konstrukcję, dzięki której materiał swobodnie pracuje i opalizuje, zmieniając kolor zależnie od kąta padania światła.<br><br>FAWORYTKA to model, w którym świat geometrii spotyka się z organiczną miękkością. O nieoczywistym charakterze torby decyduje autorska rączka. Ten dekoracyjny detal łączy ozdobną formę z funkcjonalnością, skrywając wewnątrz mechanizm regulacji jej długości. FAWORYTKA naturalnie dopasuje się do odważnych stylizacji, ale również świetnie sprawdzi się w minimalistycznych outfitach, stając się najmocniejszym akcentem, który zdefiniuje cały Twój look. Zaprojektowana i uszyta w Polsce.';
   }
 
-  return 'FAWORYTA to model, w którym świat geometrii spotyka się z organiczną miękkością. O nieoczywistym charakterze torby decyduje autorska rączka. Ten dekoracyjny detal łączy ozdobną formę z funkcjonalnością, skrywając wewnątrz mechanizm regulacji jej długości. FAWORYTA naturalnie dopasuje się do odważnych stylizacji, ale również świetnie sprawdzi się w minimalistycznych outfitów, stając się najmocniejszym akcentem, który zdefiniuje cały Twój look. Zaprojektowana i uszyta w Polsce.';
+  if (materialType === 'morowa') {
+    return 'Duża, wyrazista torba typu statement, która pomi  eści wszystkie Twoje historie. Posiada usztywniające wypełnienie, które podkreśla architektoniczną, trapezową formę dołu torby.<br><br>FAWORYTA to model, w którym świat geometrii spotyka się z organiczną miękkością. O nieoczywistym charakterze torby decyduje autorska rączka. Ten dekoracyjny detal łączy ozdobną formę z funkcjonalnością, skrywając wewnątrz mechanizm regulacji jej długości. FAWORYTA naturalnie dopasuje się do odważnych stylizacji, ale również świetnie sprawdzi się w minimalistycznych outfitach, stając się najmocniejszym akcentem, który zdefiniuje cały Twój look. Zaprojektowana i uszyta w Polsce.';
+  }
+
+  return 'Duża, wyrazista torba typu statement, która pomieści wszystkie Twoje historie. Posiada miękką, plastyczną konstrukcję, dzięki której materiał swobodnie pracuje i opalizuje, zmieniając kolor zależnie od kąta padania światła.<br><br>FAWORYTA to model, w którym świat geometrii spotyka się z organiczną miękkością. O nieoczywistym charakterze torby decyduje autorska rączka. Ten dekoracyjny detal łączy ozdobną formę z funkcjonalnością, skrywając wewnątrz mechanizm regulacji jej długości. FAWORYTA naturalnie dopasuje się do odważnych stylizacji, ale również świetnie sprawdzi się w minimalistycznych outfitach, stając się najmocniejszym akcentem, który zdefiniuje cały Twój look. Zaprojektowana i uszyta w Polsce.';
 }
 
 function buildMaterialDetails(materialType) {
@@ -67,7 +71,7 @@ const products = [
       '/images/faworyta/faworyta-jagoda-3.webp',
       '/images/faworyta/faworyta-jagoda-main.webp',
     ],
-    description: buildModelDescription('Faworyta'),
+    description: buildModelDescription('Faworyta', 'morowa'),
     details: buildProductDetails('morowa'),
     material: buildMaterialDetails('morowa'),
     delivery: buildDeliveryDetails('Faworyta'),
@@ -87,7 +91,7 @@ const products = [
       '/images/faworyta/faworyta-zlota-reneta-3.webp',
       '/images/faworyta/faworyta-zlota-reneta-main.webp',
     ],
-    description: buildModelDescription('Faworyta'),
+    description: buildModelDescription('Faworyta', 'taftowa'),
     details: buildProductDetails('taftowa'),
     material: buildMaterialDetails('taftowa'),
     delivery: buildDeliveryDetails('Faworyta'),
@@ -107,7 +111,7 @@ const products = [
       '/images/faworyta/faworyta-malwa-3.webp',
       '/images/faworyta/faworyta-malwa-main.webp',
     ],
-    description: buildModelDescription('Faworyta'),
+    description: buildModelDescription('Faworyta', 'taftowa'),
     details: buildProductDetails('taftowa'),
     material: buildMaterialDetails('taftowa'),
     delivery: buildDeliveryDetails('Faworyta'),
@@ -127,7 +131,7 @@ const products = [
       '/images/faworyta/faworyta-pieprz-3.webp',
       '/images/faworyta/faworyta-pieprz-main.webp',
     ],
-    description: buildModelDescription('Faworyta'),
+    description: buildModelDescription('Faworyta', 'morowa'),
     details: buildProductDetails('morowa'),
     material: buildMaterialDetails('morowa'),
     delivery: buildDeliveryDetails('Faworyta'),
@@ -149,7 +153,7 @@ const products = [
       '/images/faworyta/wymiary_mora_1.webp',
       '/images/faworyta/wymiary_mora_2.webp',
     ],
-    description: buildModelDescription('Faworyta'),
+    description: buildModelDescription('Faworyta', 'morowa'),
     details: buildProductDetails('morowa'),
     material: buildMaterialDetails('morowa'),
     delivery: buildDeliveryDetails('Faworyta'),
@@ -169,7 +173,7 @@ const products = [
       '/images/faworyta/faworyta-sliwka-3.webp',
       '/images/faworyta/faworyta-sliwka-main.webp',
     ],
-    description: buildModelDescription('Faworyta'),
+    description: buildModelDescription('Faworyta', 'taftowa'),
     details: buildProductDetails('taftowa'),
     material: buildMaterialDetails('taftowa'),
     delivery: buildDeliveryDetails('Faworyta'),
@@ -188,7 +192,7 @@ const products = [
       '/images/faworytka/faworytka-malwa-2.webp',
       '/images/faworytka/faworytka-malwa-main.webp',
     ],
-    description: buildModelDescription('Faworytka'),
+    description: buildModelDescription('Faworytka', 'taftowa'),
     details: buildProductDetails('taftowa'),
     material: buildMaterialDetails('taftowa'),
     delivery: buildDeliveryDetails('Faworytka'),
@@ -206,7 +210,7 @@ const products = [
       '/images/faworytka/faworytka-sliwka-main.webp',
       '/images/faworytka/faworytka-sliwka-1.webp',
     ],
-    description: buildModelDescription('Faworytka'),
+    description: buildModelDescription('Faworytka', 'taftowa'),
     details: buildProductDetails('taftowa'),
     material: buildMaterialDetails('taftowa'),
     delivery: buildDeliveryDetails('Faworytka'),

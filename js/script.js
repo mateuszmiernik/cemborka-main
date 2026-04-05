@@ -1142,6 +1142,7 @@ function setupDesktopDescriptionExpand() {
       descriptionNode.classList.add('is-expanded');
       expandButton.hidden = true;
       expandButton.setAttribute('aria-expanded', 'true');
+      syncDesktopDetailsColumnHeight();
     });
 
     collapseButton.addEventListener('click', () => {
@@ -1150,6 +1151,7 @@ function setupDesktopDescriptionExpand() {
       descriptionNode.classList.remove('is-expanded');
       expandButton.hidden = false;
       expandButton.setAttribute('aria-expanded', 'false');
+      syncDesktopDetailsColumnHeight();
     });
 
     descriptionNode.dataset.bound = 'true';
@@ -1263,10 +1265,13 @@ function renderDesktopView(container, product) {
   
   // Po dodaniu elementu do DOM, inicjalizujemy galerię
   setupDesktopGallery();
+  syncDesktopDetailsColumnHeight();
 }
 
 let currentDesktopImageIndex = 0;
 let totalDesktopImages = 0;
+let desktopDetailsColumnObserver = null;
+let desktopDetailsResizeBound = false;
 
 function setupDesktopGallery() {
     const galleryContainer = document.querySelector('.desktop-gallery-container');
@@ -1278,10 +1283,14 @@ function setupDesktopGallery() {
 
   images.forEach((img) => {
     if (!img.complete) {
-      img.addEventListener('load', syncDesktopGalleryArrowOffsets, { once: true });
+      img.addEventListener('load', () => {
+        syncDesktopGalleryArrowOffsets();
+        syncDesktopDetailsColumnHeight();
+      }, { once: true });
     }
   });
 
+    setupDesktopDetailsColumnObserver();
     updateDesktopGallery();
 }
 
@@ -1308,6 +1317,90 @@ function updateDesktopGallery() {
     });
 
     syncDesktopGalleryArrowOffsets();
+    syncDesktopDetailsColumnHeight();
+}
+
+function syncDesktopDetailsColumnHeight() {
+  const detailsColumn = document.querySelector('.product-details-column');
+
+  if (!(detailsColumn instanceof HTMLElement)) return;
+
+  if (!window.matchMedia('(min-width: 1024px)').matches) {
+    detailsColumn.style.removeProperty('--desktop-gallery-height');
+    detailsColumn.style.removeProperty('--desktop-tabs-max-height');
+    return;
+  }
+
+  const galleryContainer = document.querySelector('.desktop-gallery-container');
+  const tabsSection = detailsColumn.querySelector('.tabs-section');
+  const tabsHeader = tabsSection instanceof HTMLElement ? tabsSection.querySelector('.tabs') : null;
+
+  if (!(galleryContainer instanceof HTMLElement) || !(tabsSection instanceof HTMLElement) || !(tabsHeader instanceof HTMLElement)) {
+    detailsColumn.style.removeProperty('--desktop-gallery-height');
+    detailsColumn.style.removeProperty('--desktop-tabs-max-height');
+    return;
+  }
+
+  const galleryHeight = Math.round(galleryContainer.getBoundingClientRect().height);
+
+  if (galleryHeight > 0) {
+    detailsColumn.style.setProperty('--desktop-gallery-height', `${galleryHeight}px`);
+  } else {
+    detailsColumn.style.removeProperty('--desktop-gallery-height');
+    detailsColumn.style.removeProperty('--desktop-tabs-max-height');
+    return;
+  }
+
+  const staticChildrenHeight = Array.from(detailsColumn.children)
+    .filter((child) => child !== tabsSection)
+    .reduce((total, child) => total + getOuterHeight(child), 0);
+
+  const tabsHeaderHeight = getOuterHeight(tabsHeader);
+  const availableTabsHeight = Math.max(0, galleryHeight - staticChildrenHeight - tabsHeaderHeight);
+
+  detailsColumn.style.setProperty('--desktop-tabs-max-height', `${availableTabsHeight}px`);
+}
+
+function getOuterHeight(element) {
+  if (!(element instanceof HTMLElement)) return 0;
+
+  const computedStyle = window.getComputedStyle(element);
+  const marginTop = parseFloat(computedStyle.marginTop) || 0;
+  const marginBottom = parseFloat(computedStyle.marginBottom) || 0;
+
+  return element.getBoundingClientRect().height + marginTop + marginBottom;
+}
+
+function setupDesktopDetailsColumnObserver() {
+  if (desktopDetailsColumnObserver) {
+    desktopDetailsColumnObserver.disconnect();
+    desktopDetailsColumnObserver = null;
+  }
+
+  const galleryContainer = document.querySelector('.desktop-gallery-container');
+
+  if (!desktopDetailsResizeBound) {
+    window.addEventListener('resize', syncDesktopDetailsColumnHeight);
+    desktopDetailsResizeBound = true;
+  }
+
+  if (!(galleryContainer instanceof HTMLElement)) {
+    syncDesktopDetailsColumnHeight();
+    return;
+  }
+
+  if (typeof ResizeObserver === 'undefined') {
+    syncDesktopDetailsColumnHeight();
+    return;
+  }
+
+  desktopDetailsColumnObserver = new ResizeObserver(() => {
+    syncDesktopDetailsColumnHeight();
+    syncDesktopGalleryArrowOffsets();
+  });
+
+  desktopDetailsColumnObserver.observe(galleryContainer);
+  syncDesktopDetailsColumnHeight();
 }
 
   function syncDesktopGalleryArrowOffsets() {
@@ -1397,6 +1490,8 @@ function toggleDesktopTab(buttonEl, tabId) {
     if (targetContent) targetContent.classList.add('active');
     buttonEl.classList.add('active');
   }
+
+  syncDesktopDetailsColumnHeight();
 }
 
 function getParentPageUrl() {

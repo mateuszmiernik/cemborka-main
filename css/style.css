@@ -1532,13 +1532,13 @@ body.product-lightbox-open {
   }
 
   .about-moodboard-second {
-    padding-bottom: 4.625rem;
+    padding-bottom: 3rem;
     margin-bottom: 1.4375rem;
     border-bottom: 1px solid var(--text-color);
   }
 
   .about-footer {
-    padding-bottom: 2rem;
+    padding-bottom: 2.375rem;
   }
 
   .about-footer-title {
