@@ -852,6 +852,14 @@ let productLightboxTouchState = {
   isTracking: false
 };
 
+let productLightboxZoomState = {
+  scale: 1,
+  minScale: 1,
+  maxScale: 4,
+  originX: 50,
+  originY: 50
+};
+
 function createProductLightbox() {
   const lightbox = document.createElement('div');
   lightbox.className = 'product-lightbox';
@@ -883,10 +891,14 @@ function createProductLightbox() {
     stage.addEventListener('touchstart', handleProductLightboxTouchStart, { passive: true });
     stage.addEventListener('touchend', handleProductLightboxTouchEnd, { passive: true });
     stage.addEventListener('touchcancel', resetProductLightboxTouchState, { passive: true });
+    stage.addEventListener('mousemove', handleProductLightboxMouseMove);
+    stage.addEventListener('wheel', handleProductLightboxWheel, { passive: false });
   }
 
   if (imageNode instanceof HTMLImageElement) {
     imageNode.addEventListener('load', syncProductLightboxArrowOffsets);
+    imageNode.addEventListener('load', syncProductLightboxZoom);
+    imageNode.addEventListener('click', handleProductLightboxImageClick);
   }
 
   lightbox.addEventListener('click', (event) => {
@@ -952,6 +964,116 @@ function resetProductLightboxTouchState() {
   productLightboxTouchState.isTracking = false;
 }
 
+function canUseDesktopLightboxZoom() {
+  return typeof window !== 'undefined'
+    && typeof window.matchMedia === 'function'
+    && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+}
+
+function clampProductLightboxZoomScale(scale) {
+  return Math.min(
+    productLightboxZoomState.maxScale,
+    Math.max(productLightboxZoomState.minScale, scale)
+  );
+}
+
+function setProductLightboxZoomOriginFromPointer(event, imageNode) {
+  if (!(imageNode instanceof HTMLImageElement)) return;
+
+  const imageRect = imageNode.getBoundingClientRect();
+  if (!imageRect.width || !imageRect.height) return;
+
+  const relativeX = ((event.clientX - imageRect.left) / imageRect.width) * 100;
+  const relativeY = ((event.clientY - imageRect.top) / imageRect.height) * 100;
+
+  productLightboxZoomState.originX = Math.min(100, Math.max(0, relativeX));
+  productLightboxZoomState.originY = Math.min(100, Math.max(0, relativeY));
+}
+
+function syncProductLightboxZoom() {
+  const lightbox = document.querySelector('.product-lightbox');
+  if (!(lightbox instanceof HTMLElement)) return;
+
+  const stage = lightbox.querySelector('.product-lightbox-stage');
+  const imageNode = lightbox.querySelector('.product-lightbox-image');
+
+  if (!(stage instanceof HTMLElement)) return;
+  if (!(imageNode instanceof HTMLImageElement)) return;
+
+  const isDesktopZoom = canUseDesktopLightboxZoom();
+  const scale = isDesktopZoom ? clampProductLightboxZoomScale(productLightboxZoomState.scale) : 1;
+  const isZoomed = scale > 1.01;
+
+  productLightboxZoomState.scale = scale;
+  imageNode.style.transformOrigin = `${productLightboxZoomState.originX}% ${productLightboxZoomState.originY}%`;
+  imageNode.style.transform = `scale(${scale})`;
+  stage.classList.toggle('is-zoomed', isZoomed);
+  imageNode.classList.toggle('is-zoomed', isZoomed);
+
+  requestAnimationFrame(syncProductLightboxArrowOffsets);
+}
+
+function resetProductLightboxZoom() {
+  productLightboxZoomState.scale = 1;
+  productLightboxZoomState.originX = 50;
+  productLightboxZoomState.originY = 50;
+  syncProductLightboxZoom();
+}
+
+function handleProductLightboxImageClick(event) {
+  const imageNode = event.currentTarget;
+  if (!(imageNode instanceof HTMLImageElement)) return;
+  if (!canUseDesktopLightboxZoom()) return;
+
+  if (productLightboxZoomState.scale > 1.01) {
+    resetProductLightboxZoom();
+    return;
+  }
+
+  setProductLightboxZoomOriginFromPointer(event, imageNode);
+  productLightboxZoomState.scale = 2.5;
+  syncProductLightboxZoom();
+}
+
+function handleProductLightboxMouseMove(event) {
+  if (!canUseDesktopLightboxZoom()) return;
+  if (productLightboxZoomState.scale <= 1.01) return;
+
+  const lightbox = document.querySelector('.product-lightbox');
+  if (!(lightbox instanceof HTMLElement) || lightbox.hidden) return;
+
+  const imageNode = lightbox.querySelector('.product-lightbox-image');
+  if (!(imageNode instanceof HTMLImageElement)) return;
+
+  setProductLightboxZoomOriginFromPointer(event, imageNode);
+  syncProductLightboxZoom();
+}
+
+function handleProductLightboxWheel(event) {
+  if (!canUseDesktopLightboxZoom()) return;
+
+  const lightbox = document.querySelector('.product-lightbox');
+  if (!(lightbox instanceof HTMLElement) || lightbox.hidden) return;
+
+  const imageNode = lightbox.querySelector('.product-lightbox-image');
+  if (!(imageNode instanceof HTMLImageElement)) return;
+
+  event.preventDefault();
+  setProductLightboxZoomOriginFromPointer(event, imageNode);
+
+  const nextScale = clampProductLightboxZoomScale(
+    productLightboxZoomState.scale + (event.deltaY < 0 ? 0.4 : -0.4)
+  );
+
+  if (nextScale <= 1.01) {
+    resetProductLightboxZoom();
+    return;
+  }
+
+  productLightboxZoomState.scale = nextScale;
+  syncProductLightboxZoom();
+}
+
 function ensureProductLightbox() {
   return document.querySelector('.product-lightbox') || createProductLightbox();
 }
@@ -972,6 +1094,7 @@ function updateProductLightbox() {
   const currentImage = productLightboxState.images[productLightboxState.index];
   if (!currentImage) return;
 
+  resetProductLightboxZoom();
   imageNode.src = currentImage.src;
   imageNode.alt = currentImage.alt;
   counterNode.textContent = `${productLightboxState.index + 1} / ${totalImages}`;
@@ -1001,6 +1124,7 @@ function closeProductLightbox() {
   const lightbox = document.querySelector('.product-lightbox');
   if (!(lightbox instanceof HTMLElement)) return;
 
+  resetProductLightboxZoom();
   lightbox.hidden = true;
   lightbox.setAttribute('aria-hidden', 'true');
   document.body.classList.remove('product-lightbox-open');
@@ -1093,7 +1217,10 @@ function setupProductImageZoom(product, container) {
       }
     });
 
-    window.addEventListener('resize', syncProductLightboxArrowOffsets);
+    window.addEventListener('resize', () => {
+      syncProductLightboxZoom();
+      syncProductLightboxArrowOffsets();
+    });
 
     document.body.dataset.productLightboxKeyboardBound = 'true';
   }

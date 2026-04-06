@@ -328,7 +328,7 @@ body.product-page .product-details-column {
 .tabs-section .tabs-content {
   font-size: .9375rem;
   letter-spacing: .0335rem;
-  line-height: 1.6;
+  /* line-height: 1.6; */
   display: none;
   margin: 0;
 }

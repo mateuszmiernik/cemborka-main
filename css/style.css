@@ -1088,6 +1088,7 @@ body.product-lightbox-open {
   justify-content: center;
   min-width: 0;
   min-height: 0;
+  overflow: hidden;
 }
 
 .product-lightbox-image {
@@ -1095,6 +1096,9 @@ body.product-lightbox-open {
   max-width: min(100%, 68rem);
   max-height: calc(100vh - 7.5rem);
   object-fit: contain;
+  transform-origin: 50% 50%;
+  transition: transform 0.18s ease-out;
+  will-change: transform;
 }
 
 .product-lightbox-arrow {
@@ -1126,6 +1130,14 @@ body.product-lightbox-open {
 }
 
 @media (hover: hover) and (pointer: fine) {
+  .product-lightbox-image {
+    cursor: zoom-in;
+  }
+
+  .product-lightbox-stage.is-zoomed .product-lightbox-image {
+    cursor: zoom-out;
+  }
+
   .product-lightbox-arrow:hover,
   .product-lightbox-close:hover {
     opacity: 0.5;
@@ -1271,7 +1283,7 @@ body.product-lightbox-open {
 
 .tabs-content ul {
   margin: 0;
-  padding-left: 1.25rem;
+  padding-left: 1.15rem;
   list-style: disc;
 }
 
