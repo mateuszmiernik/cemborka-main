@@ -850,7 +850,7 @@ body.home-page .home-container {
 .product-card img {
   display: block;
   width: 100%;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 4 / 5;
   margin-bottom: .5rem;
   object-fit: cover;
   transform: scale(1);
@@ -1513,8 +1513,9 @@ body.product-lightbox-open {
 @media (min-width: 1024px) {
   /* hero */
   .cta-container {
-    bottom: 15%;
-    width: 25%;
+    bottom: 11%;
+    width: min(34vw, 32rem);
+    max-width: calc(100% - 3rem);
   }
   
   .cta-button {
@@ -1579,9 +1580,21 @@ body.product-lightbox-open {
   }
 }
 
-@media (min-width: 1024px) {
-  html.is-safari .cta-container {
-    bottom: clamp(11rem, 18svh, 13rem);
+@media (min-width: 1024px) and (max-height: 980px) {
+  .cta-container {
+    bottom: 9%;
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 900px) {
+  .cta-container {
+    bottom: 8%;
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 780px) {
+  .cta-container {
+    bottom: 7%;
   }
 }
 
