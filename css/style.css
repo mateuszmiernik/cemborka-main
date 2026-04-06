@@ -387,17 +387,18 @@ body.menu-open {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  color: var(--text-color);
 }
 
-.contact-social-link img {
+.contact-social-icon {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  display: block;
   transition: opacity 0.2s ease;
 }
 
-.contact-social-link:hover img,
-.contact-social-link:focus-visible img {
+.contact-social-link:hover .contact-social-icon,
+.contact-social-link:focus-visible .contact-social-icon {
   opacity: 0.5;
 }
 
@@ -1447,7 +1448,9 @@ body.product-lightbox-open {
 }
 
 .about-outro {
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.4063rem;
+  padding-bottom: 2.8125rem;
+  border-bottom: 1px solid var(--text-color);
 }
 
 .about-paragraph-outro {
@@ -1491,18 +1494,19 @@ body.product-lightbox-open {
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--text-color);
 }
 
-.about-social-placeholder img {
-  color: var(--text-color);
+.about-social-icon {
   opacity: 0.8;
   width: 1.5rem;
   height: 1.5rem;
+  display: block;
   transition: opacity 0.2s ease;
 }
 
-.about-social-placeholder:hover img,
-.about-social-placeholder:focus-visible img {
+.about-social-placeholder:hover .about-social-icon,
+.about-social-placeholder:focus-visible .about-social-icon {
   opacity: 0.5;
 }
 
@@ -1548,10 +1552,10 @@ body.product-lightbox-open {
 
   .about-moodboard {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     gap: 0;
     margin-bottom: 1.8125rem;
-    padding: 0 3.75rem;
+    padding: 0;
   }
 
   .about-moodboard .about-moodboard-image {
@@ -1559,10 +1563,6 @@ body.product-lightbox-open {
   }
 
   .about-outro {
-    margin-bottom: 1.8125rem;
-  }
-
-  .about-moodboard-second {
     padding-bottom: 3rem;
     margin-bottom: 1.4375rem;
     border-bottom: 1px solid var(--text-color);
@@ -2200,6 +2200,11 @@ body.product-lightbox-open {
   max-width: 10rem;
   height: auto;
   object-fit: contain;
+}
+
+.test {
+  background-color: green;
+  color:green
 }
 
 @media (min-width: 1024px) {
