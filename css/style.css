@@ -74,6 +74,25 @@ body {
   min-height: 100vh;
 }
 
+@supports (padding-top: env(safe-area-inset-top)) {
+  html,
+  body {
+    min-height: 100dvh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: env(safe-area-inset-top);
+    background-color: var(--bg-color);
+    pointer-events: none;
+    z-index: 999;
+  }
+}
+
 html.home-page {
   height: 100%;
   overflow: hidden;
