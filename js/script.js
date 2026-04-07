@@ -1228,7 +1228,7 @@ function setupProductImageZoom(product, container) {
 
 function buildDesktopDescriptionMarkup(descriptionText) {
   const text = (descriptionText || '').trim();
-  const marker = 'długości.';
+  const marker = 'Ten dekoracyjny detal łączy ozdobną formę z funkcjonalnością,';
   const markerIndex = text.indexOf(marker);
 
   if (markerIndex === -1) {

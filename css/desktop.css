@@ -183,6 +183,10 @@ body.product-page .product-details-column {
   display: none;
 }
 
+.model-desc-break {
+    margin: 0.5rem 0;
+  }
+
 .product-details-column .description-collapse-inline {
   display: inline;
   margin-left: 0.25rem;
@@ -487,7 +491,7 @@ body.product-page .product-details-column {
 body.product-page .desktop-gallery-container {
   max-width: none;
   width: 100%;
-  height: auto;
+  /* height: auto; */
   max-height: 100%;
   aspect-ratio: 3 / 4;
 }
