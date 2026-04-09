@@ -1111,10 +1111,12 @@ function openProductLightbox(images, startIndex) {
 
   productLightboxState.images = images;
   productLightboxState.index = Math.max(0, Math.min(startIndex, images.length - 1));
+  productLightboxState.savedScrollY = window.scrollY;
 
   const lightbox = ensureProductLightbox();
   lightbox.hidden = false;
   lightbox.setAttribute('aria-hidden', 'false');
+  document.body.style.top = `-${productLightboxState.savedScrollY}px`;
   document.body.classList.add('product-lightbox-open');
 
   updateProductLightbox();
@@ -1128,26 +1130,14 @@ function closeProductLightbox() {
   lightbox.hidden = true;
   lightbox.setAttribute('aria-hidden', 'true');
   document.body.classList.remove('product-lightbox-open');
+  document.body.style.top = '';
+  window.scrollTo({ top: productLightboxState.savedScrollY || 0, behavior: 'instant' });
   resetProductLightboxTouchState();
 }
 
 function syncProductLightboxArrowOffsets() {
-  const lightbox = document.querySelector('.product-lightbox');
-  if (!(lightbox instanceof HTMLElement) || lightbox.hidden) return;
-
-  const stage = lightbox.querySelector('.product-lightbox-stage');
-  const imageNode = lightbox.querySelector('.product-lightbox-image');
-
-  if (!(stage instanceof HTMLElement)) return;
-  if (!(imageNode instanceof HTMLImageElement)) return;
-
-  const stageRect = stage.getBoundingClientRect();
-  const imageRect = imageNode.getBoundingClientRect();
-
-  if (!stageRect.width || !imageRect.width) return;
-
-  const sideGap = Math.max(0, (stageRect.width - imageRect.width) / 2);
-  stage.style.setProperty('--product-lightbox-side-gap', `${sideGap}px`);
+  // Arrow positions are now fixed via CSS (no dynamic gap tracking).
+  // This function is intentionally a no-op but kept to avoid call-site errors.
 }
 
 function changeProductLightboxImage(direction) {
@@ -1218,8 +1208,10 @@ function setupProductImageZoom(product, container) {
     });
 
     window.addEventListener('resize', () => {
-      syncProductLightboxZoom();
-      syncProductLightboxArrowOffsets();
+      requestAnimationFrame(() => {
+        syncProductLightboxZoom();
+        syncProductLightboxArrowOffsets();
+      });
     });
 
     document.body.dataset.productLightboxKeyboardBound = 'true';
@@ -1228,7 +1220,7 @@ function setupProductImageZoom(product, container) {
 
 function buildDesktopDescriptionMarkup(descriptionText) {
   const text = (descriptionText || '').trim();
-  const marker = 'Ten dekoracyjny detal łączy ozdobną formę z funkcjonalnością,';
+  const marker = 'Ten dekoracyjny detal łączy ozdobną formę z funkcjonalnością, skrywając';
   const markerIndex = text.indexOf(marker);
 
   if (markerIndex === -1) {
@@ -1452,7 +1444,23 @@ function syncDesktopDetailsColumnHeight() {
 
   if (!(detailsColumn instanceof HTMLElement)) return;
 
+  const tabsContentContainer = detailsColumn.querySelector('.tabs-content-container');
+
   if (!window.matchMedia('(min-width: 1024px)').matches) {
+    if (tabsContentContainer instanceof HTMLElement) {
+      tabsContentContainer.classList.remove('is-scrollable');
+    }
+
+    detailsColumn.style.removeProperty('--desktop-gallery-height');
+    detailsColumn.style.removeProperty('--desktop-tabs-max-height');
+    return;
+  }
+
+  if (window.matchMedia('(max-height: 900px) and (max-width: 1500px)').matches) {
+    if (tabsContentContainer instanceof HTMLElement) {
+      tabsContentContainer.classList.remove('is-scrollable');
+    }
+
     detailsColumn.style.removeProperty('--desktop-gallery-height');
     detailsColumn.style.removeProperty('--desktop-tabs-max-height');
     return;
@@ -1461,8 +1469,9 @@ function syncDesktopDetailsColumnHeight() {
   const galleryContainer = document.querySelector('.desktop-gallery-container');
   const tabsSection = detailsColumn.querySelector('.tabs-section');
   const tabsHeader = tabsSection instanceof HTMLElement ? tabsSection.querySelector('.tabs') : null;
+  const tabsScrollableContainer = tabsSection instanceof HTMLElement ? tabsSection.querySelector('.tabs-content-container') : null;
 
-  if (!(galleryContainer instanceof HTMLElement) || !(tabsSection instanceof HTMLElement) || !(tabsHeader instanceof HTMLElement)) {
+  if (!(galleryContainer instanceof HTMLElement) || !(tabsSection instanceof HTMLElement) || !(tabsHeader instanceof HTMLElement) || !(tabsScrollableContainer instanceof HTMLElement)) {
     detailsColumn.style.removeProperty('--desktop-gallery-height');
     detailsColumn.style.removeProperty('--desktop-tabs-max-height');
     return;
@@ -1475,6 +1484,7 @@ function syncDesktopDetailsColumnHeight() {
   } else {
     detailsColumn.style.removeProperty('--desktop-gallery-height');
     detailsColumn.style.removeProperty('--desktop-tabs-max-height');
+    tabsScrollableContainer.classList.remove('is-scrollable');
     return;
   }
 
@@ -1486,6 +1496,17 @@ function syncDesktopDetailsColumnHeight() {
   const availableTabsHeight = Math.max(0, galleryHeight - staticChildrenHeight - tabsHeaderHeight);
 
   detailsColumn.style.setProperty('--desktop-tabs-max-height', `${availableTabsHeight}px`);
+
+  requestAnimationFrame(() => {
+    syncDesktopTabsOverflowState(tabsScrollableContainer);
+  });
+}
+
+function syncDesktopTabsOverflowState(tabsContentContainer) {
+  if (!(tabsContentContainer instanceof HTMLElement)) return;
+
+  const hasOverflow = tabsContentContainer.scrollHeight - tabsContentContainer.clientHeight > 1;
+  tabsContentContainer.classList.toggle('is-scrollable', hasOverflow);
 }
 
 function getOuterHeight(element) {
@@ -1585,7 +1606,12 @@ function toggleMobileTab(buttonEl, tabId) {
 
   allContents.forEach(c => c.classList.remove('active'));
   allButtons.forEach(b => b.classList.remove('active'));
-  
+
+  if (isCurrentlyActive) {
+    buttonEl.blur();
+    return;
+  }
+
   if (!isCurrentlyActive) {
     if (targetContent) targetContent.classList.add('active');
     buttonEl.classList.add('active');

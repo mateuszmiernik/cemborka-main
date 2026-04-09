@@ -37,6 +37,44 @@ body.product-page .product-detail-container {
   padding-top: 0;
 }
 
+@media (min-width: 1024px) and (max-width: 1500px) and (max-height: 900px) {
+  body.product-page {
+    height: auto;
+    min-height: 100dvh;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  body.product-page .product-detail-container {
+    overflow: visible;
+  }
+
+  body.product-page .product-layout-grid,
+  body.product-page .product-image-column,
+  body.product-page .desktop-gallery-container,
+  body.product-page .product-details-column {
+    height: auto;
+    max-height: none;
+  }
+
+  body.product-page .tabs-section .tabs-content-container {
+    max-height: none;
+    overflow-y: visible;
+    overflow-x: visible;
+    overscroll-behavior: auto;
+    scrollbar-gutter: auto;
+    padding-right: 0;
+  }
+}
+
+@supports not (height: 100dvh) {
+  @media (min-width: 1024px) and (max-width: 1500px) and (max-height: 900px) {
+    body.product-page {
+      min-height: 100vh;
+    }
+  }
+}
+
 /* Main layout grid */
 .product-layout-grid {
   display: grid;
@@ -304,12 +342,16 @@ body.product-page .product-details-column {
 .tabs-section .tabs-content-container {
   padding-top: 0;
   max-height: var(--desktop-tabs-max-height, none);
-  overflow-y: auto;
+  overflow-y: hidden;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
   scrollbar-width: thin;
   scrollbar-color: rgba(251, 223, 203, 0.55) transparent;
   padding-right: 0.1875rem;
+}
+
+.tabs-section .tabs-content-container.is-scrollable {
+  overflow-y: auto;
 }
 
 .tabs-section .tabs-content-container::-webkit-scrollbar {
@@ -494,6 +536,13 @@ body.product-page .desktop-gallery-container {
   /* height: auto; */
   max-height: 100%;
   aspect-ratio: 3 / 4;
+}
+
+@media (min-width: 1024px) and (max-width: 1500px) and (max-height: 900px) {
+  body.product-page .desktop-gallery-container {
+    height: 100%;
+    height: auto;
+  }
 }
 
 .desktop-gallery-container .gallery-image {

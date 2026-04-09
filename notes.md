@@ -1,5 +1,5 @@
 ~~-> link do FB i TIK TOKa uzupelnic~~
--> paski scrollowane
+~~-> paski scrollowane~~
 
 ~~-> na telefonie jak klikam w przyciski to sie robi taki obszar elementu widoczny po kliknieciu (ANDROID tylko)~~
 
