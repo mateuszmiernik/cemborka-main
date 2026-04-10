@@ -31,7 +31,10 @@ cemborka-html/
 
 1. Skopiuj pliki czcionek (Degular-Light, Degular-Regular) do folderu `fonts/`
 2. Skopiuj obrazki produktów do folderu `images/`
-3. Otwórz `index.html` w przeglądarce
+3. Uruchom prosty serwer statyczny (np. Live Server w VS Code)
+4. Otwórz `http://127.0.0.1:5500/`
+
+Uwaga: projekt korzysta ze stalego `<base href="/">`, wiec powinien byc uruchamiany z roota domeny (lokalnie i na produkcji).
 
 ## Nawigacja
 
@@ -59,6 +62,7 @@ Wszystkie dane są w pliku `js/data.js` w tablicy `products`. Każdy produkt zaw
   slug: 'unique-slug',           // używane w URL
   model: 'Faworyta',              // nazwa modelu
   color: 'Jagoda',               // kolor
+  isAvailable: true,             // opcjonalne; false = chwilowo niedostępna
   price: 530,                     // cena
   mainImage: '/images/...',      // główne zdjęcie
   galleryImages: [...],          // tablica galerii
@@ -69,6 +73,14 @@ Wszystkie dane są w pliku `js/data.js` w tablicy `products`. Każdy produkt zaw
   care: '...'                   // zakładka Pielęgnacja
 }
 ```
+
+### Dostepnosc produktu (`isAvailable`)
+
+- `isAvailable: false` oznacza produkt chwilowo niedostepny.
+- Na liscie modeli karta ma mniejsza opacity i badge "chwilowo niedostepna", ale dalej jest klikalna.
+- Na stronie produktu status zmienia sie na "chwilowo niedostepna".
+- Przycisk `KUP` na stronie produktu jest nieaktywny dla niedostepnego modelu.
+- Niedostepny model jest automatycznie ukrywany w dropdownie modeli w formularzu zamowienia.
 
 ## Cechy
 
@@ -90,7 +102,7 @@ Po migracji na Go wystarczy zmienic jeden URL – frontend nie wymaga zadnych zm
 1. Zaloz konto na https://workers.cloudflare.com (darmowe, bez karty).
 2. Stworz nowy Worker, wklej caly plik `backend/order-worker.js` i kliknij "Deploy".
 3. W zakladce Worker → Settings → Variables dodaj dwie zmienne:
-   - `RESEND_API_KEY`  →  klucz API z resend.com
+  - `RESEND_API_KEY`  →  klucz API z resend.com (zalecane jako `Secret`)
    - `MAIL_TO`         →  Twoj adres email (tu beda przychodzic zamowienia)
 4. Skopiuj URL Workera i wklej do `js/data.js`:
 
@@ -100,7 +112,16 @@ const ORDER_FORM_CONFIG = {
 };
 ```
 
-5. W Resend zweryfikuj domene nadawcy lub na poczatek uzyj `onboarding@resend.dev`.
+5. Aktualnie `from` w Workerze jest ustawione na `onboarding@resend.dev` (tryb testowy).
+  Po podpieciu wlasnej domeny w Resend podmien `from` na adres z tej domeny.
+
+### CORS (wymagane dla produkcji)
+
+W `backend/order-worker.js` domena frontendu musi byc na liscie `ALLOWED_ORIGINS`.
+Przykladowo dla tej strony:
+
+- `https://www.cemborka.com`
+- `https://cemborka.com`
 
 ### Dane przesylane w zamowieniu
 - dane klienta: imie i nazwisko, email, telefon, adres/paczkomat
