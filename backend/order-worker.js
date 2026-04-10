@@ -26,7 +26,9 @@ const ALLOWED_ORIGINS = [
   'http://localhost:5500',
   'http://127.0.0.1:8080',
   'http://localhost:8080',
-  'http://192.168.0.191:5500'
+  'http://192.168.0.191:5500',
+  'https://www.cemborka.com',
+  'https://cemborka.com'
 ];
 
 export default {
@@ -79,7 +81,7 @@ export default {
         from: 'CEMBORKA <onboarding@resend.dev>',
         // from: 'CEMBORKA <zamowienia@cemborka.pl>',
         to: [mailTo],
-        subject: `Nowe zamówienie CEMBORKA – ${order.customerName}`,
+        subject: `Nowe zamówienie CEMBORKA - ${order.customerName}`,
         html: emailHTML,
       }),
     });
