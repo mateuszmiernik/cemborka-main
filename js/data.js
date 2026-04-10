@@ -33,7 +33,7 @@ function buildModelDescription(model, materialType) {
   }
 
   if (materialType === 'morowa') {
-    return 'Duża, wyrazista torba typu statement, która pomi  eści wszystkie Twoje historie. Posiada usztywniające wypełnienie, które podkreśla architektoniczną, trapezową formę dołu torby.<span class="model-desc-break"></span>FAWORYTA to model, w którym świat geometrii spotyka się z organiczną miękkością. O nieoczywistym charakterze torby decyduje autorska rączka. Ten dekoracyjny detal łączy ozdobną formę z funkcjonalnością, skrywając wewnątrz mechanizm regulacji jej długości. FAWORYTA naturalnie dopasuje się do odważnych stylizacji, ale również świetnie sprawdzi się w minimalistycznych outfitach, stając się najmocniejszym akcentem, który zdefiniuje cały Twój look. Zaprojektowana i uszyta w Polsce.';
+    return 'Duża, wyrazista torba typu statement, która pomieści wszystkie Twoje historie. Posiada miękkie a zarazem usztywniające wypełnienie, które podkreśla architektoniczną, trapezową formę dołu torby.<span class="model-desc-break"></span>FAWORYTA to model, w którym świat geometrii spotyka się z organiczną miękkością. O nieoczywistym charakterze torby decyduje autorska rączka. Ten dekoracyjny detal łączy ozdobną formę z funkcjonalnością, skrywając wewnątrz mechanizm regulacji jej długości. FAWORYTA naturalnie dopasuje się do odważnych stylizacji, ale również świetnie sprawdzi się w minimalistycznych outfitach, stając się najmocniejszym akcentem, który zdefiniuje cały Twój look. Zaprojektowana i uszyta w Polsce.';
   }
 
   return 'Duża, wyrazista torba typu statement, która pomieści wszystkie Twoje historie. Posiada miękką, plastyczną konstrukcję, dzięki której materiał swobodnie pracuje i opalizuje, zmieniając kolor zależnie od kąta padania światła.<span class="model-desc-break"></span>FAWORYTA to model, w którym świat geometrii spotyka się z organiczną miękkością. O nieoczywistym charakterze torby decyduje autorska rączka. Ten dekoracyjny detal łączy ozdobną formę z funkcjonalnością, skrywając wewnątrz mechanizm regulacji jej długości. FAWORYTA naturalnie dopasuje się do odważnych stylizacji, ale również świetnie sprawdzi się w minimalistycznych outfitach, stając się najmocniejszym akcentem, który zdefiniuje cały Twój look. Zaprojektowana i uszyta w Polsce.';
@@ -62,6 +62,7 @@ const products = [
     slug: 'faworyta-jagoda',
     model: 'Faworyta',
     color: 'Jagoda',
+    isAvailable: true,
     materialType: 'morowa',
     price: 630,
     mainImage: '/images/faworyta/faworyta-jagoda-main.webp',

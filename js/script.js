@@ -32,6 +32,26 @@ function resolveAssetPath(assetPath = '') {
   return normalizedAssetPath;
 }
 
+function isProductAvailable(product) {
+  return Boolean(product) && product.isAvailable !== false;
+}
+
+function getAvailableProducts() {
+  return products.filter(isProductAvailable);
+}
+
+function getProductAvailabilityLabel(product) {
+  return isProductAvailable(product) ? 'dostępna' : 'chwilowo niedostępna';
+}
+
+function buildBuyButtonMarkup(product) {
+  if (!isProductAvailable(product)) {
+    return '<span class="buy-button is-disabled" aria-disabled="true">KUP</span>';
+  }
+
+  return `<a href="${toSitePath('zamowienie/')}?slug=${encodeURIComponent(product.slug)}" class="buy-button">KUP</a>`;
+}
+
 // Renderowanie listy modeli
 function renderModels() {
   const container = document.getElementById('modelsContainer');
@@ -68,12 +88,14 @@ function renderModels() {
     
     items.forEach(product => {
       const productCard = document.createElement('a');
-      productCard.className = 'product-card';
+      const isUnavailable = !isProductAvailable(product);
+      productCard.className = `product-card${isUnavailable ? ' is-unavailable' : ''}`;
       productCard.href = `${toSitePath('produkt/')}?slug=${encodeURIComponent(product.slug)}`;
       
       productCard.innerHTML = `
         <div class="image-wrapper">
           <img src="${resolveAssetPath(product.mainImage)}" alt="${product.model} ${product.color}">
+          ${isUnavailable ? '<span class="product-unavailable-badge">chwilowo niedostępna</span>' : ''}
         </div>
         <div class="product-info">
           <span class="color-label">kolor</span>
@@ -99,11 +121,14 @@ function getOrderSeedProduct() {
   const slug = urlParams.get('slug');
   if (!slug) return null;
 
-  return getProductBySlug(slug);
+  const product = getProductBySlug(slug);
+  return isProductAvailable(product) ? product : null;
 }
 
 function buildOrderModelOptions(selectedSlug) {
-  return products.map(product => {
+  const availableProducts = getAvailableProducts();
+
+  return availableProducts.map(product => {
     const selectedAttr = product.slug === selectedSlug ? 'selected' : '';
     return `<option value="${product.slug}" ${selectedAttr}>${getOrderProductLabel(product)}</option>`;
   }).join('');
@@ -190,7 +215,8 @@ function getOrderDraftItems(draft, fallbackSlug) {
 
   const validItems = draft.items.filter((item) => {
     if (!item || typeof item !== 'object') return false;
-    if (typeof item.slug !== 'string' || !getProductBySlug(item.slug)) return false;
+    const product = typeof item.slug === 'string' ? getProductBySlug(item.slug) : null;
+    if (!isProductAvailable(product)) return false;
 
     const quantity = Number(item.quantity);
     return Number.isFinite(quantity) && quantity >= 1;
@@ -620,6 +646,12 @@ function renderOrderForm() {
   const container = document.getElementById('orderFormContainer');
   if (!container) return;
 
+  const availableProducts = getAvailableProducts();
+  if (availableProducts.length === 0) {
+    window.location.href = toSitePath('modele/');
+    return;
+  }
+
   const initialProduct = getOrderSeedProduct();
   if (!initialProduct) {
     window.location.href = toSitePath('modele/');
@@ -629,7 +661,7 @@ function renderOrderForm() {
   container.innerHTML = `
     <section class="order-hero">
       <h1 class="order-title">KUPUJĘ!</h1>
-      <p class="order-subtitle">Miło nam, że chcesz kupić nasz produkt!<br>Możesz to zrobić przez poniższy formularz!</p>
+      <p class="order-subtitle">Cieszymy się, że tu jesteś!<br>Zamówienie możesz złożyć przez poniższy formularz.</p>
     </section>
 
     <form id="orderForm" class="order-form" novalidate>
@@ -702,7 +734,7 @@ function renderOrderForm() {
   updateOrderRemoveButtonsState();
 
   addRowButton.addEventListener('click', () => {
-    const newRow = createOrderItemRow(products[0].slug, 1);
+    const newRow = createOrderItemRow(availableProducts[0].slug, 1);
     itemsContainer.appendChild(newRow);
     initializeOrderCustomSelects(newRow);
     updateOrderRemoveButtonsState();
@@ -1302,7 +1334,7 @@ function renderMobileView(container, product) {
         <div class="color-title">
           <span class="label">kolor</span>
           <span class="name">${product.color}</span>
-          <span class="status">dostępna</span>
+          <span class="status${isProductAvailable(product) ? '' : ' is-unavailable'}">${getProductAvailabilityLabel(product)}</span>
         </div>
         <p class="description">${product.description}</p>
       </div>
@@ -1326,7 +1358,7 @@ function renderMobileView(container, product) {
     </div>
     <div class="purchase-section">
       <span class="price">${product.price} zł</span>
-      <a href="${toSitePath('zamowienie/')}?slug=${encodeURIComponent(product.slug)}" class="buy-button">KUP</a>
+      ${buildBuyButtonMarkup(product)}
     </div>
   `;
   container.appendChild(footerActions);
@@ -1363,12 +1395,12 @@ function renderDesktopView(container, product) {
       <div class="color-title">
         <span class="label">kolor</span>
         <span class="name">${product.color}</span>
-        <span class="status">dostępna</span>
+        <span class="status${isProductAvailable(product) ? '' : ' is-unavailable'}">${getProductAvailabilityLabel(product)}</span>
       </div>
       ${buildDesktopDescriptionMarkup(product.description)}
       <div class="purchase-section">
         <span class="price">${product.price} zł</span>
-        <a href="${toSitePath('zamowienie/')}?slug=${encodeURIComponent(product.slug)}" class="buy-button">KUP</a>
+        ${buildBuyButtonMarkup(product)}
       </div>
       <div class="tabs-section">
         <div class="tabs">
