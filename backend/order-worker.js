@@ -68,6 +68,7 @@ export default {
     }
 
     const emailHTML = buildEmailHTML(order);
+    const emailText = buildEmailText(order);
 
     const resendResponse = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -76,13 +77,11 @@ export default {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        // Adres nadawcy – musi być zweryfikowana domena w Resend.
-        // Do testów możesz użyć: onboarding@resend.dev
         from: 'CEMBORKA <onboarding@resend.dev>',
-        // from: 'CEMBORKA <zamowienia@cemborka.pl>',
         to: [mailTo],
         subject: `Nowe zamówienie CEMBORKA - ${order.customerName}`,
         html: emailHTML,
+        text: emailText,
       }),
     });
 
@@ -99,6 +98,26 @@ export default {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+
+function buildEmailText(o) {
+  const itemsText = (o.orderItems || [])
+    .map(
+      (item) =>
+        `${item.lp}. ${item.modelLabel} - ${item.quantity} szt.`
+    )
+    .join('\n');
+
+  return (
+    `Nowe zamówienie CEMBORKA\n\n` +
+    `Dane klienta:\n` +
+    `Imię i Nazwisko: ${o.customerName}\n` +
+    `E-mail: ${o.customerEmail}\n` +
+    `Telefon: ${o.customerPhone}\n` +
+    `Adres / Paczkomat: ${o.customerAddress}\n\n` +
+    `Dostawa:\n${o.deliveryLabel}\n\n` +
+    `Zamówione produkty:\n${itemsText}\n`
+  );
+}
 
 function buildCorsHeaders(origin, allowed) {
   // Jeśli lista allowed jest pusta – przepuszczamy wszystko (ok na etapie dewelopmentu).
