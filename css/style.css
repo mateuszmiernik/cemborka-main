@@ -1033,7 +1033,8 @@ body.home-page .home-container {
   align-self: center;
 }
 
-.color-title .status.is-unavailable {
+.color-title .status.is-unavailable,
+.color-title .status.is-last-items {
   color: var(--accent-red);
 }
 
