@@ -44,7 +44,10 @@ function getAvailableProducts() {
 }
 
 function getProductAvailabilityLabel(product) {
-  return isProductAvailable(product) ? "dostępna" : "chwilowo niedostępna";
+  if (!isProductAvailable(product)) {
+    return ("chwilowo niedostępna")
+  }
+  return product.isLastItems === true ? "ostatnie sztuki" : "dostępna";
 }
 
 function buildBuyButtonMarkup(product) {
@@ -94,7 +97,13 @@ function renderModels() {
     items.forEach((product) => {
       const productCard = document.createElement("a");
       const isUnavailable = !isProductAvailable(product);
-      productCard.className = `product-card${isUnavailable ? " is-unavailable" : ""}`;
+      const isLast = isProductAvailable(product) && product.isLastItems === true;
+
+      let cardClass = "product-card";
+      if (isUnavailable) cardClass += " is-unavailable";
+      if (isLast) cardClass += " is-last-items";
+      productCard.className = cardClass;
+
       productCard.href = `${toSitePath("produkt/")}?slug=${encodeURIComponent(product.slug)}`;
 
       productCard.innerHTML = `
@@ -1466,7 +1475,7 @@ function renderMobileView(container, product) {
         <div class="color-title">
           <span class="label">kolor</span>
           <span class="name">${product.color}</span>
-          <span class="status${isProductAvailable(product) ? "" : " is-unavailable"}">${getProductAvailabilityLabel(product)}</span>
+          <span class="status${!isProductAvailable(product) ? " is-unavailable" : product.isLastItems === true ? " is-last-items" : ""}">${getProductAvailabilityLabel(product)}</span>
         </div>
         <p class="description">${product.description}</p>
       </div>
@@ -1545,7 +1554,7 @@ function renderDesktopView(container, product) {
       <div class="color-title">
         <span class="label">kolor</span>
         <span class="name">${product.color}</span>
-        <span class="status${isProductAvailable(product) ? "" : " is-unavailable"}">${getProductAvailabilityLabel(product)}</span>
+        <span class="status${!isProductAvailable(product) ? " is-unavailable" : product.isLastItems === true ? " is-last-items" : ""}">${getProductAvailabilityLabel(product)}</span>
       </div>
       ${buildDesktopDescriptionMarkup(product.description)}
       <div class="purchase-section">
@@ -2096,6 +2105,12 @@ function markSafariBrowser() {
   if (isSafari) {
     document.documentElement.classList.add("is-safari");
   }
+}
+
+// LastItems
+
+function isProductLastItems(product) {
+  return isProductAvailable(product) && product.isProductLastItems === true;
 }
 
 // Polepsz nawigację wstecz
