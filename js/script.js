@@ -1,79 +1,106 @@
 function getSiteBasePath() {
-  if (typeof window === 'undefined') return '/';
+  if (typeof window === "undefined") return "/";
 
   if (/github\.io$/i.test(window.location.hostname)) {
-    const segments = window.location.pathname.split('/').filter(Boolean);
+    const segments = window.location.pathname.split("/").filter(Boolean);
     if (segments.length > 0) {
       return `/${segments[0]}/`;
     }
   }
 
-  return '/';
+  return "/";
 }
 
-function toSitePath(path = '') {
-  const normalizedPath = String(path).replace(/^\/+/, '');
+function toSitePath(path = "") {
+  const normalizedPath = String(path).replace(/^\/+/, "");
   const basePath = getSiteBasePath();
   return normalizedPath ? `${basePath}${normalizedPath}` : basePath;
 }
 
-function resolveAssetPath(assetPath = '') {
+function resolveAssetPath(assetPath = "") {
   const normalizedAssetPath = String(assetPath).trim();
-  if (!normalizedAssetPath) return '';
+  if (!normalizedAssetPath) return "";
 
-  if (/^(?:[a-z]+:)?\/\//i.test(normalizedAssetPath) || /^(data:|blob:)/i.test(normalizedAssetPath)) {
+  if (
+    /^(?:[a-z]+:)?\/\//i.test(normalizedAssetPath) ||
+    /^(data:|blob:)/i.test(normalizedAssetPath)
+  ) {
     return normalizedAssetPath;
   }
 
-  if (normalizedAssetPath.startsWith('/')) {
+  if (normalizedAssetPath.startsWith("/")) {
     return toSitePath(normalizedAssetPath.slice(1));
   }
 
   return normalizedAssetPath;
 }
 
+function isProductAvailable(product) {
+  return Boolean(product) && product.isAvailable !== false;
+}
+
+function getAvailableProducts() {
+  return products.filter(isProductAvailable);
+}
+
+function getProductAvailabilityLabel(product) {
+  return isProductAvailable(product) ? "dostępna" : "chwilowo niedostępna";
+}
+
+function buildBuyButtonMarkup(product) {
+  if (!isProductAvailable(product)) {
+    return '<span class="buy-button is-disabled" aria-disabled="true">KUP</span>';
+  }
+
+  return `<a href="${toSitePath("zamowienie/")}?slug=${encodeURIComponent(product.slug)}" class="buy-button">KUP</a>`;
+}
+
 // Renderowanie listy modeli
 function renderModels() {
-  const container = document.getElementById('modelsContainer');
+  const container = document.getElementById("modelsContainer");
   const productsByModel = getProductsByModel();
   const modelDescriptions = {
-    Faworyta: 'Duża, wyrazista torba typu statement, która pomieści wszystkie Twoje historie i zdefiniuje każdą stylizację.',
-    Faworytka: 'Mniejsza siostra FAWORYTY, to ten sam silny charakter, ale w bardziej kompaktowym rozmiarze.'
+    Faworyta:
+      "Duża, wyrazista torba typu statement, która pomieści wszystkie Twoje historie i zdefiniuje każdą stylizację.",
+    Faworytka:
+      "Mniejsza siostra FAWORYTY, to ten sam silny charakter, ale w bardziej kompaktowym rozmiarze.",
   };
-  
-  container.innerHTML = '';
-  
+
+  container.innerHTML = "";
+
   Object.entries(productsByModel).forEach(([model, items]) => {
     // Tworzymy sekcję modelu
-    const section = document.createElement('section');
-    section.className = 'model-section';
-    
+    const section = document.createElement("section");
+    section.className = "model-section";
+
     // Tytuł modelu
-    const title = document.createElement('div');
-    title.className = 'model-title';
+    const title = document.createElement("div");
+    title.className = "model-title";
     title.innerHTML = `<span class="label">model</span><span class="name">${model}</span>`;
     section.appendChild(title);
 
     const description = modelDescriptions[model];
     if (description) {
-      const intro = document.createElement('p');
-      intro.className = 'model-intro';
+      const intro = document.createElement("p");
+      intro.className = "model-intro";
       intro.textContent = description;
       section.appendChild(intro);
     }
-    
+
     // Siatka produktów
-    const grid = document.createElement('div');
-    grid.className = 'products-grid';
-    
-    items.forEach(product => {
-      const productCard = document.createElement('a');
-      productCard.className = 'product-card';
-      productCard.href = `${toSitePath('produkt/')}?slug=${encodeURIComponent(product.slug)}`;
-      
+    const grid = document.createElement("div");
+    grid.className = "products-grid";
+
+    items.forEach((product) => {
+      const productCard = document.createElement("a");
+      const isUnavailable = !isProductAvailable(product);
+      productCard.className = `product-card${isUnavailable ? " is-unavailable" : ""}`;
+      productCard.href = `${toSitePath("produkt/")}?slug=${encodeURIComponent(product.slug)}`;
+
       productCard.innerHTML = `
         <div class="image-wrapper">
           <img src="${resolveAssetPath(product.mainImage)}" alt="${product.model} ${product.color}">
+          ${isUnavailable ? '<span class="product-unavailable-badge">chwilowo niedostępna</span>' : ""}
         </div>
         <div class="product-info">
           <span class="color-label">kolor</span>
@@ -81,10 +108,10 @@ function renderModels() {
           <span class="price">${product.price} zł</span>
         </div>
       `;
-      
+
       grid.appendChild(productCard);
     });
-    
+
     section.appendChild(grid);
     container.appendChild(section);
   });
@@ -96,17 +123,22 @@ function getOrderProductLabel(product) {
 
 function getOrderSeedProduct() {
   const urlParams = new URLSearchParams(window.location.search);
-  const slug = urlParams.get('slug');
+  const slug = urlParams.get("slug");
   if (!slug) return null;
 
-  return getProductBySlug(slug);
+  const product = getProductBySlug(slug);
+  return isProductAvailable(product) ? product : null;
 }
 
 function buildOrderModelOptions(selectedSlug) {
-  return products.map(product => {
-    const selectedAttr = product.slug === selectedSlug ? 'selected' : '';
-    return `<option value="${product.slug}" ${selectedAttr}>${getOrderProductLabel(product)}</option>`;
-  }).join('');
+  const availableProducts = getAvailableProducts();
+
+  return availableProducts
+    .map((product) => {
+      const selectedAttr = product.slug === selectedSlug ? "selected" : "";
+      return `<option value="${product.slug}" ${selectedAttr}>${getOrderProductLabel(product)}</option>`;
+    })
+    .join("");
 }
 
 function buildOrderQuantityOptions(selectedQuantity) {
@@ -115,16 +147,19 @@ function buildOrderQuantityOptions(selectedQuantity) {
 
   return Array.from({ length: maxQuantity }, (_, index) => {
     const value = index + 1;
-    const selectedAttr = value === numericQty ? 'selected' : '';
+    const selectedAttr = value === numericQty ? "selected" : "";
     return `<option value="${value}" ${selectedAttr}>x${value}</option>`;
-  }).join('');
+  }).join("");
 }
 
-const ORDER_FORM_DRAFT_STORAGE_KEY = 'cemborka-order-form-draft';
+const ORDER_FORM_DRAFT_STORAGE_KEY = "cemborka-order-form-draft";
 
 function canUseSessionStorage() {
   try {
-    return typeof window !== 'undefined' && typeof window.sessionStorage !== 'undefined';
+    return (
+      typeof window !== "undefined" &&
+      typeof window.sessionStorage !== "undefined"
+    );
   } catch {
     return false;
   }
@@ -134,11 +169,13 @@ function readOrderFormDraft() {
   if (!canUseSessionStorage()) return null;
 
   try {
-    const rawDraft = window.sessionStorage.getItem(ORDER_FORM_DRAFT_STORAGE_KEY);
+    const rawDraft = window.sessionStorage.getItem(
+      ORDER_FORM_DRAFT_STORAGE_KEY,
+    );
     if (!rawDraft) return null;
 
     const parsedDraft = JSON.parse(rawDraft);
-    return parsedDraft && typeof parsedDraft === 'object' ? parsedDraft : null;
+    return parsedDraft && typeof parsedDraft === "object" ? parsedDraft : null;
   } catch {
     return null;
   }
@@ -147,28 +184,37 @@ function readOrderFormDraft() {
 function writeOrderFormDraft(form) {
   if (!canUseSessionStorage() || !(form instanceof HTMLFormElement)) return;
 
-  const deliveryMethod = form.querySelector('#deliveryMethod');
-  const customerName = form.querySelector('#customerName');
-  const customerEmail = form.querySelector('#customerEmail');
-  const customerAddress = form.querySelector('#customerAddress');
-  const customerPhone = form.querySelector('#customerPhone');
-  const orderConsent = form.querySelector('#orderConsent');
+  const deliveryMethod = form.querySelector("#deliveryMethod");
+  const customerName = form.querySelector("#customerName");
+  const customerEmail = form.querySelector("#customerEmail");
+  const customerAddress = form.querySelector("#customerAddress");
+  const customerPhone = form.querySelector("#customerPhone");
+  const orderConsent = form.querySelector("#orderConsent");
 
   const draft = {
     items: buildOrderItemsPayload(form).map((item) => ({
       slug: item.modelSlug,
-      quantity: item.quantity
+      quantity: item.quantity,
     })),
-    deliveryMethod: deliveryMethod instanceof HTMLSelectElement ? deliveryMethod.value : '',
-    customerName: customerName instanceof HTMLInputElement ? customerName.value : '',
-    customerEmail: customerEmail instanceof HTMLInputElement ? customerEmail.value : '',
-    customerAddress: customerAddress instanceof HTMLInputElement ? customerAddress.value : '',
-    customerPhone: customerPhone instanceof HTMLInputElement ? customerPhone.value : '',
-    orderConsent: orderConsent instanceof HTMLInputElement ? orderConsent.checked : false
+    deliveryMethod:
+      deliveryMethod instanceof HTMLSelectElement ? deliveryMethod.value : "",
+    customerName:
+      customerName instanceof HTMLInputElement ? customerName.value : "",
+    customerEmail:
+      customerEmail instanceof HTMLInputElement ? customerEmail.value : "",
+    customerAddress:
+      customerAddress instanceof HTMLInputElement ? customerAddress.value : "",
+    customerPhone:
+      customerPhone instanceof HTMLInputElement ? customerPhone.value : "",
+    orderConsent:
+      orderConsent instanceof HTMLInputElement ? orderConsent.checked : false,
   };
 
   try {
-    window.sessionStorage.setItem(ORDER_FORM_DRAFT_STORAGE_KEY, JSON.stringify(draft));
+    window.sessionStorage.setItem(
+      ORDER_FORM_DRAFT_STORAGE_KEY,
+      JSON.stringify(draft),
+    );
   } catch {
     // Ignorujemy błąd zapisu, żeby nie blokować formularza.
   }
@@ -186,11 +232,14 @@ function clearOrderFormDraft() {
 
 function getOrderDraftItems(draft, fallbackSlug) {
   const fallbackItems = [{ slug: fallbackSlug, quantity: 1 }];
-  if (!draft || !Array.isArray(draft.items) || draft.items.length === 0) return fallbackItems;
+  if (!draft || !Array.isArray(draft.items) || draft.items.length === 0)
+    return fallbackItems;
 
   const validItems = draft.items.filter((item) => {
-    if (!item || typeof item !== 'object') return false;
-    if (typeof item.slug !== 'string' || !getProductBySlug(item.slug)) return false;
+    if (!item || typeof item !== "object") return false;
+    const product =
+      typeof item.slug === "string" ? getProductBySlug(item.slug) : null;
+    if (!isProductAvailable(product)) return false;
 
     const quantity = Number(item.quantity);
     return Number.isFinite(quantity) && quantity >= 1;
@@ -200,36 +249,54 @@ function getOrderDraftItems(draft, fallbackSlug) {
 }
 
 function applyOrderFormDraft(form, draft) {
-  if (!(form instanceof HTMLFormElement) || !draft || typeof draft !== 'object') return;
+  if (!(form instanceof HTMLFormElement) || !draft || typeof draft !== "object")
+    return;
 
-  const deliveryMethod = form.querySelector('#deliveryMethod');
-  const customerName = form.querySelector('#customerName');
-  const customerEmail = form.querySelector('#customerEmail');
-  const customerAddress = form.querySelector('#customerAddress');
-  const customerPhone = form.querySelector('#customerPhone');
-  const orderConsent = form.querySelector('#orderConsent');
+  const deliveryMethod = form.querySelector("#deliveryMethod");
+  const customerName = form.querySelector("#customerName");
+  const customerEmail = form.querySelector("#customerEmail");
+  const customerAddress = form.querySelector("#customerAddress");
+  const customerPhone = form.querySelector("#customerPhone");
+  const orderConsent = form.querySelector("#orderConsent");
 
-  if (deliveryMethod instanceof HTMLSelectElement && typeof draft.deliveryMethod === 'string') {
-    const optionExists = Array.from(deliveryMethod.options).some((option) => option.value === draft.deliveryMethod);
+  if (
+    deliveryMethod instanceof HTMLSelectElement &&
+    typeof draft.deliveryMethod === "string"
+  ) {
+    const optionExists = Array.from(deliveryMethod.options).some(
+      (option) => option.value === draft.deliveryMethod,
+    );
     if (optionExists) {
       deliveryMethod.value = draft.deliveryMethod;
       syncOrderCustomSelectUI(deliveryMethod);
     }
   }
 
-  if (customerName instanceof HTMLInputElement && typeof draft.customerName === 'string') {
+  if (
+    customerName instanceof HTMLInputElement &&
+    typeof draft.customerName === "string"
+  ) {
     customerName.value = draft.customerName;
   }
 
-  if (customerEmail instanceof HTMLInputElement && typeof draft.customerEmail === 'string') {
+  if (
+    customerEmail instanceof HTMLInputElement &&
+    typeof draft.customerEmail === "string"
+  ) {
     customerEmail.value = draft.customerEmail;
   }
 
-  if (customerAddress instanceof HTMLInputElement && typeof draft.customerAddress === 'string') {
+  if (
+    customerAddress instanceof HTMLInputElement &&
+    typeof draft.customerAddress === "string"
+  ) {
     customerAddress.value = draft.customerAddress;
   }
 
-  if (customerPhone instanceof HTMLInputElement && typeof draft.customerPhone === 'string') {
+  if (
+    customerPhone instanceof HTMLInputElement &&
+    typeof draft.customerPhone === "string"
+  ) {
     customerPhone.value = draft.customerPhone;
   }
 
@@ -241,128 +308,135 @@ function applyOrderFormDraft(form, draft) {
 let orderCustomSelectEventsBound = false;
 
 function closeAllOrderCustomSelects(exceptField) {
-  document.querySelectorAll('.order-field-select.is-open').forEach((field) => {
+  document.querySelectorAll(".order-field-select.is-open").forEach((field) => {
     if (exceptField && field === exceptField) return;
-    field.classList.remove('is-open');
+    field.classList.remove("is-open");
 
-    const trigger = field.querySelector('.order-custom-trigger');
-    if (trigger) trigger.setAttribute('aria-expanded', 'false');
+    const trigger = field.querySelector(".order-custom-trigger");
+    if (trigger) trigger.setAttribute("aria-expanded", "false");
   });
 }
 
 function syncOrderCustomSelectUI(selectEl) {
-  const field = selectEl.closest('.order-field-select');
+  const field = selectEl.closest(".order-field-select");
   if (!field) return;
 
   const selectedOption = selectEl.options[selectEl.selectedIndex];
-  const valueNode = field.querySelector('.order-custom-value');
+  const valueNode = field.querySelector(".order-custom-value");
   if (valueNode && selectedOption) {
     valueNode.textContent = selectedOption.textContent;
   }
 
-  field.querySelectorAll('.order-custom-option').forEach((optionButton) => {
-    optionButton.classList.toggle('is-selected', optionButton.dataset.value === selectEl.value);
+  field.querySelectorAll(".order-custom-option").forEach((optionButton) => {
+    optionButton.classList.toggle(
+      "is-selected",
+      optionButton.dataset.value === selectEl.value,
+    );
   });
 }
 
 function setupOrderCustomSelect(selectEl) {
-  if (!selectEl || selectEl.dataset.customized === 'true') return;
+  if (!selectEl || selectEl.dataset.customized === "true") return;
 
-  const field = selectEl.closest('.order-field-select');
+  const field = selectEl.closest(".order-field-select");
   if (!field) return;
 
-  selectEl.classList.add('order-native-select');
+  selectEl.classList.add("order-native-select");
 
-  const trigger = document.createElement('button');
-  trigger.type = 'button';
-  trigger.className = 'order-custom-trigger';
-  trigger.setAttribute('aria-haspopup', 'listbox');
-  trigger.setAttribute('aria-expanded', 'false');
+  const trigger = document.createElement("button");
+  trigger.type = "button";
+  trigger.className = "order-custom-trigger";
+  trigger.setAttribute("aria-haspopup", "listbox");
+  trigger.setAttribute("aria-expanded", "false");
 
-  const fieldLabel = field.querySelector('label');
+  const fieldLabel = field.querySelector("label");
   if (fieldLabel) {
-    fieldLabel.addEventListener('click', (event) => {
+    fieldLabel.addEventListener("click", (event) => {
       event.preventDefault();
       trigger.click();
     });
   }
 
-  const valueNode = document.createElement('span');
-  valueNode.className = 'order-custom-value';
+  const valueNode = document.createElement("span");
+  valueNode.className = "order-custom-value";
   trigger.appendChild(valueNode);
 
-  const menu = document.createElement('div');
-  menu.className = 'order-custom-menu';
-  menu.setAttribute('role', 'listbox');
+  const menu = document.createElement("div");
+  menu.className = "order-custom-menu";
+  menu.setAttribute("role", "listbox");
 
   Array.from(selectEl.options).forEach((optionEl) => {
-    const optionButton = document.createElement('button');
-    optionButton.type = 'button';
-    optionButton.className = 'order-custom-option';
+    const optionButton = document.createElement("button");
+    optionButton.type = "button";
+    optionButton.className = "order-custom-option";
     optionButton.dataset.value = optionEl.value;
     optionButton.textContent = optionEl.textContent;
-    optionButton.setAttribute('role', 'option');
+    optionButton.setAttribute("role", "option");
 
     if (optionEl.selected) {
-      optionButton.classList.add('is-selected');
+      optionButton.classList.add("is-selected");
     }
 
-    optionButton.addEventListener('click', () => {
+    optionButton.addEventListener("click", () => {
       selectEl.value = optionEl.value;
-      selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+      selectEl.dispatchEvent(new Event("change", { bubbles: true }));
       closeAllOrderCustomSelects();
     });
 
     menu.appendChild(optionButton);
   });
 
-  trigger.addEventListener('click', () => {
-    const isOpen = field.classList.contains('is-open');
+  trigger.addEventListener("click", () => {
+    const isOpen = field.classList.contains("is-open");
     closeAllOrderCustomSelects(field);
 
     if (!isOpen) {
-      field.classList.add('is-open');
-      trigger.setAttribute('aria-expanded', 'true');
+      field.classList.add("is-open");
+      trigger.setAttribute("aria-expanded", "true");
     } else {
-      field.classList.remove('is-open');
-      trigger.setAttribute('aria-expanded', 'false');
+      field.classList.remove("is-open");
+      trigger.setAttribute("aria-expanded", "false");
     }
   });
 
-  trigger.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
+  trigger.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
       closeAllOrderCustomSelects();
       return;
     }
 
-    if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowDown') {
+    if (
+      event.key === "Enter" ||
+      event.key === " " ||
+      event.key === "ArrowDown"
+    ) {
       event.preventDefault();
-      if (!field.classList.contains('is-open')) {
+      if (!field.classList.contains("is-open")) {
         closeAllOrderCustomSelects(field);
-        field.classList.add('is-open');
-        trigger.setAttribute('aria-expanded', 'true');
+        field.classList.add("is-open");
+        trigger.setAttribute("aria-expanded", "true");
       }
     }
   });
 
-  selectEl.addEventListener('change', () => syncOrderCustomSelectUI(selectEl));
+  selectEl.addEventListener("change", () => syncOrderCustomSelectUI(selectEl));
 
   field.appendChild(trigger);
   field.appendChild(menu);
 
   syncOrderCustomSelectUI(selectEl);
-  selectEl.dataset.customized = 'true';
+  selectEl.dataset.customized = "true";
 }
 
 function initializeOrderCustomSelects(root) {
   const scope = root || document;
-  scope.querySelectorAll('.order-field-select select').forEach((selectEl) => {
+  scope.querySelectorAll(".order-field-select select").forEach((selectEl) => {
     setupOrderCustomSelect(selectEl);
   });
 
   if (!orderCustomSelectEventsBound) {
-    document.addEventListener('click', (event) => {
-      if (!event.target.closest('.order-field-select')) {
+    document.addEventListener("click", (event) => {
+      if (!event.target.closest(".order-field-select")) {
         closeAllOrderCustomSelects();
       }
     });
@@ -371,8 +445,8 @@ function initializeOrderCustomSelects(root) {
 }
 
 function createOrderItemRow(selectedSlug, quantity) {
-  const row = document.createElement('div');
-  row.className = 'order-item-row';
+  const row = document.createElement("div");
+  row.className = "order-item-row";
 
   row.innerHTML = `
     <div class="order-field order-field-select">
@@ -398,26 +472,30 @@ function createOrderItemRow(selectedSlug, quantity) {
 }
 
 function updateOrderRemoveButtonsState() {
-  const rows = document.querySelectorAll('.order-item-row');
+  const rows = document.querySelectorAll(".order-item-row");
   const isSingleRow = rows.length <= 1;
 
   rows.forEach((row) => {
-    const removeButton = row.querySelector('.remove-order-row');
+    const removeButton = row.querySelector(".remove-order-row");
     if (!removeButton) return;
 
     removeButton.disabled = isSingleRow;
-    removeButton.classList.toggle('is-disabled', isSingleRow);
+    removeButton.classList.toggle("is-disabled", isSingleRow);
   });
 }
 
 function normalizeOrderFieldValue(field) {
-  if (!field || typeof field.value !== 'string') return '';
+  if (!field || typeof field.value !== "string") return "";
   return field.value.trim();
 }
 
 function isValidOrderPhone(phoneValue) {
-  const compact = phoneValue.replace(/[\s-]/g, '');
-  return /^\d{9}$/.test(compact) || /^48\d{9}$/.test(compact) || /^\+48\d{9}$/.test(compact);
+  const compact = phoneValue.replace(/[\s-]/g, "");
+  return (
+    /^\d{9}$/.test(compact) ||
+    /^48\d{9}$/.test(compact) ||
+    /^\+48\d{9}$/.test(compact)
+  );
 }
 
 function isValidOrderEmail(emailValue) {
@@ -425,37 +503,37 @@ function isValidOrderEmail(emailValue) {
 }
 
 function setOrderFieldInvalidState(field, isInvalid) {
-  const fieldWrapper = field.closest('.order-field');
+  const fieldWrapper = field.closest(".order-field");
   if (!fieldWrapper) return;
 
-  fieldWrapper.classList.toggle('has-error', isInvalid);
-  field.setAttribute('aria-invalid', isInvalid ? 'true' : 'false');
+  fieldWrapper.classList.toggle("has-error", isInvalid);
+  field.setAttribute("aria-invalid", isInvalid ? "true" : "false");
 }
 
 function clearOrderFormErrors(form) {
-  form.querySelectorAll('.order-field.has-error').forEach((fieldWrapper) => {
-    fieldWrapper.classList.remove('has-error');
+  form.querySelectorAll(".order-field.has-error").forEach((fieldWrapper) => {
+    fieldWrapper.classList.remove("has-error");
   });
 
   form.querySelectorAll('[aria-invalid="true"]').forEach((field) => {
-    field.setAttribute('aria-invalid', 'false');
+    field.setAttribute("aria-invalid", "false");
   });
 
-  const errorNode = form.querySelector('#orderFormError');
+  const errorNode = form.querySelector("#orderFormError");
   if (errorNode) {
     errorNode.hidden = true;
-    errorNode.textContent = '';
+    errorNode.textContent = "";
   }
 
-  const consentErrorNode = form.querySelector('#orderConsentError');
+  const consentErrorNode = form.querySelector("#orderConsentError");
   if (consentErrorNode) {
     consentErrorNode.hidden = true;
-    consentErrorNode.textContent = '';
+    consentErrorNode.textContent = "";
   }
 }
 
 function validateOrderForm(form) {
-  const requiredFields = Array.from(form.querySelectorAll('[required]'));
+  const requiredFields = Array.from(form.querySelectorAll("[required]"));
   const invalidDataFields = [];
   let consentField = null;
   let isConsentInvalid = false;
@@ -463,7 +541,7 @@ function validateOrderForm(form) {
   requiredFields.forEach((field) => {
     let isInvalid = false;
 
-    if (field instanceof HTMLInputElement && field.type === 'checkbox') {
+    if (field instanceof HTMLInputElement && field.type === "checkbox") {
       consentField = field;
       isInvalid = !field.checked;
       isConsentInvalid = isInvalid;
@@ -471,56 +549,61 @@ function validateOrderForm(form) {
       const value = normalizeOrderFieldValue(field);
       isInvalid = value.length === 0;
 
-      if (!isInvalid && field.id === 'customerEmail') {
+      if (!isInvalid && field.id === "customerEmail") {
         isInvalid = !isValidOrderEmail(value);
       }
 
-      if (!isInvalid && field.id === 'customerPhone') {
+      if (!isInvalid && field.id === "customerPhone") {
         isInvalid = !isValidOrderPhone(value);
       }
     }
 
     setOrderFieldInvalidState(field, isInvalid);
 
-    if (isInvalid && !(field instanceof HTMLInputElement && field.type === 'checkbox')) {
+    if (
+      isInvalid &&
+      !(field instanceof HTMLInputElement && field.type === "checkbox")
+    ) {
       invalidDataFields.push(field);
     }
   });
 
-  const errorNode = form.querySelector('#orderFormError');
-  const consentErrorNode = form.querySelector('#orderConsentError');
+  const errorNode = form.querySelector("#orderFormError");
+  const consentErrorNode = form.querySelector("#orderConsentError");
 
   if (errorNode) {
     if (invalidDataFields.length > 0) {
-      errorNode.textContent = 'Formularz nie jest poprawnie uzupełniony. Uzupełnij wszystkie wymagane pola i sprawdź format e-maila oraz telefonu.';
+      errorNode.textContent =
+        "Formularz nie jest poprawnie uzupełniony. Uzupełnij wszystkie wymagane pola i sprawdź format e-maila oraz telefonu.";
       errorNode.hidden = false;
     } else {
       errorNode.hidden = true;
-      errorNode.textContent = '';
+      errorNode.textContent = "";
     }
   }
 
   if (consentErrorNode) {
     consentErrorNode.hidden = true;
-    consentErrorNode.textContent = '';
+    consentErrorNode.textContent = "";
   }
 
   return {
     isValid: invalidDataFields.length === 0 && !isConsentInvalid,
-    firstInvalidField: invalidDataFields[0] || (isConsentInvalid ? consentField : null)
+    firstInvalidField:
+      invalidDataFields[0] || (isConsentInvalid ? consentField : null),
   };
 }
 
 function setOrderSubmitState(form, isSubmitting) {
-  const submitButton = form.querySelector('.order-submit-button');
+  const submitButton = form.querySelector(".order-submit-button");
   if (!submitButton) return;
 
   submitButton.disabled = isSubmitting;
-  submitButton.textContent = isSubmitting ? 'WYSYŁAM...' : 'WYŚLIJ';
+  submitButton.textContent = isSubmitting ? "WYSYŁAM..." : "WYŚLIJ";
 }
 
 function showOrderSubmitError(form, message) {
-  const submitErrorNode = form.querySelector('#orderSubmitError');
+  const submitErrorNode = form.querySelector("#orderSubmitError");
   if (!submitErrorNode) return;
 
   submitErrorNode.textContent = message;
@@ -528,39 +611,54 @@ function showOrderSubmitError(form, message) {
 }
 
 function clearOrderSubmitError(form) {
-  const submitErrorNode = form.querySelector('#orderSubmitError');
+  const submitErrorNode = form.querySelector("#orderSubmitError");
   if (!submitErrorNode) return;
 
   submitErrorNode.hidden = true;
-  submitErrorNode.textContent = '';
+  submitErrorNode.textContent = "";
 }
 
 function buildOrderItemsPayload(form) {
-  return Array.from(form.querySelectorAll('.order-item-row')).map((row, index) => {
-    const modelSelect = row.querySelector('.order-model-select');
-    const quantitySelect = row.querySelector('.order-quantity-select');
+  return Array.from(form.querySelectorAll(".order-item-row")).map(
+    (row, index) => {
+      const modelSelect = row.querySelector(".order-model-select");
+      const quantitySelect = row.querySelector(".order-quantity-select");
 
-    const modelLabel = modelSelect?.options[modelSelect.selectedIndex]?.textContent?.trim() || '';
-    const modelSlug = modelSelect?.value || '';
-    const quantityValue = quantitySelect?.value || '';
+      const modelLabel =
+        modelSelect?.options[modelSelect.selectedIndex]?.textContent?.trim() ||
+        "";
+      const modelSlug = modelSelect?.value || "";
+      const quantityValue = quantitySelect?.value || "";
 
-    return {
-      lp: index + 1,
-      modelSlug,
-      modelLabel,
-      quantity: Number(quantityValue) || 1
-    };
-  });
+      return {
+        lp: index + 1,
+        modelSlug,
+        modelLabel,
+        quantity: Number(quantityValue) || 1,
+      };
+    },
+  );
 }
 
 function buildOrderMailPayload(form) {
-  const customerName = normalizeOrderFieldValue(form.querySelector('#customerName'));
-  const customerEmail = normalizeOrderFieldValue(form.querySelector('#customerEmail'));
-  const customerAddress = normalizeOrderFieldValue(form.querySelector('#customerAddress'));
-  const customerPhone = normalizeOrderFieldValue(form.querySelector('#customerPhone'));
-  const deliverySelect = form.querySelector('#deliveryMethod');
-  const deliveryMethod = deliverySelect?.value || '';
-  const deliveryLabel = deliverySelect?.options[deliverySelect.selectedIndex]?.textContent?.trim() || '';
+  const customerName = normalizeOrderFieldValue(
+    form.querySelector("#customerName"),
+  );
+  const customerEmail = normalizeOrderFieldValue(
+    form.querySelector("#customerEmail"),
+  );
+  const customerAddress = normalizeOrderFieldValue(
+    form.querySelector("#customerAddress"),
+  );
+  const customerPhone = normalizeOrderFieldValue(
+    form.querySelector("#customerPhone"),
+  );
+  const deliverySelect = form.querySelector("#deliveryMethod");
+  const deliveryMethod = deliverySelect?.value || "";
+  const deliveryLabel =
+    deliverySelect?.options[
+      deliverySelect.selectedIndex
+    ]?.textContent?.trim() || "";
   const orderItems = buildOrderItemsPayload(form);
 
   // Czysty payload strukturalny – Go/backend sam formatuje maila z tych danych.
@@ -571,31 +669,32 @@ function buildOrderMailPayload(form) {
     customerAddress,
     deliveryMethod,
     deliveryLabel,
-    orderItems
+    orderItems,
   };
 }
 
 async function submitOrderFormData(form) {
-  const endpoint = (typeof ORDER_FORM_CONFIG !== 'undefined' && ORDER_FORM_CONFIG.endpoint)
-    ? ORDER_FORM_CONFIG.endpoint.trim()
-    : '';
+  const endpoint =
+    typeof ORDER_FORM_CONFIG !== "undefined" && ORDER_FORM_CONFIG.endpoint
+      ? ORDER_FORM_CONFIG.endpoint.trim()
+      : "";
 
   if (!endpoint) {
-    throw new Error('ORDER_FORM_ENDPOINT_MISSING');
+    throw new Error("ORDER_FORM_ENDPOINT_MISSING");
   }
 
   const payload = buildOrderMailPayload(form);
   const response = await fetch(endpoint, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json'
+      "Content-Type": "application/json",
+      Accept: "application/json",
     },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   });
 
   if (!response.ok) {
-    throw new Error('ORDER_FORM_SUBMIT_FAILED');
+    throw new Error("ORDER_FORM_SUBMIT_FAILED");
   }
 
   return { ok: true };
@@ -605,31 +704,37 @@ function renderOrderSuccessState(container) {
   if (!container) return;
 
   clearOrderFormDraft();
-  container.classList.add('is-success');
+  container.classList.add("is-success");
   container.innerHTML = `
     <section class="order-success-panel" aria-live="polite">
       <span class="material-symbols-outlined order-success-check" aria-hidden="true">check</span>
       <p class="order-success-thanks">Dziękujemy!</p>
       <h2 class="order-success-title">FORMULARZ<br>WYSŁANY!</h2>
-      <img src="${toSitePath('images/bag.png')}" alt="Ilustracja torebki" class="order-success-image">
+      <img src="${toSitePath("images/bag.png")}" alt="Ilustracja torebki" class="order-success-image">
     </section>
   `;
 }
 
 function renderOrderForm() {
-  const container = document.getElementById('orderFormContainer');
+  const container = document.getElementById("orderFormContainer");
   if (!container) return;
+
+  const availableProducts = getAvailableProducts();
+  if (availableProducts.length === 0) {
+    window.location.href = toSitePath("modele/");
+    return;
+  }
 
   const initialProduct = getOrderSeedProduct();
   if (!initialProduct) {
-    window.location.href = toSitePath('modele/');
+    window.location.href = toSitePath("modele/");
     return;
   }
 
   container.innerHTML = `
     <section class="order-hero">
       <h1 class="order-title">KUPUJĘ!</h1>
-      <p class="order-subtitle">Miło nam, że chcesz kupić nasz produkt!<br>Możesz to zrobić przez poniższy formularz!</p>
+      <p class="order-subtitle">Cieszymy się, że tu jesteś!<br>Zamówienie możesz złożyć przez poniższy formularz.</p>
     </section>
 
     <form id="orderForm" class="order-form" novalidate>
@@ -671,7 +776,7 @@ function renderOrderForm() {
       <div class="order-field order-consent-field">
         <label class="order-consent-label" for="orderConsent">
           <input type="checkbox" id="orderConsent" name="orderConsent" required>
-          <span>Akceptuję <a href="${toSitePath('regulamin/')}" target="_blank" rel="noopener">Regulamin</a> i <a href="${toSitePath('polityka-prywatnosci/')}" target="_blank" rel="noopener">Politykę Prywatności</a> sklepu CEMBORKA</span>
+          <span>Akceptuję <a href="${toSitePath("regulamin/")}" target="_blank" rel="noopener">Regulamin</a> i <a href="${toSitePath("polityka-prywatnosci/")}" target="_blank" rel="noopener">Politykę Prywatności</a> sklepu CEMBORKA</span>
         </label>
       </div>
 
@@ -686,11 +791,11 @@ function renderOrderForm() {
     </form>
   `;
 
-  container.classList.remove('is-success');
+  container.classList.remove("is-success");
 
-  const itemsContainer = document.getElementById('orderItems');
-  const addRowButton = document.getElementById('addOrderRow');
-  const orderForm = document.getElementById('orderForm');
+  const itemsContainer = document.getElementById("orderItems");
+  const addRowButton = document.getElementById("addOrderRow");
+  const orderForm = document.getElementById("orderForm");
   const orderDraft = readOrderFormDraft();
 
   getOrderDraftItems(orderDraft, initialProduct.slug).forEach((item) => {
@@ -701,19 +806,19 @@ function renderOrderForm() {
   applyOrderFormDraft(orderForm, orderDraft);
   updateOrderRemoveButtonsState();
 
-  addRowButton.addEventListener('click', () => {
-    const newRow = createOrderItemRow(products[0].slug, 1);
+  addRowButton.addEventListener("click", () => {
+    const newRow = createOrderItemRow(availableProducts[0].slug, 1);
     itemsContainer.appendChild(newRow);
     initializeOrderCustomSelects(newRow);
     updateOrderRemoveButtonsState();
     writeOrderFormDraft(orderForm);
   });
 
-  itemsContainer.addEventListener('click', (event) => {
-    const removeButton = event.target.closest('.remove-order-row');
+  itemsContainer.addEventListener("click", (event) => {
+    const removeButton = event.target.closest(".remove-order-row");
     if (!removeButton || removeButton.disabled) return;
 
-    const row = removeButton.closest('.order-item-row');
+    const row = removeButton.closest(".order-item-row");
     if (row) {
       row.remove();
       updateOrderRemoveButtonsState();
@@ -721,16 +826,20 @@ function renderOrderForm() {
     }
   });
 
-  orderForm.addEventListener('input', (event) => {
+  orderForm.addEventListener("input", (event) => {
     const field = event.target;
-    if (!(field instanceof HTMLInputElement) && !(field instanceof HTMLSelectElement)) return;
+    if (
+      !(field instanceof HTMLInputElement) &&
+      !(field instanceof HTMLSelectElement)
+    )
+      return;
 
     writeOrderFormDraft(orderForm);
 
-    if (!field.hasAttribute('required')) return;
-    if (orderForm.dataset.validationAttempted !== 'true') return;
+    if (!field.hasAttribute("required")) return;
+    if (orderForm.dataset.validationAttempted !== "true") return;
 
-    if (field instanceof HTMLInputElement && field.type === 'checkbox') {
+    if (field instanceof HTMLInputElement && field.type === "checkbox") {
       setOrderFieldInvalidState(field, !field.checked);
       return;
     }
@@ -738,51 +847,59 @@ function renderOrderForm() {
     const value = normalizeOrderFieldValue(field);
     let isInvalid = value.length === 0;
 
-    if (!isInvalid && field.id === 'customerEmail') {
+    if (!isInvalid && field.id === "customerEmail") {
       isInvalid = !isValidOrderEmail(value);
     }
 
-    if (!isInvalid && field.id === 'customerPhone') {
+    if (!isInvalid && field.id === "customerPhone") {
       isInvalid = !isValidOrderPhone(value);
     }
 
     setOrderFieldInvalidState(field, isInvalid);
   });
 
-  orderForm.addEventListener('change', (event) => {
+  orderForm.addEventListener("change", (event) => {
     const field = event.target;
-    if (!(field instanceof HTMLSelectElement) && !(field instanceof HTMLInputElement)) return;
+    if (
+      !(field instanceof HTMLSelectElement) &&
+      !(field instanceof HTMLInputElement)
+    )
+      return;
 
     writeOrderFormDraft(orderForm);
 
-    if (!field.hasAttribute('required')) return;
-    if (orderForm.dataset.validationAttempted !== 'true') return;
+    if (!field.hasAttribute("required")) return;
+    if (orderForm.dataset.validationAttempted !== "true") return;
 
-    const isInvalid = field instanceof HTMLInputElement && field.type === 'checkbox'
-      ? !field.checked
-      : normalizeOrderFieldValue(field).length === 0;
+    const isInvalid =
+      field instanceof HTMLInputElement && field.type === "checkbox"
+        ? !field.checked
+        : normalizeOrderFieldValue(field).length === 0;
 
     setOrderFieldInvalidState(field, isInvalid);
 
-    if (field instanceof HTMLInputElement && field.type === 'checkbox') {
-      const consentErrorNode = orderForm.querySelector('#orderConsentError');
+    if (field instanceof HTMLInputElement && field.type === "checkbox") {
+      const consentErrorNode = orderForm.querySelector("#orderConsentError");
       if (consentErrorNode && field.checked) {
         consentErrorNode.hidden = true;
-        consentErrorNode.textContent = '';
+        consentErrorNode.textContent = "";
       }
     }
   });
 
-  orderForm.addEventListener('submit', async (event) => {
+  orderForm.addEventListener("submit", async (event) => {
     event.preventDefault();
-    orderForm.dataset.validationAttempted = 'true';
+    orderForm.dataset.validationAttempted = "true";
     clearOrderFormErrors(orderForm);
     clearOrderSubmitError(orderForm);
 
     const result = validateOrderForm(orderForm);
     if (!result.isValid) {
       result.firstInvalidField?.focus({ preventScroll: true });
-      result.firstInvalidField?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      result.firstInvalidField?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
       return;
     }
 
@@ -791,15 +908,24 @@ function renderOrderForm() {
       const response = await submitOrderFormData(orderForm);
 
       if (!response?.ok) {
-        throw new Error('Submit failed');
+        throw new Error("Submit failed");
       }
 
       renderOrderSuccessState(container);
     } catch (error) {
-      if (error instanceof Error && error.message === 'ORDER_FORM_ENDPOINT_MISSING') {
-        showOrderSubmitError(orderForm, 'Wysylka formularza nie jest jeszcze skonfigurowana. Ustaw endpoint w js/data.js (ORDER_FORM_CONFIG.endpoint).');
+      if (
+        error instanceof Error &&
+        error.message === "ORDER_FORM_ENDPOINT_MISSING"
+      ) {
+        showOrderSubmitError(
+          orderForm,
+          "Wysylka formularza nie jest jeszcze skonfigurowana. Ustaw endpoint w js/data.js (ORDER_FORM_CONFIG.endpoint).",
+        );
       } else {
-        showOrderSubmitError(orderForm, 'Nie udało się wysłać formularza. Spróbuj ponownie za chwilę.');
+        showOrderSubmitError(
+          orderForm,
+          "Nie udało się wysłać formularza. Spróbuj ponownie za chwilę.",
+        );
       }
     } finally {
       setOrderSubmitState(orderForm, false);
@@ -811,22 +937,22 @@ function renderOrderForm() {
 function renderProductDetail() {
   // Pobieramy slug z URL
   const urlParams = new URLSearchParams(window.location.search);
-  const slug = urlParams.get('slug');
-  
+  const slug = urlParams.get("slug");
+
   if (!slug) {
-    window.location.href = toSitePath('modele/');
+    window.location.href = toSitePath("modele/");
     return;
   }
-  
+
   const product = getProductBySlug(slug);
-  
+
   if (!product) {
-    window.location.href = toSitePath('modele/');
+    window.location.href = toSitePath("modele/");
     return;
   }
-  
-  const container = document.getElementById('productContainer');
-  container.innerHTML = ''; // Zawsze czyść kontener
+
+  const container = document.getElementById("productContainer");
+  container.innerHTML = ""; // Zawsze czyść kontener
 
   // --- Struktura dla wersji mobilnej (pozostaje bez zmian) ---
   renderMobileView(container, product);
@@ -843,13 +969,13 @@ function renderProductDetail() {
 
 let productLightboxState = {
   images: [],
-  index: 0
+  index: 0,
 };
 
 let productLightboxTouchState = {
   startX: 0,
   startY: 0,
-  isTracking: false
+  isTracking: false,
 };
 
 let productLightboxZoomState = {
@@ -857,14 +983,14 @@ let productLightboxZoomState = {
   minScale: 1,
   maxScale: 4,
   originX: 50,
-  originY: 50
+  originY: 50,
 };
 
 function createProductLightbox() {
-  const lightbox = document.createElement('div');
-  lightbox.className = 'product-lightbox';
+  const lightbox = document.createElement("div");
+  lightbox.className = "product-lightbox";
   lightbox.hidden = true;
-  lightbox.setAttribute('aria-hidden', 'true');
+  lightbox.setAttribute("aria-hidden", "true");
 
   lightbox.innerHTML = `
     <div class="product-lightbox-backdrop" data-lightbox-close="true"></div>
@@ -874,50 +1000,61 @@ function createProductLightbox() {
       </button>
       <div class="product-lightbox-stage">
         <button type="button" class="product-lightbox-arrow prev" aria-label="Poprzednie zdjęcie">
-          <img src="${toSitePath('images/back-icon.png')}" alt="" class="back-icon">
+          <img src="${toSitePath("images/back-icon.png")}" alt="" class="back-icon">
         </button>
         <img src="" alt="" class="product-lightbox-image">
         <button type="button" class="product-lightbox-arrow next" aria-label="Następne zdjęcie">
-          <img src="${toSitePath('images/back-icon.png')}" alt="" class="back-icon back-icon-next">
+          <img src="${toSitePath("images/back-icon.png")}" alt="" class="back-icon back-icon-next">
         </button>
       </div>
       <p class="product-lightbox-counter" aria-live="polite"></p>
     </div>
   `;
 
-  const stage = lightbox.querySelector('.product-lightbox-stage');
-  const imageNode = lightbox.querySelector('.product-lightbox-image');
+  const stage = lightbox.querySelector(".product-lightbox-stage");
+  const imageNode = lightbox.querySelector(".product-lightbox-image");
   if (stage instanceof HTMLElement) {
-    stage.addEventListener('touchstart', handleProductLightboxTouchStart, { passive: true });
-    stage.addEventListener('touchend', handleProductLightboxTouchEnd, { passive: true });
-    stage.addEventListener('touchcancel', resetProductLightboxTouchState, { passive: true });
-    stage.addEventListener('mousemove', handleProductLightboxMouseMove);
-    stage.addEventListener('wheel', handleProductLightboxWheel, { passive: false });
+    stage.addEventListener("touchstart", handleProductLightboxTouchStart, {
+      passive: true,
+    });
+    stage.addEventListener("touchend", handleProductLightboxTouchEnd, {
+      passive: true,
+    });
+    stage.addEventListener("touchcancel", resetProductLightboxTouchState, {
+      passive: true,
+    });
+    stage.addEventListener("mousemove", handleProductLightboxMouseMove);
+    stage.addEventListener("wheel", handleProductLightboxWheel, {
+      passive: false,
+    });
   }
 
   if (imageNode instanceof HTMLImageElement) {
-    imageNode.addEventListener('load', syncProductLightboxArrowOffsets);
-    imageNode.addEventListener('load', syncProductLightboxZoom);
-    imageNode.addEventListener('click', handleProductLightboxImageClick);
+    imageNode.addEventListener("load", syncProductLightboxArrowOffsets);
+    imageNode.addEventListener("load", syncProductLightboxZoom);
+    imageNode.addEventListener("click", handleProductLightboxImageClick);
   }
 
-  lightbox.addEventListener('click', (event) => {
+  lightbox.addEventListener("click", (event) => {
     const target = event.target;
     if (!(target instanceof HTMLElement)) return;
 
-    if (target.dataset.lightboxClose === 'true' || target.closest('.product-lightbox-close')) {
+    if (
+      target.dataset.lightboxClose === "true" ||
+      target.closest(".product-lightbox-close")
+    ) {
       closeProductLightbox();
       return;
     }
 
-    const prevArrow = target.closest('.product-lightbox-arrow.prev');
+    const prevArrow = target.closest(".product-lightbox-arrow.prev");
     if (prevArrow instanceof HTMLButtonElement) {
       changeProductLightboxImage(-1);
       prevArrow.blur();
       return;
     }
 
-    const nextArrow = target.closest('.product-lightbox-arrow.next');
+    const nextArrow = target.closest(".product-lightbox-arrow.next");
     if (nextArrow instanceof HTMLButtonElement) {
       changeProductLightboxImage(1);
       nextArrow.blur();
@@ -965,15 +1102,17 @@ function resetProductLightboxTouchState() {
 }
 
 function canUseDesktopLightboxZoom() {
-  return typeof window !== 'undefined'
-    && typeof window.matchMedia === 'function'
-    && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  return (
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(hover: hover) and (pointer: fine)").matches
+  );
 }
 
 function clampProductLightboxZoomScale(scale) {
   return Math.min(
     productLightboxZoomState.maxScale,
-    Math.max(productLightboxZoomState.minScale, scale)
+    Math.max(productLightboxZoomState.minScale, scale),
   );
 }
 
@@ -991,24 +1130,26 @@ function setProductLightboxZoomOriginFromPointer(event, imageNode) {
 }
 
 function syncProductLightboxZoom() {
-  const lightbox = document.querySelector('.product-lightbox');
+  const lightbox = document.querySelector(".product-lightbox");
   if (!(lightbox instanceof HTMLElement)) return;
 
-  const stage = lightbox.querySelector('.product-lightbox-stage');
-  const imageNode = lightbox.querySelector('.product-lightbox-image');
+  const stage = lightbox.querySelector(".product-lightbox-stage");
+  const imageNode = lightbox.querySelector(".product-lightbox-image");
 
   if (!(stage instanceof HTMLElement)) return;
   if (!(imageNode instanceof HTMLImageElement)) return;
 
   const isDesktopZoom = canUseDesktopLightboxZoom();
-  const scale = isDesktopZoom ? clampProductLightboxZoomScale(productLightboxZoomState.scale) : 1;
+  const scale = isDesktopZoom
+    ? clampProductLightboxZoomScale(productLightboxZoomState.scale)
+    : 1;
   const isZoomed = scale > 1.01;
 
   productLightboxZoomState.scale = scale;
   imageNode.style.transformOrigin = `${productLightboxZoomState.originX}% ${productLightboxZoomState.originY}%`;
   imageNode.style.transform = `scale(${scale})`;
-  stage.classList.toggle('is-zoomed', isZoomed);
-  imageNode.classList.toggle('is-zoomed', isZoomed);
+  stage.classList.toggle("is-zoomed", isZoomed);
+  imageNode.classList.toggle("is-zoomed", isZoomed);
 
   requestAnimationFrame(syncProductLightboxArrowOffsets);
 }
@@ -1039,10 +1180,10 @@ function handleProductLightboxMouseMove(event) {
   if (!canUseDesktopLightboxZoom()) return;
   if (productLightboxZoomState.scale <= 1.01) return;
 
-  const lightbox = document.querySelector('.product-lightbox');
+  const lightbox = document.querySelector(".product-lightbox");
   if (!(lightbox instanceof HTMLElement) || lightbox.hidden) return;
 
-  const imageNode = lightbox.querySelector('.product-lightbox-image');
+  const imageNode = lightbox.querySelector(".product-lightbox-image");
   if (!(imageNode instanceof HTMLImageElement)) return;
 
   setProductLightboxZoomOriginFromPointer(event, imageNode);
@@ -1052,17 +1193,17 @@ function handleProductLightboxMouseMove(event) {
 function handleProductLightboxWheel(event) {
   if (!canUseDesktopLightboxZoom()) return;
 
-  const lightbox = document.querySelector('.product-lightbox');
+  const lightbox = document.querySelector(".product-lightbox");
   if (!(lightbox instanceof HTMLElement) || lightbox.hidden) return;
 
-  const imageNode = lightbox.querySelector('.product-lightbox-image');
+  const imageNode = lightbox.querySelector(".product-lightbox-image");
   if (!(imageNode instanceof HTMLImageElement)) return;
 
   event.preventDefault();
   setProductLightboxZoomOriginFromPointer(event, imageNode);
 
   const nextScale = clampProductLightboxZoomScale(
-    productLightboxZoomState.scale + (event.deltaY < 0 ? 0.4 : -0.4)
+    productLightboxZoomState.scale + (event.deltaY < 0 ? 0.4 : -0.4),
   );
 
   if (nextScale <= 1.01) {
@@ -1075,15 +1216,15 @@ function handleProductLightboxWheel(event) {
 }
 
 function ensureProductLightbox() {
-  return document.querySelector('.product-lightbox') || createProductLightbox();
+  return document.querySelector(".product-lightbox") || createProductLightbox();
 }
 
 function updateProductLightbox() {
   const lightbox = ensureProductLightbox();
-  const imageNode = lightbox.querySelector('.product-lightbox-image');
-  const counterNode = lightbox.querySelector('.product-lightbox-counter');
-  const prevButton = lightbox.querySelector('.product-lightbox-arrow.prev');
-  const nextButton = lightbox.querySelector('.product-lightbox-arrow.next');
+  const imageNode = lightbox.querySelector(".product-lightbox-image");
+  const counterNode = lightbox.querySelector(".product-lightbox-counter");
+  const prevButton = lightbox.querySelector(".product-lightbox-arrow.prev");
+  const nextButton = lightbox.querySelector(".product-lightbox-arrow.next");
 
   if (!(imageNode instanceof HTMLImageElement)) return;
   if (!(counterNode instanceof HTMLElement)) return;
@@ -1110,28 +1251,34 @@ function openProductLightbox(images, startIndex) {
   if (!Array.isArray(images) || images.length === 0) return;
 
   productLightboxState.images = images;
-  productLightboxState.index = Math.max(0, Math.min(startIndex, images.length - 1));
+  productLightboxState.index = Math.max(
+    0,
+    Math.min(startIndex, images.length - 1),
+  );
   productLightboxState.savedScrollY = window.scrollY;
 
   const lightbox = ensureProductLightbox();
   lightbox.hidden = false;
-  lightbox.setAttribute('aria-hidden', 'false');
+  lightbox.setAttribute("aria-hidden", "false");
   document.body.style.top = `-${productLightboxState.savedScrollY}px`;
-  document.body.classList.add('product-lightbox-open');
+  document.body.classList.add("product-lightbox-open");
 
   updateProductLightbox();
 }
 
 function closeProductLightbox() {
-  const lightbox = document.querySelector('.product-lightbox');
+  const lightbox = document.querySelector(".product-lightbox");
   if (!(lightbox instanceof HTMLElement)) return;
 
   resetProductLightboxZoom();
   lightbox.hidden = true;
-  lightbox.setAttribute('aria-hidden', 'true');
-  document.body.classList.remove('product-lightbox-open');
-  document.body.style.top = '';
-  window.scrollTo({ top: productLightboxState.savedScrollY || 0, behavior: 'instant' });
+  lightbox.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("product-lightbox-open");
+  document.body.style.top = "";
+  window.scrollTo({
+    top: productLightboxState.savedScrollY || 0,
+    behavior: "instant",
+  });
   resetProductLightboxTouchState();
 }
 
@@ -1158,69 +1305,79 @@ function changeProductLightboxImage(direction) {
 function setupProductImageZoom(product, container) {
   if (!(container instanceof HTMLElement)) return;
 
-  const images = (product.galleryImages && product.galleryImages.length > 0 ? product.galleryImages : [product.mainImage])
-    .map((src, index) => ({
-      src: resolveAssetPath(src),
-      alt: `${product.model} ${product.color} - zdjęcie ${index + 1}`
-    }));
+  const images = (
+    product.galleryImages && product.galleryImages.length > 0
+      ? product.galleryImages
+      : [product.mainImage]
+  ).map((src, index) => ({
+    src: resolveAssetPath(src),
+    alt: `${product.model} ${product.color} - zdjęcie ${index + 1}`,
+  }));
 
-  container.querySelectorAll('[data-product-image-index]').forEach((imageNode) => {
-    if (!(imageNode instanceof HTMLElement) || imageNode.dataset.zoomBound === 'true') return;
+  container
+    .querySelectorAll("[data-product-image-index]")
+    .forEach((imageNode) => {
+      if (
+        !(imageNode instanceof HTMLElement) ||
+        imageNode.dataset.zoomBound === "true"
+      )
+        return;
 
-    imageNode.classList.add('is-zoomable');
-    imageNode.setAttribute('role', 'button');
-    imageNode.setAttribute('tabindex', '0');
-    imageNode.setAttribute('aria-label', 'Powiększ zdjęcie produktu');
+      imageNode.classList.add("is-zoomable");
+      imageNode.setAttribute("role", "button");
+      imageNode.setAttribute("tabindex", "0");
+      imageNode.setAttribute("aria-label", "Powiększ zdjęcie produktu");
 
-    const openZoom = () => {
-      const imageIndex = Number(imageNode.dataset.productImageIndex) || 0;
-      openProductLightbox(images, imageIndex);
-    };
+      const openZoom = () => {
+        const imageIndex = Number(imageNode.dataset.productImageIndex) || 0;
+        openProductLightbox(images, imageIndex);
+      };
 
-    imageNode.addEventListener('click', openZoom);
-    imageNode.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        openZoom();
-      }
+      imageNode.addEventListener("click", openZoom);
+      imageNode.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openZoom();
+        }
+      });
+
+      imageNode.dataset.zoomBound = "true";
     });
 
-    imageNode.dataset.zoomBound = 'true';
-  });
+  if (document.body.dataset.productLightboxKeyboardBound !== "true") {
+    document.addEventListener("keydown", (event) => {
+      if (!document.body.classList.contains("product-lightbox-open")) return;
 
-  if (document.body.dataset.productLightboxKeyboardBound !== 'true') {
-    document.addEventListener('keydown', (event) => {
-      if (!document.body.classList.contains('product-lightbox-open')) return;
-
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         closeProductLightbox();
         return;
       }
 
-      if (event.key === 'ArrowLeft') {
+      if (event.key === "ArrowLeft") {
         changeProductLightboxImage(-1);
         return;
       }
 
-      if (event.key === 'ArrowRight') {
+      if (event.key === "ArrowRight") {
         changeProductLightboxImage(1);
       }
     });
 
-    window.addEventListener('resize', () => {
+    window.addEventListener("resize", () => {
       requestAnimationFrame(() => {
         syncProductLightboxZoom();
         syncProductLightboxArrowOffsets();
       });
     });
 
-    document.body.dataset.productLightboxKeyboardBound = 'true';
+    document.body.dataset.productLightboxKeyboardBound = "true";
   }
 }
 
 function buildDesktopDescriptionMarkup(descriptionText) {
-  const text = (descriptionText || '').trim();
-  const marker = 'Ten dekoracyjny detal łączy ozdobną formę z funkcjonalnością, skrywając';
+  const text = (descriptionText || "").trim();
+  const marker =
+    "Ten dekoracyjny detal łączy ozdobną formę z funkcjonalnością, skrywając";
   const markerIndex = text.indexOf(marker);
 
   if (markerIndex === -1) {
@@ -1244,53 +1401,60 @@ function buildDesktopDescriptionMarkup(descriptionText) {
 }
 
 function setupDesktopDescriptionExpand() {
-  document.querySelectorAll('.description.description-collapsible').forEach((descriptionNode) => {
-    if (descriptionNode.dataset.bound === 'true') return;
+  document
+    .querySelectorAll(".description.description-collapsible")
+    .forEach((descriptionNode) => {
+      if (descriptionNode.dataset.bound === "true") return;
 
-    const expandButton = descriptionNode.nextElementSibling;
-    const hiddenPart = descriptionNode.querySelector('.description-more');
-    const collapseButton = descriptionNode.querySelector('.description-collapse-inline');
+      const expandButton = descriptionNode.nextElementSibling;
+      const hiddenPart = descriptionNode.querySelector(".description-more");
+      const collapseButton = descriptionNode.querySelector(
+        ".description-collapse-inline",
+      );
 
-    if (!(expandButton instanceof HTMLButtonElement)) return;
-    if (!(hiddenPart instanceof HTMLElement)) return;
-    if (!(collapseButton instanceof HTMLButtonElement)) return;
+      if (!(expandButton instanceof HTMLButtonElement)) return;
+      if (!(hiddenPart instanceof HTMLElement)) return;
+      if (!(collapseButton instanceof HTMLButtonElement)) return;
 
-    expandButton.addEventListener('click', () => {
-      hiddenPart.hidden = false;
-      collapseButton.hidden = false;
-      descriptionNode.classList.add('is-expanded');
-      expandButton.hidden = true;
-      expandButton.setAttribute('aria-expanded', 'true');
-      syncDesktopDetailsColumnHeight();
+      expandButton.addEventListener("click", () => {
+        hiddenPart.hidden = false;
+        collapseButton.hidden = false;
+        descriptionNode.classList.add("is-expanded");
+        expandButton.hidden = true;
+        expandButton.setAttribute("aria-expanded", "true");
+        syncDesktopDetailsColumnHeight();
+      });
+
+      collapseButton.addEventListener("click", () => {
+        hiddenPart.hidden = true;
+        collapseButton.hidden = true;
+        descriptionNode.classList.remove("is-expanded");
+        expandButton.hidden = false;
+        expandButton.setAttribute("aria-expanded", "false");
+        syncDesktopDetailsColumnHeight();
+      });
+
+      descriptionNode.dataset.bound = "true";
     });
-
-    collapseButton.addEventListener('click', () => {
-      hiddenPart.hidden = true;
-      collapseButton.hidden = true;
-      descriptionNode.classList.remove('is-expanded');
-      expandButton.hidden = false;
-      expandButton.setAttribute('aria-expanded', 'false');
-      syncDesktopDetailsColumnHeight();
-    });
-
-    descriptionNode.dataset.bound = 'true';
-  });
 }
 
 function renderMobileView(container, product) {
-  const firstImage = product.galleryImages && product.galleryImages.length > 0 ? product.galleryImages[0] : product.mainImage;
+  const firstImage =
+    product.galleryImages && product.galleryImages.length > 0
+      ? product.galleryImages[0]
+      : product.mainImage;
 
   const tabsList = [
-    { id: 'szczegoly-mob', label: 'SZCZEGÓŁY', content: product.details },
-    { id: 'material-mob', label: 'MATERIAŁ', content: product.material },
-    { id: 'pielegnacja-mob', label: 'PIELĘGNACJA', content: product.care },
-    { id: 'dostawa-mob', label: 'DOSTAWA', content: product.delivery }
+    { id: "szczegoly-mob", label: "SZCZEGÓŁY", content: product.details },
+    { id: "material-mob", label: "MATERIAŁ", content: product.material },
+    { id: "pielegnacja-mob", label: "PIELĘGNACJA", content: product.care },
+    { id: "dostawa-mob", label: "DOSTAWA", content: product.delivery },
   ];
 
   // Kontener dla widoku mobilnego
-  const mobileWrapper = document.createElement('div');
-  mobileWrapper.className = 'product-wrapper'; // Ten kontener będzie ukryty na desktopie
-  
+  const mobileWrapper = document.createElement("div");
+  mobileWrapper.className = "product-wrapper"; // Ten kontener będzie ukryty na desktopie
+
   mobileWrapper.innerHTML = `
     <div class="main-info">
       <div class="product-title">
@@ -1302,31 +1466,41 @@ function renderMobileView(container, product) {
         <div class="color-title">
           <span class="label">kolor</span>
           <span class="name">${product.color}</span>
-          <span class="status">dostępna</span>
+          <span class="status${isProductAvailable(product) ? "" : " is-unavailable"}">${getProductAvailabilityLabel(product)}</span>
         </div>
         <p class="description">${product.description}</p>
       </div>
     </div>
-    ${(product.galleryImages && product.galleryImages.length > 1) ? `
+    ${
+      product.galleryImages && product.galleryImages.length > 1
+        ? `
       <div class="gallery">
-        ${product.galleryImages.slice(1).map((imgSrc, index) => `<img src="${resolveAssetPath(imgSrc)}" alt="${product.model} ${product.color} - zdjęcie ${index + 2}" class="gallery-image" data-product-image-index="${index + 1}">`).join('')}
+        ${product.galleryImages
+          .slice(1)
+          .map(
+            (imgSrc, index) =>
+              `<img src="${resolveAssetPath(imgSrc)}" alt="${product.model} ${product.color} - zdjęcie ${index + 2}" class="gallery-image" data-product-image-index="${index + 1}">`,
+          )
+          .join("")}
       </div>
-    ` : ''}
+    `
+        : ""
+    }
   `;
   container.appendChild(mobileWrapper);
 
-  const footerActions = document.createElement('div');
-  footerActions.className = 'footer-actions'; // Ten kontener też będzie ukryty na desktopie
+  const footerActions = document.createElement("div");
+  footerActions.className = "footer-actions"; // Ten kontener też będzie ukryty na desktopie
   footerActions.innerHTML = `
     <div class="tabs">
-      ${tabsList.map((tab) => `<button class="tab-button" onclick="toggleMobileTab(this, '${tab.id}')">${tab.label}</button>`).join('')}
+      ${tabsList.map((tab) => `<button class="tab-button" onclick="toggleMobileTab(this, '${tab.id}')">${tab.label}</button>`).join("")}
       <div id="tabsContentContainer-mob">
-        ${tabsList.map(tab => `<div class="tabs-content" id="${tab.id}">${tab.content}</div>`).join('')}
+        ${tabsList.map((tab) => `<div class="tabs-content" id="${tab.id}">${tab.content}</div>`).join("")}
       </div>
     </div>
     <div class="purchase-section">
       <span class="price">${product.price} zł</span>
-      <a href="${toSitePath('zamowienie/')}?slug=${encodeURIComponent(product.slug)}" class="buy-button">KUP</a>
+      ${buildBuyButtonMarkup(product)}
     </div>
   `;
   container.appendChild(footerActions);
@@ -1334,25 +1508,33 @@ function renderMobileView(container, product) {
 
 function renderDesktopView(container, product) {
   const tabsList = [
-    { id: 'szczegoly-desk', label: 'SZCZEGÓŁY', content: product.details },
-    { id: 'material-desk', label: 'MATERIAŁ', content: product.material },
-    { id: 'pielegnacja-desk', label: 'PIELĘGNACJA', content: product.care },
-    { id: 'dostawa-desk', label: 'DOSTAWA', content: product.delivery }
+    { id: "szczegoly-desk", label: "SZCZEGÓŁY", content: product.details },
+    { id: "material-desk", label: "MATERIAŁ", content: product.material },
+    { id: "pielegnacja-desk", label: "PIELĘGNACJA", content: product.care },
+    { id: "dostawa-desk", label: "DOSTAWA", content: product.delivery },
   ];
 
-  const desktopLayout = document.createElement('div');
-  desktopLayout.className = 'product-layout-grid'; // Ten layout jest widoczny tylko na desktopie
-  
+  const desktopLayout = document.createElement("div");
+  desktopLayout.className = "product-layout-grid"; // Ten layout jest widoczny tylko na desktopie
+
   desktopLayout.innerHTML = `
     <div class="product-image-column">
       <div class="desktop-gallery-container">
-        ${product.galleryImages.map((imgSrc, index) => `
-          <img src="${resolveAssetPath(imgSrc)}" alt="${product.model} ${product.color} - zdjęcie ${index + 1}" class="gallery-image ${index === 0 ? 'active' : ''}" data-index="${index}" data-product-image-index="${index}">
-        `).join('')}
-        ${product.galleryImages.length > 1 ? `
-          <button class="gallery-arrow prev" onclick="changeDesktopImage(-1)"><img src="${toSitePath('images/back-icon.png')}" alt="Wstecz" class="back-icon"></button>
-          <button class="gallery-arrow next" onclick="changeDesktopImage(1)"><img src="${toSitePath('images/back-icon.png')}" alt="Dalej" class="back-icon back-icon-next"></button>
-        ` : ''}
+        ${product.galleryImages
+          .map(
+            (imgSrc, index) => `
+          <img src="${resolveAssetPath(imgSrc)}" alt="${product.model} ${product.color} - zdjęcie ${index + 1}" class="gallery-image ${index === 0 ? "active" : ""}" data-index="${index}" data-product-image-index="${index}">
+        `,
+          )
+          .join("")}
+        ${
+          product.galleryImages.length > 1
+            ? `
+          <button class="gallery-arrow prev" onclick="changeDesktopImage(-1)"><img src="${toSitePath("images/back-icon.png")}" alt="Wstecz" class="back-icon"></button>
+          <button class="gallery-arrow next" onclick="changeDesktopImage(1)"><img src="${toSitePath("images/back-icon.png")}" alt="Dalej" class="back-icon back-icon-next"></button>
+        `
+            : ""
+        }
       </div>
     </div>
     <div class="product-details-column">
@@ -1363,25 +1545,25 @@ function renderDesktopView(container, product) {
       <div class="color-title">
         <span class="label">kolor</span>
         <span class="name">${product.color}</span>
-        <span class="status">dostępna</span>
+        <span class="status${isProductAvailable(product) ? "" : " is-unavailable"}">${getProductAvailabilityLabel(product)}</span>
       </div>
       ${buildDesktopDescriptionMarkup(product.description)}
       <div class="purchase-section">
         <span class="price">${product.price} zł</span>
-        <a href="${toSitePath('zamowienie/')}?slug=${encodeURIComponent(product.slug)}" class="buy-button">KUP</a>
+        ${buildBuyButtonMarkup(product)}
       </div>
       <div class="tabs-section">
         <div class="tabs">
-          ${tabsList.map((tab, index) => `<button class="tab-button" onclick="toggleDesktopTab(this, '${tab.id}')">${tab.label}</button>`).join('')}
+          ${tabsList.map((tab, index) => `<button class="tab-button" onclick="toggleDesktopTab(this, '${tab.id}')">${tab.label}</button>`).join("")}
         </div>
         <div class="tabs-content-container">
-          ${tabsList.map((tab, index) => `<div id="${tab.id}" class="tabs-content">${tab.content}</div>`).join('')}
+          ${tabsList.map((tab, index) => `<div id="${tab.id}" class="tabs-content">${tab.content}</div>`).join("")}
         </div>
       </div>
     </div>
   `;
   container.appendChild(desktopLayout);
-  
+
   // Po dodaniu elementu do DOM, inicjalizujemy galerię
   setupDesktopGallery();
   syncDesktopDetailsColumnHeight();
@@ -1393,98 +1575,122 @@ let desktopDetailsColumnObserver = null;
 let desktopDetailsResizeBound = false;
 
 function setupDesktopGallery() {
-    const galleryContainer = document.querySelector('.desktop-gallery-container');
-    if (!galleryContainer) return;
+  const galleryContainer = document.querySelector(".desktop-gallery-container");
+  if (!galleryContainer) return;
 
-    const images = galleryContainer.querySelectorAll('.gallery-image');
-    totalDesktopImages = images.length;
-    currentDesktopImageIndex = 0;
+  const images = galleryContainer.querySelectorAll(".gallery-image");
+  totalDesktopImages = images.length;
+  currentDesktopImageIndex = 0;
 
   images.forEach((img) => {
     if (!img.complete) {
-      img.addEventListener('load', () => {
-        syncDesktopGalleryArrowOffsets();
-        syncDesktopDetailsColumnHeight();
-      }, { once: true });
+      img.addEventListener(
+        "load",
+        () => {
+          syncDesktopGalleryArrowOffsets();
+          syncDesktopDetailsColumnHeight();
+        },
+        { once: true },
+      );
     }
   });
 
-    setupDesktopDetailsColumnObserver();
-    updateDesktopGallery();
+  setupDesktopDetailsColumnObserver();
+  updateDesktopGallery();
 }
 
 function changeDesktopImage(direction) {
-    currentDesktopImageIndex += direction;
+  currentDesktopImageIndex += direction;
 
-    if (currentDesktopImageIndex < 0) {
-        currentDesktopImageIndex = totalDesktopImages - 1;
-    } else if (currentDesktopImageIndex >= totalDesktopImages) {
-        currentDesktopImageIndex = 0;
-    }
+  if (currentDesktopImageIndex < 0) {
+    currentDesktopImageIndex = totalDesktopImages - 1;
+  } else if (currentDesktopImageIndex >= totalDesktopImages) {
+    currentDesktopImageIndex = 0;
+  }
 
-    updateDesktopGallery();
+  updateDesktopGallery();
 }
 
 function updateDesktopGallery() {
-    const galleryContainer = document.querySelector('.desktop-gallery-container');
-    if (!galleryContainer) return;
+  const galleryContainer = document.querySelector(".desktop-gallery-container");
+  if (!galleryContainer) return;
 
-    const images = galleryContainer.querySelectorAll('.gallery-image');
+  const images = galleryContainer.querySelectorAll(".gallery-image");
 
-    images.forEach((img, index) => {
-        img.classList.toggle('active', index === currentDesktopImageIndex);
-    });
+  images.forEach((img, index) => {
+    img.classList.toggle("active", index === currentDesktopImageIndex);
+  });
 
-    syncDesktopGalleryArrowOffsets();
-    syncDesktopDetailsColumnHeight();
+  syncDesktopGalleryArrowOffsets();
+  syncDesktopDetailsColumnHeight();
 }
 
 function syncDesktopDetailsColumnHeight() {
-  const detailsColumn = document.querySelector('.product-details-column');
+  const detailsColumn = document.querySelector(".product-details-column");
 
   if (!(detailsColumn instanceof HTMLElement)) return;
 
-  const tabsContentContainer = detailsColumn.querySelector('.tabs-content-container');
+  const tabsContentContainer = detailsColumn.querySelector(
+    ".tabs-content-container",
+  );
 
-  if (!window.matchMedia('(min-width: 1024px)').matches) {
+  if (!window.matchMedia("(min-width: 1024px)").matches) {
     if (tabsContentContainer instanceof HTMLElement) {
-      tabsContentContainer.classList.remove('is-scrollable');
+      tabsContentContainer.classList.remove("is-scrollable");
     }
 
-    detailsColumn.style.removeProperty('--desktop-gallery-height');
-    detailsColumn.style.removeProperty('--desktop-tabs-max-height');
+    detailsColumn.style.removeProperty("--desktop-gallery-height");
+    detailsColumn.style.removeProperty("--desktop-tabs-max-height");
     return;
   }
 
-  if (window.matchMedia('(max-height: 900px) and (max-width: 1500px)').matches) {
+  if (
+    window.matchMedia("(max-height: 900px) and (max-width: 1500px)").matches
+  ) {
     if (tabsContentContainer instanceof HTMLElement) {
-      tabsContentContainer.classList.remove('is-scrollable');
+      tabsContentContainer.classList.remove("is-scrollable");
     }
 
-    detailsColumn.style.removeProperty('--desktop-gallery-height');
-    detailsColumn.style.removeProperty('--desktop-tabs-max-height');
+    detailsColumn.style.removeProperty("--desktop-gallery-height");
+    detailsColumn.style.removeProperty("--desktop-tabs-max-height");
     return;
   }
 
-  const galleryContainer = document.querySelector('.desktop-gallery-container');
-  const tabsSection = detailsColumn.querySelector('.tabs-section');
-  const tabsHeader = tabsSection instanceof HTMLElement ? tabsSection.querySelector('.tabs') : null;
-  const tabsScrollableContainer = tabsSection instanceof HTMLElement ? tabsSection.querySelector('.tabs-content-container') : null;
+  const galleryContainer = document.querySelector(".desktop-gallery-container");
+  const tabsSection = detailsColumn.querySelector(".tabs-section");
+  const tabsHeader =
+    tabsSection instanceof HTMLElement
+      ? tabsSection.querySelector(".tabs")
+      : null;
+  const tabsScrollableContainer =
+    tabsSection instanceof HTMLElement
+      ? tabsSection.querySelector(".tabs-content-container")
+      : null;
 
-  if (!(galleryContainer instanceof HTMLElement) || !(tabsSection instanceof HTMLElement) || !(tabsHeader instanceof HTMLElement) || !(tabsScrollableContainer instanceof HTMLElement)) {
-    detailsColumn.style.removeProperty('--desktop-gallery-height');
-    detailsColumn.style.removeProperty('--desktop-tabs-max-height');
+  if (
+    !(galleryContainer instanceof HTMLElement) ||
+    !(tabsSection instanceof HTMLElement) ||
+    !(tabsHeader instanceof HTMLElement) ||
+    !(tabsScrollableContainer instanceof HTMLElement)
+  ) {
+    detailsColumn.style.removeProperty("--desktop-gallery-height");
+    detailsColumn.style.removeProperty("--desktop-tabs-max-height");
     return;
   }
 
-  const galleryHeight = Math.round(galleryContainer.getBoundingClientRect().height);
+  const galleryHeight = Math.round(
+    galleryContainer.getBoundingClientRect().height,
+  );
 
   if (galleryHeight > 0) {
-    detailsColumn.style.setProperty('--desktop-gallery-height', `${galleryHeight}px`);
+    detailsColumn.style.setProperty(
+      "--desktop-gallery-height",
+      `${galleryHeight}px`,
+    );
   } else {
-    detailsColumn.style.removeProperty('--desktop-gallery-height');
-    detailsColumn.style.removeProperty('--desktop-tabs-max-height');
-    tabsScrollableContainer.classList.remove('is-scrollable');
+    detailsColumn.style.removeProperty("--desktop-gallery-height");
+    detailsColumn.style.removeProperty("--desktop-tabs-max-height");
+    tabsScrollableContainer.classList.remove("is-scrollable");
     return;
   }
 
@@ -1493,9 +1699,15 @@ function syncDesktopDetailsColumnHeight() {
     .reduce((total, child) => total + getOuterHeight(child), 0);
 
   const tabsHeaderHeight = getOuterHeight(tabsHeader);
-  const availableTabsHeight = Math.max(0, galleryHeight - staticChildrenHeight - tabsHeaderHeight);
+  const availableTabsHeight = Math.max(
+    0,
+    galleryHeight - staticChildrenHeight - tabsHeaderHeight,
+  );
 
-  detailsColumn.style.setProperty('--desktop-tabs-max-height', `${availableTabsHeight}px`);
+  detailsColumn.style.setProperty(
+    "--desktop-tabs-max-height",
+    `${availableTabsHeight}px`,
+  );
 
   requestAnimationFrame(() => {
     syncDesktopTabsOverflowState(tabsScrollableContainer);
@@ -1505,8 +1717,9 @@ function syncDesktopDetailsColumnHeight() {
 function syncDesktopTabsOverflowState(tabsContentContainer) {
   if (!(tabsContentContainer instanceof HTMLElement)) return;
 
-  const hasOverflow = tabsContentContainer.scrollHeight - tabsContentContainer.clientHeight > 1;
-  tabsContentContainer.classList.toggle('is-scrollable', hasOverflow);
+  const hasOverflow =
+    tabsContentContainer.scrollHeight - tabsContentContainer.clientHeight > 1;
+  tabsContentContainer.classList.toggle("is-scrollable", hasOverflow);
 }
 
 function getOuterHeight(element) {
@@ -1525,10 +1738,10 @@ function setupDesktopDetailsColumnObserver() {
     desktopDetailsColumnObserver = null;
   }
 
-  const galleryContainer = document.querySelector('.desktop-gallery-container');
+  const galleryContainer = document.querySelector(".desktop-gallery-container");
 
   if (!desktopDetailsResizeBound) {
-    window.addEventListener('resize', syncDesktopDetailsColumnHeight);
+    window.addEventListener("resize", syncDesktopDetailsColumnHeight);
     desktopDetailsResizeBound = true;
   }
 
@@ -1537,7 +1750,7 @@ function setupDesktopDetailsColumnObserver() {
     return;
   }
 
-  if (typeof ResizeObserver === 'undefined') {
+  if (typeof ResizeObserver === "undefined") {
     syncDesktopDetailsColumnHeight();
     return;
   }
@@ -1551,61 +1764,65 @@ function setupDesktopDetailsColumnObserver() {
   syncDesktopDetailsColumnHeight();
 }
 
-  function syncDesktopGalleryArrowOffsets() {
-    if (!window.matchMedia('(min-width: 1024px)').matches) return;
+function syncDesktopGalleryArrowOffsets() {
+  if (!window.matchMedia("(min-width: 1024px)").matches) return;
 
-    const galleryContainer = document.querySelector('.desktop-gallery-container');
-    if (!galleryContainer) return;
+  const galleryContainer = document.querySelector(".desktop-gallery-container");
+  if (!galleryContainer) return;
 
-    const activeImage = galleryContainer.querySelector('.gallery-image.active');
-    if (!activeImage) return;
+  const activeImage = galleryContainer.querySelector(".gallery-image.active");
+  if (!activeImage) return;
 
-    const containerWidth = galleryContainer.clientWidth;
-    const containerHeight = galleryContainer.clientHeight;
-    const naturalWidth = activeImage.naturalWidth;
-    const naturalHeight = activeImage.naturalHeight;
+  const containerWidth = galleryContainer.clientWidth;
+  const containerHeight = galleryContainer.clientHeight;
+  const naturalWidth = activeImage.naturalWidth;
+  const naturalHeight = activeImage.naturalHeight;
 
-    if (!containerWidth || !containerHeight || !naturalWidth || !naturalHeight) return;
+  if (!containerWidth || !containerHeight || !naturalWidth || !naturalHeight)
+    return;
 
-    const scale = Math.min(containerWidth / naturalWidth, containerHeight / naturalHeight);
-    const renderedWidth = naturalWidth * scale;
-    const sideGap = Math.max(0, (containerWidth - renderedWidth) / 2);
+  const scale = Math.min(
+    containerWidth / naturalWidth,
+    containerHeight / naturalHeight,
+  );
+  const renderedWidth = naturalWidth * scale;
+  const sideGap = Math.max(0, (containerWidth - renderedWidth) / 2);
 
-    galleryContainer.style.setProperty('--gallery-side-gap', `${sideGap}px`);
-  }
+  galleryContainer.style.setProperty("--gallery-side-gap", `${sideGap}px`);
+}
 
 function initializeTabs() {
-    // Ta funkcja może być pusta, jeśli używamy `onclick` bezpośrednio w HTML,
-    // lub można tu przenieść logikę z `toggleTab` dla lepszej praktyki.
-    // Na razie zostawiamy `onclick` dla prostoty.
+  // Ta funkcja może być pusta, jeśli używamy `onclick` bezpośrednio w HTML,
+  // lub można tu przenieść logikę z `toggleTab` dla lepszej praktyki.
+  // Na razie zostawiamy `onclick` dla prostoty.
 }
 
 function scrollMobileProductPageToBottom(footerElement) {
   if (!footerElement) return;
-  if (window.matchMedia('(min-width: 1024px)').matches) return;
+  if (window.matchMedia("(min-width: 1024px)").matches) return;
 
-  const purchaseSection = footerElement.querySelector('.purchase-section');
+  const purchaseSection = footerElement.querySelector(".purchase-section");
   if (!purchaseSection) return;
 
   window.scrollTo({
     top: document.documentElement.scrollHeight,
-    behavior: 'smooth'
+    behavior: "smooth",
   });
 }
 
 // Dedykowana funkcja dla zakładek mobilnych
 function toggleMobileTab(buttonEl, tabId) {
-  const footer = buttonEl.closest('.footer-actions');
-  const allButtons = footer.querySelectorAll('.tab-button');
-  
-  const contentContainer = document.getElementById('tabsContentContainer-mob');
-  const allContents = contentContainer.querySelectorAll('.tabs-content');
+  const footer = buttonEl.closest(".footer-actions");
+  const allButtons = footer.querySelectorAll(".tab-button");
+
+  const contentContainer = document.getElementById("tabsContentContainer-mob");
+  const allContents = contentContainer.querySelectorAll(".tabs-content");
   const targetContent = contentContainer.querySelector(`#${tabId}`);
 
-  const isCurrentlyActive = buttonEl.classList.contains('active');
+  const isCurrentlyActive = buttonEl.classList.contains("active");
 
-  allContents.forEach(c => c.classList.remove('active'));
-  allButtons.forEach(b => b.classList.remove('active'));
+  allContents.forEach((c) => c.classList.remove("active"));
+  allButtons.forEach((b) => b.classList.remove("active"));
 
   if (isCurrentlyActive) {
     buttonEl.blur();
@@ -1613,8 +1830,8 @@ function toggleMobileTab(buttonEl, tabId) {
   }
 
   if (!isCurrentlyActive) {
-    if (targetContent) targetContent.classList.add('active');
-    buttonEl.classList.add('active');
+    if (targetContent) targetContent.classList.add("active");
+    buttonEl.classList.add("active");
 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -1626,22 +1843,22 @@ function toggleMobileTab(buttonEl, tabId) {
 
 // Dedykowana funkcja dla zakładek na desktopie
 function toggleDesktopTab(buttonEl, tabId) {
-  const section = buttonEl.closest('.tabs-section');
-  const allButtons = section.querySelectorAll('.tab-button');
-  const contentContainer = section.querySelector('.tabs-content-container');
-  const allContents = contentContainer.querySelectorAll('.tabs-content');
+  const section = buttonEl.closest(".tabs-section");
+  const allButtons = section.querySelectorAll(".tab-button");
+  const contentContainer = section.querySelector(".tabs-content-container");
+  const allContents = contentContainer.querySelectorAll(".tabs-content");
   const targetContent = contentContainer.querySelector(`#${tabId}`);
 
-  const isCurrentlyActive = buttonEl.classList.contains('active');
+  const isCurrentlyActive = buttonEl.classList.contains("active");
 
   // Ukryj wszystko
-  allContents.forEach(c => c.classList.remove('active'));
-  allButtons.forEach(b => b.classList.remove('active'));
-  
+  allContents.forEach((c) => c.classList.remove("active"));
+  allButtons.forEach((b) => b.classList.remove("active"));
+
   // Jeśli nie była aktywna, pokaż ją
   if (!isCurrentlyActive) {
-    if (targetContent) targetContent.classList.add('active');
-    buttonEl.classList.add('active');
+    if (targetContent) targetContent.classList.add("active");
+    buttonEl.classList.add("active");
   }
 
   syncDesktopDetailsColumnHeight();
@@ -1650,30 +1867,30 @@ function toggleDesktopTab(buttonEl, tabId) {
 function getParentPageUrl() {
   const path = window.location.pathname.toLowerCase();
 
-  if (path.includes('/zamowienie')) {
+  if (path.includes("/zamowienie")) {
     const urlParams = new URLSearchParams(window.location.search);
-    const slug = urlParams.get('slug');
+    const slug = urlParams.get("slug");
 
     if (slug) {
-      return `${toSitePath('produkt/')}?slug=${encodeURIComponent(slug)}`;
+      return `${toSitePath("produkt/")}?slug=${encodeURIComponent(slug)}`;
     }
 
-    return toSitePath('modele/');
+    return toSitePath("modele/");
   }
 
-  if (path.includes('/produkt')) {
-    return toSitePath('modele/');
+  if (path.includes("/produkt")) {
+    return toSitePath("modele/");
   }
 
-  if (path.includes('/modele')) {
+  if (path.includes("/modele")) {
     return toSitePath();
   }
 
-  if (path.includes('/o-marce')) {
+  if (path.includes("/o-marce")) {
     return toSitePath();
   }
 
-  if (path.includes('/kontakt')) {
+  if (path.includes("/kontakt")) {
     return toSitePath();
   }
 
@@ -1681,18 +1898,21 @@ function getParentPageUrl() {
 }
 
 function prefersReducedMotion() {
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
 function navigateWithPageTransition(targetUrl) {
   if (!targetUrl) return;
+
+  const current = window.location.href;
+  if (current === targetUrl || current === targetUrl + "/") return;
 
   if (prefersReducedMotion()) {
     window.location.href = targetUrl;
     return;
   }
 
-  document.body.classList.add('page-transition-leave');
+  document.body.classList.add("page-transition-leave");
 
   window.setTimeout(() => {
     window.location.href = targetUrl;
@@ -1702,13 +1922,13 @@ function navigateWithPageTransition(targetUrl) {
 function isAnimatableInternalLink(linkEl) {
   if (!linkEl) return false;
 
-  const href = linkEl.getAttribute('href');
-  if (!href || href.startsWith('#')) return false;
+  const href = linkEl.getAttribute("href");
+  if (!href || href.startsWith("#")) return false;
 
-  if (linkEl.hasAttribute('download')) return false;
+  if (linkEl.hasAttribute("download")) return false;
 
-  const target = linkEl.getAttribute('target');
-  if (target && target.toLowerCase() === '_blank') return false;
+  const target = linkEl.getAttribute("target");
+  if (target && target.toLowerCase() === "_blank") return false;
 
   if (/^(mailto:|tel:|javascript:)/i.test(href)) return false;
 
@@ -1723,11 +1943,11 @@ function isAnimatableInternalLink(linkEl) {
 
 function setupPageTransitions() {
   if (!prefersReducedMotion()) {
-    document.body.classList.add('page-transition-enter');
+    document.body.classList.add("page-transition-enter");
   }
 
-  document.addEventListener('click', (event) => {
-    const link = event.target.closest('a');
+  document.addEventListener("click", (event) => {
+    const link = event.target.closest("a");
     if (!isAnimatableInternalLink(link)) return;
 
     event.preventDefault();
@@ -1735,74 +1955,93 @@ function setupPageTransitions() {
   });
 }
 
+function resetPageTransitionState() {
+  const body = document.body;
+  if (!body) return;
+
+  body.classList.remove("page-transition-leave");
+  body.classList.remove("page-transition-enter");
+
+  if (prefersReducedMotion()) return;
+
+  // Wymuś ukrycie, żeby animacja miała punkt startowy
+  body.style.opacity = "0";
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      body.style.opacity = "";
+      body.classList.add("page-transition-enter");
+    });
+  });
+}
+
 function setupHamburgerMenu() {
-  const menuButton = document.querySelector('.menu-button');
-  const header = document.querySelector('.header');
+  const menuButton = document.querySelector(".menu-button");
+  const header = document.querySelector(".header");
   if (!menuButton || !header) return;
 
-  const currentPage = window.location.pathname
-    .replace(/index\.html$/i, '')
-    .replace(/\/+$/, '') || '/';
+  const currentPage =
+    window.location.pathname.replace(/index\.html$/i, "").replace(/\/+$/, "") ||
+    "/";
 
-  let menuOverlay = document.getElementById('mobileMenuOverlay');
+  let menuOverlay = document.getElementById("mobileMenuOverlay");
   if (!menuOverlay) {
-    menuOverlay = document.createElement('aside');
-    menuOverlay.id = 'mobileMenuOverlay';
-    menuOverlay.className = 'mobile-menu-overlay';
-    menuOverlay.setAttribute('aria-hidden', 'true');
+    menuOverlay = document.createElement("aside");
+    menuOverlay.id = "mobileMenuOverlay";
+    menuOverlay.className = "mobile-menu-overlay";
+    menuOverlay.setAttribute("aria-hidden", "true");
     menuOverlay.inert = true;
     menuOverlay.innerHTML = `
       <nav class="mobile-menu-panel" aria-label="Menu główne">
-        <a href="${toSitePath('modele/')}" class="mobile-menu-link">DOSTĘPNE MODELE</a>
-        <a href="${toSitePath('o-marce/')}" class="mobile-menu-link">O MARCE</a>
-        <a href="${toSitePath('kontakt/')}" class="mobile-menu-link">KONTAKT</a>
+        <a href="${toSitePath("modele/")}" class="mobile-menu-link">DOSTĘPNE MODELE</a>
+        <a href="${toSitePath("o-marce/")}" class="mobile-menu-link">O MARCE</a>
+        <a href="${toSitePath("kontakt/")}" class="mobile-menu-link">KONTAKT</a>
       </nav>
     `;
     document.body.appendChild(menuOverlay);
   }
 
   const closeMenu = () => {
-    menuOverlay.classList.remove('is-open');
-    menuOverlay.setAttribute('aria-hidden', 'true');
+    menuOverlay.classList.remove("is-open");
+    menuOverlay.setAttribute("aria-hidden", "true");
     menuOverlay.inert = true;
-    menuButton.classList.remove('is-active');
-    menuButton.setAttribute('aria-expanded', 'false');
-    document.body.classList.remove('menu-open');
-    header.classList.remove('is-fixed-on-menu-open');
+    menuButton.classList.remove("is-active");
+    menuButton.setAttribute("aria-expanded", "false");
+    document.body.classList.remove("menu-open");
+    header.classList.remove("is-fixed-on-menu-open");
   };
 
   const openMenu = () => {
-    menuOverlay.classList.add('is-open');
-    menuOverlay.setAttribute('aria-hidden', 'false');
+    menuOverlay.classList.add("is-open");
+    menuOverlay.setAttribute("aria-hidden", "false");
     menuOverlay.inert = false;
-    menuButton.classList.add('is-active');
-    menuButton.setAttribute('aria-expanded', 'true');
-    document.body.classList.add('menu-open');
-    header.classList.add('is-fixed-on-menu-open');
+    menuButton.classList.add("is-active");
+    menuButton.setAttribute("aria-expanded", "true");
+    document.body.classList.add("menu-open");
+    header.classList.add("is-fixed-on-menu-open");
   };
 
-  menuButton.setAttribute('aria-expanded', 'false');
-  menuButton.setAttribute('aria-controls', 'mobileMenuOverlay');
+  menuButton.setAttribute("aria-expanded", "false");
+  menuButton.setAttribute("aria-controls", "mobileMenuOverlay");
 
-  menuOverlay.querySelectorAll('.mobile-menu-link').forEach((link) => {
-    const href = link.getAttribute('href') || '';
-    const targetPage = href
-      .replace(/index\.html$/i, '')
-      .replace(/\/+$/, '') || '/';
+  menuOverlay.querySelectorAll(".mobile-menu-link").forEach((link) => {
+    const href = link.getAttribute("href") || "";
+    const targetPage =
+      href.replace(/index\.html$/i, "").replace(/\/+$/, "") || "/";
     const isCurrent = targetPage === currentPage;
 
-    link.classList.toggle('is-current', isCurrent);
+    link.classList.toggle("is-current", isCurrent);
     if (isCurrent) {
-      link.setAttribute('aria-current', 'page');
+      link.setAttribute("aria-current", "page");
     } else {
-      link.removeAttribute('aria-current');
+      link.removeAttribute("aria-current");
     }
   });
 
-  menuButton.addEventListener('click', (event) => {
+  menuButton.addEventListener("click", (event) => {
     event.preventDefault();
 
-    const isOpen = menuOverlay.classList.contains('is-open');
+    const isOpen = menuOverlay.classList.contains("is-open");
     if (isOpen) {
       closeMenu();
     } else {
@@ -1810,39 +2049,39 @@ function setupHamburgerMenu() {
     }
   });
 
-  menuOverlay.addEventListener('click', (event) => {
+  menuOverlay.addEventListener("click", (event) => {
     if (event.target === menuOverlay) {
       closeMenu();
     }
   });
 
-  menuOverlay.querySelectorAll('a').forEach((link) => {
-    link.addEventListener('click', () => {
+  menuOverlay.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
       closeMenu();
     });
   });
 
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && menuOverlay.classList.contains('is-open')) {
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && menuOverlay.classList.contains("is-open")) {
       closeMenu();
     }
   });
 }
 
 function setupBackButtonNavigation() {
-  const backButton = document.querySelector('.back-button');
+  const backButton = document.querySelector(".back-button");
   if (!backButton) {
     return;
   }
 
   const parentPageUrl = getParentPageUrl();
   if (!parentPageUrl) {
-    backButton.classList.add('hidden');
+    backButton.classList.add("hidden");
     return;
   }
 
-  backButton.classList.remove('hidden');
-  backButton.addEventListener('click', function(event) {
+  backButton.classList.remove("hidden");
+  backButton.addEventListener("click", function (event) {
     event.preventDefault();
     navigateWithPageTransition(parentPageUrl);
   });
@@ -1850,33 +2089,45 @@ function setupBackButtonNavigation() {
 
 function markSafariBrowser() {
   const userAgent = navigator.userAgent;
-  const isSafari = /Safari/i.test(userAgent)
-    && !/Chrome|Chromium|Edg|OPR|CriOS|FxiOS|Firefox/i.test(userAgent);
+  const isSafari =
+    /Safari/i.test(userAgent) &&
+    !/Chrome|Chromium|Edg|OPR|CriOS|FxiOS|Firefox/i.test(userAgent);
 
   if (isSafari) {
-    document.documentElement.classList.add('is-safari');
+    document.documentElement.classList.add("is-safari");
   }
 }
 
 // Polepsz nawigację wstecz
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener("DOMContentLoaded", function () {
   markSafariBrowser();
-  setupPageTransitions();
+  resetPageTransitionState();
   setupHamburgerMenu();
   setupBackButtonNavigation();
-  
+
+  if (event.persisted) return;
+
   // Uruchomienie renderowania po załadowaniu DOM
-  if (document.getElementById('productContainer')) {
+  if (document.getElementById("productContainer")) {
     renderProductDetail();
   }
 
-  if (document.getElementById('orderFormContainer')) {
+  if (document.getElementById("orderFormContainer")) {
     renderOrderForm();
   }
 
-  if (document.getElementById('modelsContainer')) {
+  if (document.getElementById("modelsContainer")) {
     renderModels();
   }
 
-  window.addEventListener('resize', syncDesktopGalleryArrowOffsets);
+  window.addEventListener("resize", syncDesktopGalleryArrowOffsets);
+
+  window.addEventListener("pageshow", function (event) {
+    resetPageTransitionState();
+    if (event.persisted) return;
+
+    if (document.getElementById("productContainer")) renderProductDetail();
+    if (document.getElementById("orderFormContainer")) renderOrderForm();
+    if (document.getElementById("modelsContainer")) renderModels();
+  });
 });
