@@ -45,7 +45,8 @@ function getAvailableProducts() {
 
 function getProductAvailabilityLabel(product) {
   if (!isProductAvailable(product)) {
-    return ("chwilowo niedostępna")
+    // Jeśli produkt jest niedostępny, sprawdzamy czy na stałe, czy chwilowo
+    return product.isPermanentlyUnavailable === true ? "niedostępna" : "chwilowo niedostępna";
   }
   return product.isLastItems === true ? "ostatnie sztuki" : "dostępna";
 }
@@ -94,7 +95,7 @@ function renderModels() {
     const grid = document.createElement("div");
     grid.className = "products-grid";
 
-    items.forEach((product) => {
+        items.forEach((product) => {
       const productCard = document.createElement("a");
       const isUnavailable = !isProductAvailable(product);
       const isLast = isProductAvailable(product) && product.isLastItems === true;
@@ -106,10 +107,13 @@ function renderModels() {
 
       productCard.href = `${toSitePath("produkt/")}?slug=${encodeURIComponent(product.slug)}`;
 
+      // Dynamiczny tekst na odznace dla produktów niedostępnych
+      const badgeText = product.isPermanentlyUnavailable === true ? "niedostępna" : "chwilowo niedostępna";
+
       productCard.innerHTML = `
         <div class="image-wrapper">
           <img src="${resolveAssetPath(product.mainImage)}" alt="${product.model} ${product.color}">
-          ${isUnavailable ? '<span class="product-unavailable-badge">chwilowo niedostępna</span>' : ""}
+          ${isUnavailable ? `<span class="product-unavailable-badge">${badgeText}</span>` : ""}
         </div>
         <div class="product-info">
           <span class="color-label">kolor</span>

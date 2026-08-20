@@ -27,33 +27,77 @@ function buildDeliveryDetails(model) {
   `;
 }
 
+// OLD
+  // function buildModelDescription(model, materialType) {
+  //   if (model === 'Faworytka') {
+  //     return 'FAWORYTKA to mniejsza siostra FAWORYTY. To ten sam silny charakter, ale w bardziej kompaktowym rozmiarze. Posiada miękką, plastyczną konstrukcję, dzięki której materiał swobodnie pracuje i opalizuje, zmieniając kolor zależnie od kąta padania światła.<span class="model-desc-break"></span>FAWORYTKA to model, w którym świat geometrii spotyka się z organiczną miękkością. O nieoczywistym charakterze torby decyduje autorska rączka. Ten dekoracyjny detal łączy ozdobną formę z funkcjonalnością, skrywając wewnątrz mechanizm regulacji jej długości. FAWORYTKA naturalnie dopasuje się do odważnych stylizacji, ale również świetnie sprawdzi się w minimalistycznych outfitach, stając się najmocniejszym akcentem, który zdefiniuje cały Twój look. Zaprojektowana i uszyta w Polsce.';
+  //   }
+
+  //   if (materialType === 'morowa') {
+  //     return 'Duża, wyrazista torba typu statement, która pomieści wszystkie Twoje historie. Posiada miękkie a zarazem usztywniające wypełnienie, które podkreśla architektoniczną, trapezową formę dołu torby.<span class="model-desc-break"></span>FAWORYTA to model, w którym świat geometrii spotyka się z organiczną miękkością. O nieoczywistym charakterze torby decyduje autorska rączka. Ten dekoracyjny detal łączy ozdobną formę z funkcjonalnością, skrywając wewnątrz mechanizm regulacji jej długości. FAWORYTA naturalnie dopasuje się do odważnych stylizacji, ale również świetnie sprawdzi się w minimalistycznych outfitach, stając się najmocniejszym akcentem, który zdefiniuje cały Twój look. Zaprojektowana i uszyta w Polsce.';
+  //   }
+
+  //   return 'Duża, wyrazista torba typu statement, która pomieści wszystkie Twoje historie. Posiada miękką, plastyczną konstrukcję, dzięki której materiał swobodnie pracuje i opalizuje, zmieniając kolor zależnie od kąta padania światła.<span class="model-desc-break"></span>FAWORYTA to model, w którym świat geometrii spotyka się z organiczną miękkością. O nieoczywistym charakterze torby decyduje autorska rączka. Ten dekoracyjny detal łączy ozdobną formę z funkcjonalnością, skrywając wewnątrz mechanizm regulacji jej długości. FAWORYTA naturalnie dopasuje się do odważnych stylizacji, ale również świetnie sprawdzi się w minimalistycznych outfitach, stając się najmocniejszym akcentem, który zdefiniuje cały Twój look. Zaprojektowana i uszyta w Polsce.';
+  // }
+
 function buildModelDescription(model, materialType) {
+  // 1. Warunek dla modeli 'Faworytka' wykonanych z materiału 'morowa' (Pieprz i Laskowa)
+  if (model === 'Faworytka' && materialType === 'morowa') {
+    return 'FAWORYTKA to mniejsza siostra FAWORYTY. To ten sam silny charakter, ale w bardziej kompaktowym rozmiarze. Posiada miękkie a zarazem usztywniające wypełnienie, które podkreśla architektoniczną, trapezową formę dołu torby.<span class="model-desc-break"></span>FAWORYTKA to model, w którym świat geometrii spotyka się z organiczną miękkością. O nieoczywistym charakterze torby decyduje autorska rączka. Ten dekoracyjny detal łączy ozdobną formę z funkcjonalnością, skrywając wewnątrz mechanizm regulacji jej długości. FAWORYTKA naturalnie dopasuje się do odważnych stylizacji, ale również świetnie sprawdzi się w minimalistycznych outfitach, stając się najmocniejszym akcentem, który zdefiniuje cały Twój look. Zaprojektowana i uszyta w Polsce.';
+  }
+
+  // 2. Warunek dla pozostałych modeli 'Faworytka' (np. taftowa Malwa, Śliwka, Kobaltowa)
   if (model === 'Faworytka') {
     return 'FAWORYTKA to mniejsza siostra FAWORYTY. To ten sam silny charakter, ale w bardziej kompaktowym rozmiarze. Posiada miękką, plastyczną konstrukcję, dzięki której materiał swobodnie pracuje i opalizuje, zmieniając kolor zależnie od kąta padania światła.<span class="model-desc-break"></span>FAWORYTKA to model, w którym świat geometrii spotyka się z organiczną miękkością. O nieoczywistym charakterze torby decyduje autorska rączka. Ten dekoracyjny detal łączy ozdobną formę z funkcjonalnością, skrywając wewnątrz mechanizm regulacji jej długości. FAWORYTKA naturalnie dopasuje się do odważnych stylizacji, ale również świetnie sprawdzi się w minimalistycznych outfitach, stając się najmocniejszym akcentem, który zdefiniuje cały Twój look. Zaprojektowana i uszyta w Polsce.';
   }
 
+  // 3. Warunek dla modeli 'Faworyta' wykonanych z materiału 'morowa' (np. Mak)
   if (materialType === 'morowa') {
     return 'Duża, wyrazista torba typu statement, która pomieści wszystkie Twoje historie. Posiada miękkie a zarazem usztywniające wypełnienie, które podkreśla architektoniczną, trapezową formę dołu torby.<span class="model-desc-break"></span>FAWORYTA to model, w którym świat geometrii spotyka się z organiczną miękkością. O nieoczywistym charakterze torby decyduje autorska rączka. Ten dekoracyjny detal łączy ozdobną formę z funkcjonalnością, skrywając wewnątrz mechanizm regulacji jej długości. FAWORYTA naturalnie dopasuje się do odważnych stylizacji, ale również świetnie sprawdzi się w minimalistycznych outfitach, stając się najmocniejszym akcentem, który zdefiniuje cały Twój look. Zaprojektowana i uszyta w Polsce.';
   }
 
+  // 4. Domyślny opis dla dużych modeli 'Faworyta' z materiału 'taftowa' (np. Śliwka)
   return 'Duża, wyrazista torba typu statement, która pomieści wszystkie Twoje historie. Posiada miękką, plastyczną konstrukcję, dzięki której materiał swobodnie pracuje i opalizuje, zmieniając kolor zależnie od kąta padania światła.<span class="model-desc-break"></span>FAWORYTA to model, w którym świat geometrii spotyka się z organiczną miękkością. O nieoczywistym charakterze torby decyduje autorska rączka. Ten dekoracyjny detal łączy ozdobną formę z funkcjonalnością, skrywając wewnątrz mechanizm regulacji jej długości. FAWORYTA naturalnie dopasuje się do odważnych stylizacji, ale również świetnie sprawdzi się w minimalistycznych outfitach, stając się najmocniejszym akcentem, który zdefiniuje cały Twój look. Zaprojektowana i uszyta w Polsce.';
 }
+// OLD
+  // function buildMaterialDetails(materialType) {
+  //   const whyPolyesterText = 'Chcemy tworzyć torby, które są nie tylko piękne, ale także funkcjonalne. Materiał syntetyczny, jakim jest poliester, oferuje dużą wytrzymałość, co jest kluczowe, ponieważ torba jest narażona na wiele testów codzienności. Dlatego nasz wybór to „świadomy poliester”. Nasza pierwsza kolekcja powstała z wykorzystaniem materiałów pozostałych z wcześniejszych kolekcji tkanin, co odzwierciedla nasze zaangażowanie w świadome podejście do surowców.';
 
-function buildMaterialDetails(materialType) {
+  //   const materialIntro =
+  //     materialType === 'morowa'
+  //       ? 'Torba stworzona z tkaniny Moiré, unikalnego materiału o charakterystycznym, mieniącym się wzorze, który przypomina słoje drewna lub falującą wodę.'
+  //       : 'Torba stworzona z tafty poliestrowej, która opalizuje na dwa kolory, a jej barwa zależy od kąta padania światła.';
+
+  //   return `
+  //     <p style="margin: 0 0 8px 0;"><strong>Skład:</strong> poliester* + bawełna</p>
+  //     <p style="margin: 0 0 8px 0;">${materialIntro}</p>
+  //     <p class="material-polyester-heading"><strong>*Dlaczego poliester?</strong></p>
+  //     <p class="material-polyester-copy">${whyPolyesterText}</p>
+  //   `;
+  // }
+
+  function buildMaterialDetails(materialType) {
   const whyPolyesterText = 'Chcemy tworzyć torby, które są nie tylko piękne, ale także funkcjonalne. Materiał syntetyczny, jakim jest poliester, oferuje dużą wytrzymałość, co jest kluczowe, ponieważ torba jest narażona na wiele testów codzienności. Dlatego nasz wybór to „świadomy poliester”. Nasza pierwsza kolekcja powstała z wykorzystaniem materiałów pozostałych z wcześniejszych kolekcji tkanin, co odzwierciedla nasze zaangażowanie w świadome podejście do surowców.';
 
+  // Dynamiczny skład w zależności od typu materiału
+  const composition = materialType === 'morowa-mix' 
+    ? 'wiskoza + poliester* + bawełna' 
+    : 'poliester* + bawełna';
+
+  // 'morowa' oraz 'morowa-mix'
   const materialIntro =
-    materialType === 'morowa'
+    materialType === 'morowa' || materialType === 'morowa-mix'
       ? 'Torba stworzona z tkaniny Moiré, unikalnego materiału o charakterystycznym, mieniącym się wzorze, który przypomina słoje drewna lub falującą wodę.'
       : 'Torba stworzona z tafty poliestrowej, która opalizuje na dwa kolory, a jej barwa zależy od kąta padania światła.';
 
   return `
-    <p style="margin: 0 0 8px 0;"><strong>Skład:</strong> poliester* + bawełna</p>
+    <p style="margin: 0 0 8px 0;"><strong>Skład:</strong> ${composition}</p>
     <p style="margin: 0 0 8px 0;">${materialIntro}</p>
     <p class="material-polyester-heading"><strong>*Dlaczego poliester?</strong></p>
     <p class="material-polyester-copy">${whyPolyesterText}</p>
   `;
 }
+
 
 // Dane produktów
 const products = [
@@ -63,6 +107,7 @@ const products = [
     model: 'Faworyta',
     color: 'Jagoda',
     isAvailable: true,
+    isPermanentlyUnavailable: false,
     isLastItems: true,
     materialType: 'morowa',
     price: 630,
@@ -87,6 +132,7 @@ const products = [
     model: 'Faworyta',
     color: 'Złota Reneta',
     isAvailable: true,
+    isPermanentlyUnavailable: false,
     isLastItems: false,
     materialType: 'taftowa',
     price: 570,
@@ -111,6 +157,7 @@ const products = [
     model: 'Faworyta',
     color: 'Malwa',
     isAvailable: true,
+    isPermanentlyUnavailable: false,
     isLastItems: false,
     materialType: 'taftowa',
     price: 570,
@@ -134,7 +181,8 @@ const products = [
     slug: 'faworyta-pieprz',
     model: 'Faworyta',
     color: 'Pieprz',
-    isAvailable: false,
+    isAvailable: true,
+    isPermanentlyUnavailable: false,
     isLastItems: false,
     materialType: 'morowa',
     price: 630,
@@ -158,7 +206,8 @@ const products = [
     slug: 'faworyta-mak',
     model: 'Faworyta',
     color: 'Mak',
-    isAvailable: true,
+    isAvailable: false,
+    isPermanentlyUnavailable: true, // <-- NOWA FLAGA: zmienia tekst na "NIEDOSTĘPNA"
     isLastItems: true,
     materialType: 'morowa',
     price: 630,
@@ -183,6 +232,7 @@ const products = [
     model: 'Faworyta',
     color: 'Śliwka',
     isAvailable: true,
+    isPermanentlyUnavailable: false,
     isLastItems: false,
     materialType: 'taftowa',
     price: 570,
@@ -207,6 +257,7 @@ const products = [
     model: 'Faworytka',
     color: 'Malwa',
     isAvailable: true,
+    isPermanentlyUnavailable: false,
     isLastItems: false,
     materialType: 'taftowa',
     price: 450,
@@ -230,6 +281,7 @@ const products = [
     model: 'Faworytka',
     color: 'Śliwka',
     isAvailable: true,
+    isPermanentlyUnavailable: false,
     isLastItems: false,
     materialType: 'taftowa',
     price: 450,
@@ -246,6 +298,81 @@ const products = [
     delivery: buildDeliveryDetails('Faworytka'),
     care: 'W przypadku zabrudzenia czyścić na sucho (rolką lub szczotką). Miejscowe plamy usuń lekko wilgotną ściereczką i łagodnym mydłem. Nie pierz w pralce. W razie zamoczenia susz równomiernie.',
   },
+   {
+    id: 'faworytka-pieprz',
+    slug: 'faworytka-pieprz',
+    model: 'Faworytka',
+    color: 'Pieprz',
+    isAvailable: true,
+    isPermanentlyUnavailable: false,
+    isLastItems: false,
+    materialType: 'morowa',
+    price: 490,
+    mainImage: '/images/faworytka/faworytka-pieprz-main.webp',
+    galleryImages: [
+      '/images/faworytka/faworytka-pieprz-main.webp',
+      '/images/faworytka/faworytka-pieprz-1.webp',
+      '/images/faworytka/faworytka-pieprz-2.webp',
+      '/images/faworytka/faworytka-pieprz-3.webp',
+      '/images/faworytka/wymiarowanie_faworytka_1.webp',
+      '/images/faworytka/wymiarowanie_faworytka_2.webp',
+    ],
+    description: buildModelDescription('Faworytka', 'morowa'),
+    details: buildProductDetails('morowa'),
+    material: buildMaterialDetails('morowa-mix'),
+    delivery: buildDeliveryDetails('Faworytka'),
+    care: 'W przypadku zabrudzenia czyścić na sucho (rolką lub szczotką). Miejscowe plamy usuń lekko wilgotną ściereczką i łagodnym mydłem. Nie pierz w pralce. W razie zamoczenia susz równomiernie.',
+  },
+  {
+    id: 'faworytka-xxx',
+    slug: 'faworytka-xxx',
+    model: 'Faworytka',
+    color: 'XXX',
+    isAvailable: true,
+    isPermanentlyUnavailable: false,
+    isLastItems: false,
+    materialType: 'taftowa',
+    price: 450,
+    mainImage: '/images/faworytka/faworytka-kobaltowa-main.webp',
+    galleryImages: [
+      '/images/faworytka/faworytka-kobaltowa-main.webp',
+      '/images/faworytka/faworytka-kobaltowa-1.webp',
+      '/images/faworytka/faworytka-kobaltowa-2.webp',
+      '/images/faworytka/faworytka-kobaltowa-3.webp',
+      '/images/faworytka/wymiarowanie_faworytka_1.webp',
+      '/images/faworytka/wymiarowanie_faworytka_2.webp',
+    ],
+    description: buildModelDescription('Faworytka', 'taftowa'),
+    details: buildProductDetails('taftowa'),
+    material: buildMaterialDetails('taftowa'),
+    delivery: buildDeliveryDetails('Faworytka'),
+    care: 'W przypadku zabrudzenia czyścić na sucho (rolką lub szczotką). Miejscowe plamy usuń lekko wilgotną ściereczką i łagodnym mydłem. Nie pierz w pralce. W razie zamoczenia susz równomiernie.',
+  },
+  {
+    id: 'faworytka-laskowa',
+    slug: 'faworytka-laskowa',
+    model: 'Faworytka',
+    color: 'Laskowa',
+    isAvailable: true,
+    isPermanentlyUnavailable: false,
+    isLastItems: false,
+    materialType: 'morowa',
+    price: 490,
+    mainImage: '/images/faworytka/faworytka-laskowa-main.webp',
+    galleryImages: [
+      '/images/faworytka/faworytka-laskowa-1.webp',
+      '/images/faworytka/faworytka-laskowa-2.webp',
+      '/images/faworytka/faworytka-laskowa-3.webp',
+      '/images/faworytka/faworytka-laskowa-main.webp',
+      '/images/faworytka/wymiarowanie_faworytka_1.webp',
+      '/images/faworytka/wymiarowanie_faworytka_2.webp',
+    ],
+    description: buildModelDescription('Faworytka', 'morowa'),
+    details: buildProductDetails('morowa'),
+    material: buildMaterialDetails('morowa-mix'),
+    delivery: buildDeliveryDetails('Faworytka'),
+    care: 'W przypadku zabrudzenia czyścić na sucho (rolką lub szczotką). Miejscowe plamy usuń lekko wilgotną ściereczką i łagodnym mydłem. Nie pierz w pralce. W razie zamoczenia susz równomiernie.',
+  }
 ];
 
 // Konfiguracja wysylki formularza zamowienia.
