@@ -23,12 +23,11 @@
         var isGithub = /github\.io$/i.test(window.location.hostname);
         var basePath = '/';
         
+        // Jeśli jesteśmy na GitHubie, szukamy na sztywno folderu Twojego projektu
         if (isGithub) {
-          var repoName = window.location.pathname.split('/').filter(Boolean)[0];
-          basePath = '/' + repoName + '/';
+          basePath = '/cemborka-main/';
         }
         
-        // Wstrzykuje tag bezpośrednio podczas ładowania strony, zanim przeglądarka przeczyta linki CSS
         document.write('<base href="' + window.location.origin + basePath + '">');
       })();
     </script>

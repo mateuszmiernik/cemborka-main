@@ -60,6 +60,7 @@ function buildBuyButtonMarkup(product) {
 }
 
 // Renderowanie listy modeli
+// Renderowanie listy modeli z podziałem wierszy dla Faworytek
 function renderModels() {
   const container = document.getElementById("modelsContainer");
   const productsByModel = getProductsByModel();
@@ -91,41 +92,90 @@ function renderModels() {
       section.appendChild(intro);
     }
 
-    // Siatka produktów
-    const grid = document.createElement("div");
-    grid.className = "products-grid";
+    // --- KLUCZOWA ZMIANA STRUCTURALNA DLA FAWORYTEK ---
+    if (model === 'Faworytka' && items.length === 5) {
+      // Tworzymy dwa osobne kontenery (DIVE-y) jako wiersze
+      const row1 = document.createElement("div");
+      row1.className = "products-grid faworytka-row-first"; // DODAJEMY TĘ KLASĘ ZAMIAST STYLU INLINE
 
-        items.forEach((product) => {
-      const productCard = document.createElement("a");
-      const isUnavailable = !isProductAvailable(product);
-      const isLast = isProductAvailable(product) && product.isLastItems === true;
+      const row2 = document.createElement("div");
+      row2.className = "products-grid";
 
-      let cardClass = "product-card";
-      if (isUnavailable) cardClass += " is-unavailable";
-      if (isLast) cardClass += " is-last-items";
-      productCard.className = cardClass;
+      items.forEach((product, index) => {
+        const productCard = document.createElement("a");
+        const isUnavailable = !isProductAvailable(product);
+        const isLast = isProductAvailable(product) && product.isLastItems === true;
 
-      productCard.href = `${toSitePath("produkt/")}?slug=${encodeURIComponent(product.slug)}`;
+        let cardClass = "product-card";
+        if (isUnavailable) cardClass += " is-unavailable";
+        if (isLast) cardClass += " is-last-items";
+        productCard.className = cardClass;
 
-      // Dynamiczny tekst na odznace dla produktów niedostępnych
-      const badgeText = product.isPermanentlyUnavailable === true ? "niedostępna" : "chwilowo niedostępna";
+        productCard.href = `${toSitePath("produkt/")}?slug=${encodeURIComponent(product.slug)}`;
 
-      productCard.innerHTML = `
-        <div class="image-wrapper">
-          <img src="${resolveAssetPath(product.mainImage)}" alt="${product.model} ${product.color}">
-          ${isUnavailable ? `<span class="product-unavailable-badge">${badgeText}</span>` : ""}
-        </div>
-        <div class="product-info">
-          <span class="color-label">kolor</span>
-          <span class="color-name">${product.color}</span>
-          <span class="price">${product.price} zł</span>
-        </div>
-      `;
+        const badgeText = product.isPermanentlyUnavailable === true ? "niedostępna" : "chwilowo niedostępna";
 
-      grid.appendChild(productCard);
-    });
+        productCard.innerHTML = `
+          <div class="image-wrapper">
+            <img src="${resolveAssetPath(product.mainImage)}" alt="${product.model} ${product.color}">
+            ${isUnavailable ? `<span class="product-unavailable-badge">${badgeText}</span>` : ""}
+          </div>
+          <div class="product-info">
+            <span class="color-label">kolor</span>
+            <span class="color-name">${product.color}</span>
+            <span class="price">${product.price} zł</span>
+          </div>
+        `;
 
-    section.appendChild(grid);
+        // Pierwsze dwa produkty (indeksy 0, 1) trafiają do pierwszego rzędu
+        if (index < 2) {
+          row1.appendChild(productCard);
+        } else {
+          // Pozostałe trzy produkty (indeksy 2, 3, 4) trafiają do drugiego rzędu
+          row2.appendChild(productCard);
+        }
+      });
+
+      section.appendChild(row1);
+      section.appendChild(row2);
+
+    } else {
+      // STANDARDOWE RENDEROWANIE (Dla dużych FAWORYT i wszystkich innych modeli)
+      const grid = document.createElement("div");
+      grid.className = "products-grid";
+
+      items.forEach((product) => {
+        const productCard = document.createElement("a");
+        const isUnavailable = !isProductAvailable(product);
+        const isLast = isProductAvailable(product) && product.isLastItems === true;
+
+        let cardClass = "product-card";
+        if (isUnavailable) cardClass += " is-unavailable";
+        if (isLast) cardClass += " is-last-items";
+        productCard.className = cardClass;
+
+        productCard.href = `${toSitePath("produkt/")}?slug=${encodeURIComponent(product.slug)}`;
+
+        const badgeText = product.isPermanentlyUnavailable === true ? "niedostępna" : "chwilowo niedostępna";
+
+        productCard.innerHTML = `
+          <div class="image-wrapper">
+            <img src="${resolveAssetPath(product.mainImage)}" alt="${product.model} ${product.color}">
+            ${isUnavailable ? `<span class="product-unavailable-badge">${badgeText}</span>` : ""}
+          </div>
+          <div class="product-info">
+            <span class="color-label">kolor</span>
+            <span class="color-name">${product.color}</span>
+            <span class="price">${product.price} zł</span>
+          </div>
+        `;
+
+        grid.appendChild(productCard);
+      });
+
+      section.appendChild(grid);
+    }
+
     container.appendChild(section);
   });
 }
