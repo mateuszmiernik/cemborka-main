@@ -324,10 +324,10 @@ const products = [
     care: 'W przypadku zabrudzenia czyścić na sucho (rolką lub szczotką). Miejscowe plamy usuń lekko wilgotną ściereczką i łagodnym mydłem. Nie pierz w pralce. W razie zamoczenia susz równomiernie.',
   },
   {
-    id: 'faworytka-xxx',
-    slug: 'faworytka-xxx',
+    id: 'faworytka-szafirka',
+    slug: 'faworytka-szafirka',
     model: 'Faworytka',
-    color: 'XXX',
+    color: 'Szafirka',
     isAvailable: true,
     isPermanentlyUnavailable: false,
     isLastItems: false,
