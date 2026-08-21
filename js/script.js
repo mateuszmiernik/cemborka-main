@@ -809,9 +809,10 @@ function renderOrderForm() {
       <div class="order-field order-field-select order-delivery-field">
         <label for="deliveryMethod">Sposób dostawy</label>
         <select id="deliveryMethod" name="deliveryMethod" required>
-          <option value="dpd-pickup">Automat DPD Pickup (13 zł)</option>
-          <option value="inpost-kurier">InPost Kurier (20 zł)</option>
-          <option value="dpd-kurier">Kurier DPD (15 zł)</option>
+          <option value="dpd-pickup">Automat DPD (13 zł)</option>
+          <option value="inpost-kurier">Kurier InPost (22 zł)</option>
+          <option value="dpd-kurier">Kurier DPD (24 zł)</option>
+          <option value="inpost-paczkomat">Paczkomat InPost (19 zł)</option>
         </select>
         <span class="order-select-icon material-symbols-outlined" aria-hidden="true">keyboard_arrow_down</span>
       </div>

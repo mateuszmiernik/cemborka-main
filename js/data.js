@@ -16,7 +16,7 @@ function buildProductDetails(materialType) {
 function buildDeliveryDetails(model) {
   const productName = model === 'Faworytka' ? 'FAWORYTKĘ' : 'FAWORYTĘ';
   const items = [
-    'Automat DPD Pickup - 13 zł / InPost Kurier - 20 zł / Kurier DPD - 15 zł.',
+    'Automat DPD - 13 zł / Kurier InPost - 22 zł / Kurier DPD - 24 zł / Paczkomat InPost - 19 zł',
     `Wysyłka zagraniczna: Napisz do nas na maila - chętnie wyślemy ${productName} w dowolne miejsce na świecie.`
   ];
 
@@ -77,12 +77,12 @@ function buildModelDescription(model, materialType) {
   // }
 
   function buildMaterialDetails(materialType) {
-  const whyPolyesterText = 'Chcemy tworzyć torby, które są nie tylko piękne, ale także funkcjonalne. Materiał syntetyczny, jakim jest poliester, oferuje dużą wytrzymałość, co jest kluczowe, ponieważ torba jest narażona na wiele testów codzienności. Dlatego nasz wybór to „świadomy poliester”. Nasza pierwsza kolekcja powstała z wykorzystaniem materiałów pozostałych z wcześniejszych kolekcji tkanin, co odzwierciedla nasze zaangażowanie w świadome podejście do surowców.';
+  const whyPolyesterText = 'Szyjemy z końcówek kolekcji tkanin oraz tzw. deadstocków. To właśnie dlatego nasze torby powstają w krótkich seriach. Świadomie dajemy drugie życie materiałom, które już wyprodukowano. Dzięki temu działamy w zrównoważony sposób. Wykorzystujemy tkaniny pochodzące z UE.';
 
   // Dynamiczny skład w zależności od typu materiału
   const composition = materialType === 'morowa-mix' 
-    ? 'wiskoza + poliester* + bawełna' 
-    : 'poliester* + bawełna';
+    ? 'wiskoza + poliester + bawełna' 
+    : 'poliester + bawełna';
 
   // 'morowa' oraz 'morowa-mix'
   const materialIntro =
@@ -93,7 +93,6 @@ function buildModelDescription(model, materialType) {
   return `
     <p style="margin: 0 0 8px 0;"><strong>Skład:</strong> ${composition}</p>
     <p style="margin: 0 0 8px 0;">${materialIntro}</p>
-    <p class="material-polyester-heading"><strong>*Dlaczego poliester?</strong></p>
     <p class="material-polyester-copy">${whyPolyesterText}</p>
   `;
 }
@@ -314,8 +313,9 @@ const products = [
       '/images/faworytka/faworytka-pieprz-1.webp',
       '/images/faworytka/faworytka-pieprz-2.webp',
       '/images/faworytka/faworytka-pieprz-3.webp',
-      '/images/faworytka/wymiarowanie_faworytka_1.webp',
-      '/images/faworytka/wymiarowanie_faworytka_2.webp',
+      '/images/faworytka/faworytka-pieprz-4.webp',
+      '/images/faworytka/wymiarowanie_faworytka_3.webp',
+      '/images/faworytka/wymiarowanie_faworytka_4.webp',
     ],
     description: buildModelDescription('Faworytka', 'morowa'),
     details: buildProductDetails('morowa'),
@@ -339,6 +339,8 @@ const products = [
       '/images/faworytka/faworytka-kobaltowa-1.webp',
       '/images/faworytka/faworytka-kobaltowa-2.webp',
       '/images/faworytka/faworytka-kobaltowa-3.webp',
+      '/images/faworytka/faworytka-kobaltowa-4.webp',
+      '/images/faworytka/faworytka-kobaltowa-5.webp',
       '/images/faworytka/wymiarowanie_faworytka_1.webp',
       '/images/faworytka/wymiarowanie_faworytka_2.webp',
     ],
@@ -360,12 +362,13 @@ const products = [
     price: 490,
     mainImage: '/images/faworytka/faworytka-laskowa-main.webp',
     galleryImages: [
+      '/images/faworytka/faworytka-laskowa-main.webp',
       '/images/faworytka/faworytka-laskowa-1.webp',
       '/images/faworytka/faworytka-laskowa-2.webp',
       '/images/faworytka/faworytka-laskowa-3.webp',
-      '/images/faworytka/faworytka-laskowa-main.webp',
-      '/images/faworytka/wymiarowanie_faworytka_1.webp',
-      '/images/faworytka/wymiarowanie_faworytka_2.webp',
+      '/images/faworytka/faworytka-laskowa-4.webp',
+      '/images/faworytka/wymiarowanie_faworytka_3.webp',
+      '/images/faworytka/wymiarowanie_faworytka_4.webp',
     ],
     description: buildModelDescription('Faworytka', 'morowa'),
     details: buildProductDetails('morowa'),
