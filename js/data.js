@@ -88,7 +88,7 @@ function buildModelDescription(model, materialType) {
   const materialIntro =
     materialType === 'morowa' || materialType === 'morowa-mix'
       ? 'Torba stworzona z tkaniny Moiré, unikalnego materiału o charakterystycznym, mieniącym się wzorze, który przypomina słoje drewna lub falującą wodę.'
-      : 'Torba stworzona z tafty poliestrowej, która opalizuje na dwa kolory, a jej barwa zależy od kąta padania światła.';
+      : 'Torba stworzona z tafty poliestrowej, która opalizuje na kilka odcieni - jej barwa zależy od kąta padania światła.';
 
   return `
     <p style="margin: 0 0 8px 0;"><strong>Skład:</strong> ${composition}</p>
