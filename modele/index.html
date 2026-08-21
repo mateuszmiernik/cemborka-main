@@ -18,7 +18,20 @@
     <meta property="og:url" content="https://www.cemborka.com/modele/">
     <meta property="og:image" content="https://www.cemborka.com/images/hero.webp">
     <meta property="og:image:alt" content="Modele torebek CEMBORKA">
-    <base href="/">
+    <script>
+      (function() {
+        var isGithub = /github\.io$/i.test(window.location.hostname);
+        var basePath = '/';
+        
+        if (isGithub) {
+          var repoName = window.location.pathname.split('/').filter(Boolean)[0];
+          basePath = '/' + repoName + '/';
+        }
+        
+        // Wstrzykuje tag bezpośrednio podczas ładowania strony, zanim przeglądarka przeczyta linki CSS
+        document.write('<base href="' + window.location.origin + basePath + '">');
+      })();
+    </script>
     <link rel="icon" type="image/png" href="favicon/favicon-96x96.png" sizes="96x96">
     <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg">
     <link rel="shortcut icon" href="favicon/favicon.ico">

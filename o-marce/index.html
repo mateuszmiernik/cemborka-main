@@ -18,7 +18,20 @@
     <meta property="og:url" content="https://www.cemborka.com/o-marce/">
     <meta property="og:image" content="https://www.cemborka.com/images/hero.webp">
     <meta property="og:image:alt" content="CEMBORKA - O marce">
-    <base href="/">
+     <script>
+      // Automatyczne ustawianie poprawnej ścieżki bazowej dla localhost i GitHub Pages
+      (function() {
+        var base = document.createElement('base');
+        if (/github\.io$/i.test(window.location.hostname)) {
+          // Pobiera pierwszy segment ścieżki (czyli nazwę repozytorium cemborka-main)
+          var repoName = window.location.pathname.split('/').filter(Boolean)[0];
+          base.href = window.location.origin + '/' + repoName + '/';
+        } else {
+          base.href = '/';
+        }
+        document.head.appendChild(base);
+      })();
+    </script>
     <link rel="icon" type="image/png" href="favicon/favicon-96x96.png" sizes="96x96">
     <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg">
     <link rel="shortcut icon" href="favicon/favicon.ico">

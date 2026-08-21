@@ -18,17 +18,18 @@
     <meta property="og:url" content="https://www.cemborka.com/">
     <meta property="og:image" content="https://www.cemborka.com/images/hero.webp">
     <meta property="og:image:alt" content="Modelka z torebką CEMBORKA">
-     <script>
-      // Automatyczne ustawianie poprawnej ścieżki bazowej dla localhost i GitHub Pages
+    <script>
       (function() {
-        var base = document.createElement('base');
-        if (/github\.io$/i.test(window.location.hostname)) {
-          var segment = window.location.pathname.split('/')[1];
-          base.href = window.location.origin + '/' + segment + '/';
-        } else {
-          base.href = '/';
+        var isGithub = /github\.io$/i.test(window.location.hostname);
+        var basePath = '/';
+        
+        if (isGithub) {
+          var repoName = window.location.pathname.split('/').filter(Boolean)[0];
+          basePath = '/' + repoName + '/';
         }
-        document.head.appendChild(base);
+        
+        // Wstrzykuje tag bezpośrednio podczas ładowania strony, zanim przeglądarka przeczyta linki CSS
+        document.write('<base href="' + window.location.origin + basePath + '">');
       })();
     </script>
     <link rel="icon" type="image/png" href="favicon/favicon-96x96.png" sizes="96x96">
