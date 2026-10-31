@@ -109,7 +109,7 @@ const products = [
     isPermanentlyUnavailable: false,
     isLastItems: true,
     materialType: 'morowa',
-    price: 630,
+    price: 689,
     mainImage: '/images/faworyta/faworyta-jagoda-main.webp',
     galleryImages: [
       '/images/faworyta/faworyta-jagoda-1.webp',
@@ -134,7 +134,7 @@ const products = [
     isPermanentlyUnavailable: false,
     isLastItems: false,
     materialType: 'taftowa',
-    price: 570,
+    price: 589,
     mainImage: '/images/faworyta/faworyta-zlota-reneta-main.webp',
     galleryImages: [
       '/images/faworyta/faworyta-zlota-reneta-1.webp',
@@ -159,7 +159,7 @@ const products = [
     isPermanentlyUnavailable: false,
     isLastItems: false,
     materialType: 'taftowa',
-    price: 570,
+    price: 589,
     mainImage: '/images/faworyta/faworyta-malwa-main.webp',
     galleryImages: [
       '/images/faworyta/faworyta-malwa-1.webp',
@@ -184,7 +184,7 @@ const products = [
     isPermanentlyUnavailable: false,
     isLastItems: false,
     materialType: 'morowa',
-    price: 630,
+    price: 689,
     mainImage: '/images/faworyta/faworyta-pieprz-main.webp',
     galleryImages: [
       '/images/faworyta/faworyta-pieprz-1.webp',
@@ -209,7 +209,7 @@ const products = [
     isPermanentlyUnavailable: true, // <-- NOWA FLAGA: zmienia tekst na "NIEDOSTĘPNA"
     isLastItems: true,
     materialType: 'morowa',
-    price: 630,
+    price: 689,
     mainImage: '/images/faworyta/faworyta-mak-main.webp',
     galleryImages: [
       '/images/faworyta/faworyta-mak-1.webp',
@@ -234,7 +234,7 @@ const products = [
     isPermanentlyUnavailable: false,
     isLastItems: false,
     materialType: 'taftowa',
-    price: 570,
+    price: 589,
     mainImage: '/images/faworyta/faworyta-sliwka-main.webp',
     galleryImages: [
       '/images/faworyta/faworyta-sliwka-1.webp',
@@ -259,7 +259,7 @@ const products = [
     isPermanentlyUnavailable: false,
     isLastItems: false,
     materialType: 'taftowa',
-    price: 450,
+    price: 499,
     mainImage: '/images/faworytka/faworytka-malwa-main.webp',
     galleryImages: [
       '/images/faworytka/faworytka-malwa-1.webp',
@@ -283,7 +283,7 @@ const products = [
     isPermanentlyUnavailable: false,
     isLastItems: false,
     materialType: 'taftowa',
-    price: 450,
+    price: 499,
     mainImage: '/images/faworytka/faworytka-sliwka-main.webp',
     galleryImages: [
       '/images/faworytka/faworytka-sliwka-main.webp',
@@ -306,7 +306,7 @@ const products = [
     isPermanentlyUnavailable: false,
     isLastItems: false,
     materialType: 'morowa',
-    price: 490,
+    price: 529,
     mainImage: '/images/faworytka/faworytka-pieprz-main.webp',
     galleryImages: [
       '/images/faworytka/faworytka-pieprz-main.webp',
@@ -332,7 +332,7 @@ const products = [
     isPermanentlyUnavailable: false,
     isLastItems: false,
     materialType: 'taftowa',
-    price: 450,
+    price: 499,
     mainImage: '/images/faworytka/faworytka-kobaltowa-main.webp',
     galleryImages: [
       '/images/faworytka/faworytka-kobaltowa-main.webp',
@@ -359,7 +359,7 @@ const products = [
     isPermanentlyUnavailable: false,
     isLastItems: false,
     materialType: 'morowa',
-    price: 490,
+    price: 529,
     mainImage: '/images/faworytka/faworytka-laskowa-main.webp',
     galleryImages: [
       '/images/faworytka/faworytka-laskowa-main.webp',
