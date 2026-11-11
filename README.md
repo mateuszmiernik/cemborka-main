@@ -8,6 +8,7 @@ Czysty HTML, CSS i JavaScript - gotowy do przerobienia na Golanga.
 cemborka-html/
 ├── index.html                  # Strona główna
 ├── modele/index.html           # Lista modeli
+├── pralinki/index.html         # Kolekcja Pralinki z klikalnym zdjęciem i galerią
 ├── produkt/index.html          # Szczegóły produktu
 ├── o-marce/index.html          # O marce
 ├── kontakt/index.html          # Kontakt
@@ -20,6 +21,7 @@ cemborka-html/
 ├── favicon/                     # Favicony i manifest PWA
 ├── js/
 │   ├── data.js                  # Dane produktów i konfiguracja endpointu
+│   ├── pralinki.js              # Hotspoty i galeria kolekcji Pralinki
 │   └── script.js                # Renderowanie widoków i interakcje
 ├── fonts/                       # Czcionki Degular
 ├── images/                      # Obrazki produktów i assety UI
@@ -38,7 +40,8 @@ Uwaga: projekt korzysta ze stalego `<base href="/">`, wiec powinien byc uruchami
 
 ## Nawigacja
 
-- `/` → Strona główna z przyciskiem "ZOBACZ DOSTĘPNE MODELE"
+- `/` → Strona główna z przyciskami do nowej kolekcji i dostępnych modeli
+- `/pralinki/` → Kolekcja Pralinki; kliknięcie torebki otwiera galerię zdjęć
 - `/modele/` → Lista wszystkich modeli i produktów w siatce 2x2
 - `/produkt/?slug=faworyta-jagoda` → Szczegóły konkretnego produktu
 - `/o-marce/`, `/kontakt/`, `/zamowienie/`, `/polityka-prywatnosci/`, `/regulamin/` → pozostałe podstrony

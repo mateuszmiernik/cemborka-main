@@ -1958,6 +1958,10 @@ function getParentPageUrl() {
     return toSitePath();
   }
 
+  if (path.includes("/pralinki")) {
+    return toSitePath();
+  }
+
   return null;
 }
 
