@@ -2700,7 +2700,6 @@ body.home-page .cta-container {
 
 .cta-button:focus-visible,
 .pralinki-hotspot:focus-visible,
-.pralinki-color-option:focus-visible,
 .pralinki-gallery-dialog button:focus-visible {
   outline: 2px solid var(--text-color);
   outline-offset: 3px;
@@ -2723,44 +2722,79 @@ body.home-page .cta-container {
 }
 
 /* PRALINKI COLLECTION PAGE */
+html.pralinki-page {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 body.pralinki-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
   min-height: 100vh;
+  overflow: hidden;
+  overscroll-behavior: none;
   background: #17040c;
   color: var(--text-color);
 }
 
+@supports (height: 100dvh) {
+  body.pralinki-page {
+    height: 100dvh;
+    min-height: 100dvh;
+  }
+}
+
+body.pralinki-page .header {
+  flex: 0 0 3.75rem;
+}
+
 .pralinki-main {
-  min-height: calc(100vh - 3.75rem);
-  padding: 0.75rem clamp(0.75rem, 2.5vw, 2rem) 2.5rem;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0;
   background: #17040c;
 }
 
 .pralinki-collection {
-  width: min(100%, 112rem);
+  width: 100%;
+  height: 100%;
   margin: 0 auto;
-}
-
-.pralinki-instruction {
-  margin: 0 auto 0.65rem;
-  color: rgba(251, 223, 203, 0.82);
-  text-align: center;
-  font-size: 0.875rem;
-  letter-spacing: 0.04em;
 }
 
 .pralinki-artwork {
   position: relative;
   isolation: isolate;
   width: 100%;
-  max-width: 112rem;
+  height: 100%;
   margin: 0 auto;
-  aspect-ratio: 3730 / 2160;
+  overflow: hidden;
+}
+
+.pralinki-artwork-picture {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .pralinki-artwork-image {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+
+.pralinki-hotspots {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  pointer-events: none;
 }
 
 .pralinki-hotspot {
@@ -2772,22 +2806,84 @@ body.pralinki-page {
   height: var(--hotspot-height);
   padding: 0;
   border: 1px solid transparent;
-  border-radius: 0.6rem;
+  border-radius: 0.65rem;
+  outline: none;
   background: transparent;
   cursor: pointer;
+  pointer-events: auto;
   touch-action: manipulation;
-  transition: background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pralinki-hotspot::before {
+  position: absolute;
+  inset: -18%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(254, 110, 118, 0.34), rgba(254, 110, 118, 0.13) 42%, transparent 75%);
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.82);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.pralinki-hotspot::after {
+  position: absolute;
+  bottom: calc(100% + 0.55rem);
+  left: 50%;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid rgba(251, 223, 203, 0.68);
+  border-radius: 999px;
+  color: var(--text-color);
+  background: rgba(23, 4, 12, 0.94);
+  box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.3);
+  content: attr(data-color);
+  font-size: clamp(0.7rem, 0.95vw, 0.875rem);
+  letter-spacing: 0.035em;
+  line-height: 1.1;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 0.3rem) scale(0.96);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  white-space: nowrap;
 }
 
 .pralinki-hotspot:hover,
 .pralinki-hotspot:focus-visible {
-  border-color: rgba(251, 223, 203, 0.82);
-  background: rgba(251, 223, 203, 0.12);
-  box-shadow: 0 0 0 2px rgba(50, 27, 11, 0.52);
+  z-index: 3;
+  border-color: rgba(251, 223, 203, 0.92);
+  background: linear-gradient(145deg, rgba(251, 223, 203, 0.1), rgba(254, 110, 118, 0.18));
+  box-shadow: 0 0 0 1px rgba(251, 223, 203, 0.34), 0 0 1.5rem rgba(254, 110, 118, 0.42), inset 0 0 1rem rgba(251, 223, 203, 0.12);
+  transform: scale(1.07);
 }
 
-.pralinki-color-options {
-  display: none;
+.pralinki-hotspot:hover::before,
+.pralinki-hotspot:focus-visible::before,
+.pralinki-hotspot:hover::after,
+.pralinki-hotspot:focus-visible::after {
+  opacity: 1;
+}
+
+.pralinki-hotspot:hover::before,
+.pralinki-hotspot:focus-visible::before {
+  transform: scale(1);
+}
+
+.pralinki-hotspot:hover::after,
+.pralinki-hotspot:focus-visible::after {
+  transform: translate(-50%, 0) scale(1);
+}
+
+.pralinki-hotspot:active {
+  transform: scale(0.96);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pralinki-hotspot,
+  .pralinki-hotspot::before,
+  .pralinki-hotspot::after {
+    transition: none;
+  }
 }
 
 /* Product gallery dialog */
@@ -3012,51 +3108,94 @@ body.pralinki-gallery-open {
 }
 
 @media (min-width: 1024px) {
-  .pralinki-main {
-    min-height: calc(100vh - 5rem);
-    padding-top: 1rem;
-  }
-
-  .pralinki-instruction {
-    margin-bottom: 0.85rem;
+  body.pralinki-page .header {
+    flex-basis: 5rem;
   }
 }
 
+.pralinki-hotspot[data-pralinka="landrynka"] {
+  --hotspot-x: 35.7%;
+  --hotspot-y: 55.5%;
+  --hotspot-width: 5%;
+  --hotspot-height: 14%;
+}
+
+.pralinki-hotspot[data-pralinka="mieta"] {
+  --hotspot-x: 40.3%;
+  --hotspot-y: 55.5%;
+  --hotspot-width: 5%;
+  --hotspot-height: 14%;
+}
+
+.pralinki-hotspot[data-pralinka="zurawina"] {
+  --hotspot-x: 44.9%;
+  --hotspot-y: 55.5%;
+  --hotspot-width: 5%;
+  --hotspot-height: 14%;
+}
+
+.pralinki-hotspot[data-pralinka="makowka"] {
+  --hotspot-x: 35.7%;
+  --hotspot-y: 68.7%;
+  --hotspot-width: 5%;
+  --hotspot-height: 14%;
+}
+
+.pralinki-hotspot[data-pralinka="sliwka"] {
+  --hotspot-x: 40.3%;
+  --hotspot-y: 68.7%;
+  --hotspot-width: 5%;
+  --hotspot-height: 14%;
+}
+
+.pralinki-hotspot[data-pralinka="wisnia"] {
+  --hotspot-x: 44.9%;
+  --hotspot-y: 68.7%;
+  --hotspot-width: 5%;
+  --hotspot-height: 14%;
+}
+
 @media (max-width: 700px) {
-  .pralinki-main {
-    min-height: calc(100vh - 3.75rem);
-    padding: 0.65rem 0.65rem 2rem;
+  .pralinki-hotspot[data-pralinka="landrynka"] {
+    --hotspot-x: 28.8%;
+    --hotspot-y: 63.8%;
+    --hotspot-width: 8.7%;
+    --hotspot-height: 11.8%;
   }
 
-  .pralinki-instruction {
-    max-width: 24rem;
-    margin-bottom: 0.6rem;
-    font-size: 0.8125rem;
+  .pralinki-hotspot[data-pralinka="mieta"] {
+    --hotspot-x: 38.9%;
+    --hotspot-y: 63.8%;
+    --hotspot-width: 9.5%;
+    --hotspot-height: 11.8%;
   }
 
-  .pralinki-color-options {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.55rem;
-    max-width: 30rem;
-    margin: 0.9rem auto 0;
+  .pralinki-hotspot[data-pralinka="zurawina"] {
+    --hotspot-x: 49.5%;
+    --hotspot-y: 63.8%;
+    --hotspot-width: 9%;
+    --hotspot-height: 11.8%;
   }
 
-  .pralinki-color-option {
-    min-height: 2.75rem;
-    padding: 0.55rem 0.65rem;
-    border: 1px solid rgba(251, 223, 203, 0.65);
-    border-radius: 0.1rem;
-    color: var(--text-color);
-    background: rgba(251, 223, 203, 0.04);
-    font-size: 0.875rem;
-    line-height: 1.15;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+  .pralinki-hotspot[data-pralinka="makowka"] {
+    --hotspot-x: 28.8%;
+    --hotspot-y: 75.8%;
+    --hotspot-width: 8.7%;
+    --hotspot-height: 16%;
   }
 
-  .pralinki-color-option:hover {
-    background: rgba(251, 223, 203, 0.12);
+  .pralinki-hotspot[data-pralinka="sliwka"] {
+    --hotspot-x: 38.9%;
+    --hotspot-y: 75.8%;
+    --hotspot-width: 9.5%;
+    --hotspot-height: 16%;
+  }
+
+  .pralinki-hotspot[data-pralinka="wisnia"] {
+    --hotspot-x: 49.5%;
+    --hotspot-y: 75.8%;
+    --hotspot-width: 9%;
+    --hotspot-height: 16%;
   }
 
   .pralinki-gallery-dialog {

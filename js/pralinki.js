@@ -4,42 +4,42 @@
       id: "landrynka",
       color: "Landrynka",
       cardImage: "/images/WIZUALIZACJE/landrynka_w papilotce.webp",
-      productImage: "/images/pralinki/landrynka.webp",
+      productImage: "/images/pralinki/pralinka-landrynka-main.webp",
       productAlt: "Pralinka Landrynka — zdjęcie torebki na tle tkaniny",
     },
     {
       id: "mieta",
       color: "Mięta w czekoladzie",
       cardImage: "/images/WIZUALIZACJE/mięta w wczekoladzie_w papilotce.webp",
-      productImage: "/images/pralinki/mięta w czekoladzie.webp",
+      productImage: "/images/pralinki/pralinka-mieta-main.webp",
       productAlt: "Pralinka Mięta w czekoladzie — zdjęcie torebki na tle tkaniny",
     },
     {
       id: "zurawina",
       color: "Żurawina",
       cardImage: "/images/WIZUALIZACJE/żurawina_w papilotce.webp",
-      productImage: "/images/pralinki/żurawina.webp",
+      productImage: "/images/pralinki/pralinka-zurawina-main.webp",
       productAlt: "Pralinka Żurawina — zdjęcie torebki na tle tkaniny",
     },
     {
       id: "makowka",
       color: "Makówka",
       cardImage: "/images/WIZUALIZACJE/makówka_w papilotce.webp",
-      productImage: "/images/pralinki/makówka.webp",
+      productImage: "/images/pralinki/pralinka-makowka-main.webp",
       productAlt: "Pralinka Makówka — zdjęcie torebki na tle tkaniny",
     },
     {
       id: "sliwka",
       color: "Śliwka",
       cardImage: "/images/WIZUALIZACJE/śliwka_w papilotce.webp",
-      productImage: "/images/pralinki/śliwka.webp",
+      productImage: "/images/pralinki/pralinka-sliwka-main.webp",
       productAlt: "Pralinka Śliwka — zdjęcie torebki na tle tkaniny",
     },
     {
       id: "wisnia",
       color: "Wiśnia w czekoladzie",
       cardImage: "/images/WIZUALIZACJE/wiśnia w czekoladzie_w papilotce.webp",
-      productImage: "/images/pralinki/wiśnia w czekoladzie.webp",
+      productImage: "/images/pralinki/pralinka-wisnia-main.webp",
       productAlt: "Pralinka Wiśnia w czekoladzie — zdjęcie torebki na tle tkaniny",
     },
   ].map((product) => ({
@@ -54,11 +54,11 @@
         alt: product.productAlt,
       },
       {
-        src: "/images/pralinki/Pralinka_wymiarowanie1.webp",
+        src: "/images/pralinki/wymiarowanie_pralinka_1.webp",
         alt: "Wymiary Pralinki: szerokość 32 cm, wysokość torebki 24 cm i minimalna długość rączki 15 cm",
       },
       {
-        src: "/images/pralinki/Pralinka_wymiarowanie2.webp",
+        src: "/images/pralinki/wymiarowanie_pralinka_2.webp",
         alt: "Wymiary Pralinki: szerokość 32 cm, wysokość torebki 24 cm i maksymalna długość rączki 50 cm",
       },
     ],
@@ -69,9 +69,47 @@
   const galleryColor = document.getElementById("pralinkiGalleryColor");
   const galleryCounter = document.getElementById("pralinkiGalleryCounter");
   const thumbnailsContainer = document.getElementById("pralinkiGalleryThumbnails");
-  const optionsContainer = document.getElementById("pralinkiColorOptions");
   const stage = dialog?.querySelector(".pralinki-gallery-stage");
   const closeButton = dialog?.querySelector("[data-gallery-close]");
+  const artwork = document.querySelector(".pralinki-artwork");
+  const artworkImage = document.querySelector(".pralinki-artwork-image");
+  const hotspotsLayer = document.querySelector(".pralinki-hotspots");
+
+  function syncHotspotsWithArtwork() {
+    if (!artwork || !artworkImage || !hotspotsLayer) return;
+
+    const artworkBounds = artwork.getBoundingClientRect();
+    const imageWidth = artworkImage.naturalWidth;
+    const imageHeight = artworkImage.naturalHeight;
+
+    if (!artworkBounds.width || !artworkBounds.height || !imageWidth || !imageHeight) {
+      return;
+    }
+
+    const coverScale = Math.max(
+      artworkBounds.width / imageWidth,
+      artworkBounds.height / imageHeight,
+    );
+    const renderedWidth = imageWidth * coverScale;
+    const renderedHeight = imageHeight * coverScale;
+
+    hotspotsLayer.style.width = `${renderedWidth}px`;
+    hotspotsLayer.style.height = `${renderedHeight}px`;
+    hotspotsLayer.style.left = `${(artworkBounds.width - renderedWidth) / 2}px`;
+    hotspotsLayer.style.top = `${(artworkBounds.height - renderedHeight) / 2}px`;
+  }
+
+  if (artwork && artworkImage && hotspotsLayer) {
+    artworkImage.addEventListener("load", syncHotspotsWithArtwork);
+    window.addEventListener("resize", syncHotspotsWithArtwork, { passive: true });
+
+    if (typeof ResizeObserver === "function") {
+      const artworkResizeObserver = new ResizeObserver(syncHotspotsWithArtwork);
+      artworkResizeObserver.observe(artwork);
+    }
+
+    syncHotspotsWithArtwork();
+  }
 
   if (
     !dialog ||
@@ -79,7 +117,6 @@
     !galleryColor ||
     !galleryCounter ||
     !thumbnailsContainer ||
-    !optionsContainer ||
     !stage ||
     !closeButton
   ) {
@@ -95,19 +132,6 @@
     return typeof resolveAssetPath === "function"
       ? resolveAssetPath(path)
       : path.replace(/^\//, "");
-  }
-
-  function renderColorOptions() {
-    products.forEach((product) => {
-      const option = document.createElement("button");
-      option.type = "button";
-      option.className = "pralinki-color-option";
-      option.dataset.pralinka = product.id;
-      option.setAttribute("aria-label", `Otwórz galerię: Pralinka, ${product.color}`);
-      option.setAttribute("aria-controls", "pralinkiGallery");
-      option.textContent = product.color;
-      optionsContainer.appendChild(option);
-    });
   }
 
   function renderThumbnails() {
@@ -170,8 +194,6 @@
 
     closeButton.focus();
   }
-
-  renderColorOptions();
 
   document.addEventListener("click", (event) => {
     const trigger = event.target.closest("[data-pralinka]");

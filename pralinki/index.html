@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="pl" class="pralinki-page">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -8,13 +8,13 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Kolekcja Pralinki - CEMBORKA</title>
-    <meta name="description" content="Poznaj nową kolekcję Pralinki CEMBORKA. Kliknij wybrany kolor i zobacz galerię zdjęć.">
+    <meta name="description" content="Poznaj nową kolekcję Pralinki CEMBORKA — sześć małych torebek prezentowanych w pudełku.">
     <link rel="canonical" href="https://www.cemborka.com/pralinki/">
     <meta property="og:locale" content="pl_PL">
     <meta property="og:site_name" content="CEMBORKA">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Kolekcja Pralinki - CEMBORKA">
-    <meta property="og:description" content="Poznaj nową kolekcję Pralinki CEMBORKA. Kliknij wybrany kolor i zobacz galerię zdjęć.">
+    <meta property="og:description" content="Poznaj nową kolekcję Pralinki CEMBORKA — sześć małych torebek prezentowanych w pudełku.">
     <meta property="og:url" content="https://www.cemborka.com/pralinki/">
     <meta property="og:image" content="https://www.cemborka.com/images/PLIKI/ZDJECIE%20PUDE%C5%81KO.webp">
     <meta property="og:image:alt" content="Pudełko kolekcji Pralinki CEMBORKA z sześcioma torebkami">
@@ -31,7 +31,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
     <meta name="apple-mobile-web-app-title" content="CEMBORKA">
     <link rel="manifest" href="favicon/site.webmanifest">
-    <link rel="stylesheet" href="css/style.css?v=5">
+    <link rel="stylesheet" href="css/style.css?v=6">
 </head>
 <body class="pralinki-page">
     <header class="header">
@@ -53,25 +53,28 @@
     <main class="pralinki-main">
         <h1 class="visually-hidden">Nowa kolekcja CEMBORKA — Pralinki</h1>
         <section class="pralinki-collection" aria-label="Kolekcja Pralinki — wybierz torebkę">
-            <p class="pralinki-instruction">Wybierz torebkę, aby zobaczyć jej galerię zdjęć.</p>
             <div class="pralinki-artwork">
-                <img
-                    src="images/PLIKI/ZDJECIE PUDEŁKO.webp"
-                    alt="Kolekcja Pralinki: sześć małych torebek w pudełku"
-                    class="pralinki-artwork-image"
-                    width="3730"
-                    height="2160"
-                    fetchpriority="high"
-                    decoding="async"
-                >
-                <button class="pralinki-hotspot" type="button" data-pralinka="landrynka" style="--hotspot-x: 35.7%; --hotspot-y: 55.5%; --hotspot-width: 5%; --hotspot-height: 14%;" aria-label="Otwórz galerię: Pralinka, Landrynka" title="Landrynka"><span class="visually-hidden">Landrynka</span></button>
-                <button class="pralinki-hotspot" type="button" data-pralinka="mieta" style="--hotspot-x: 40.3%; --hotspot-y: 55.5%; --hotspot-width: 5%; --hotspot-height: 14%;" aria-label="Otwórz galerię: Pralinka, Mięta w czekoladzie" title="Mięta w czekoladzie"><span class="visually-hidden">Mięta w czekoladzie</span></button>
-                <button class="pralinki-hotspot" type="button" data-pralinka="zurawina" style="--hotspot-x: 44.9%; --hotspot-y: 55.5%; --hotspot-width: 5%; --hotspot-height: 14%;" aria-label="Otwórz galerię: Pralinka, Żurawina" title="Żurawina"><span class="visually-hidden">Żurawina</span></button>
-                <button class="pralinki-hotspot" type="button" data-pralinka="makowka" style="--hotspot-x: 35.7%; --hotspot-y: 68.7%; --hotspot-width: 5%; --hotspot-height: 14%;" aria-label="Otwórz galerię: Pralinka, Makówka" title="Makówka"><span class="visually-hidden">Makówka</span></button>
-                <button class="pralinki-hotspot" type="button" data-pralinka="sliwka" style="--hotspot-x: 40.3%; --hotspot-y: 68.7%; --hotspot-width: 5%; --hotspot-height: 14%;" aria-label="Otwórz galerię: Pralinka, Śliwka" title="Śliwka"><span class="visually-hidden">Śliwka</span></button>
-                <button class="pralinki-hotspot" type="button" data-pralinka="wisnia" style="--hotspot-x: 44.9%; --hotspot-y: 68.7%; --hotspot-width: 5%; --hotspot-height: 14%;" aria-label="Otwórz galerię: Pralinka, Wiśnia w czekoladzie" title="Wiśnia w czekoladzie"><span class="visually-hidden">Wiśnia w czekoladzie</span></button>
+                <picture class="pralinki-artwork-picture">
+                    <source media="(max-width: 700px)" srcset="images/PLIKI/Obszar%20kompozycji%201%20kopia%202.webp">
+                    <img
+                        src="images/PLIKI/ZDJECIE PUDEŁKO.webp"
+                        alt="Kolekcja Pralinki: sześć małych torebek w pudełku"
+                        class="pralinki-artwork-image"
+                        width="3730"
+                        height="2160"
+                        fetchpriority="high"
+                        decoding="async"
+                    >
+                </picture>
+                <div class="pralinki-hotspots">
+                    <button class="pralinki-hotspot" type="button" data-pralinka="landrynka" aria-haspopup="dialog" aria-controls="pralinkiGallery" aria-label="Otwórz galerię: Pralinka, Landrynka" data-color="Landrynka"><span class="visually-hidden">Landrynka</span></button>
+                    <button class="pralinki-hotspot" type="button" data-pralinka="mieta" aria-haspopup="dialog" aria-controls="pralinkiGallery" aria-label="Otwórz galerię: Pralinka, Mięta w czekoladzie" data-color="Mięta w czekoladzie"><span class="visually-hidden">Mięta w czekoladzie</span></button>
+                    <button class="pralinki-hotspot" type="button" data-pralinka="zurawina" aria-haspopup="dialog" aria-controls="pralinkiGallery" aria-label="Otwórz galerię: Pralinka, Żurawina" data-color="Żurawina"><span class="visually-hidden">Żurawina</span></button>
+                    <button class="pralinki-hotspot" type="button" data-pralinka="makowka" aria-haspopup="dialog" aria-controls="pralinkiGallery" aria-label="Otwórz galerię: Pralinka, Makówka" data-color="Makówka"><span class="visually-hidden">Makówka</span></button>
+                    <button class="pralinki-hotspot" type="button" data-pralinka="sliwka" aria-haspopup="dialog" aria-controls="pralinkiGallery" aria-label="Otwórz galerię: Pralinka, Śliwka" data-color="Śliwka"><span class="visually-hidden">Śliwka</span></button>
+                    <button class="pralinki-hotspot" type="button" data-pralinka="wisnia" aria-haspopup="dialog" aria-controls="pralinkiGallery" aria-label="Otwórz galerię: Pralinka, Wiśnia w czekoladzie" data-color="Wiśnia w czekoladzie"><span class="visually-hidden">Wiśnia w czekoladzie</span></button>
+                </div>
             </div>
-            <div class="pralinki-color-options" id="pralinkiColorOptions" aria-label="Wybierz kolor torebki"></div>
         </section>
     </main>
 
@@ -107,6 +110,6 @@
     </dialog>
 
     <script src="js/script.js?v=5"></script>
-    <script src="js/pralinki.js?v=1"></script>
+    <script src="js/pralinki.js?v=2"></script>
 </body>
 </html>
