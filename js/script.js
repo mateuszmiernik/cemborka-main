@@ -43,6 +43,59 @@ function getAvailableProducts() {
   return products.filter(isProductAvailable);
 }
 
+function getProductGalleryImages(product) {
+  if (!product || typeof product !== "object") return [];
+
+  const galleryImages = Array.isArray(product.galleryImages)
+    ? product.galleryImages.filter(
+        (imagePath) => typeof imagePath === "string" && imagePath.trim(),
+      )
+    : [];
+
+  if (galleryImages.length > 0) return galleryImages;
+
+  return typeof product.mainImage === "string" && product.mainImage.trim()
+    ? [product.mainImage]
+    : [];
+}
+
+function buildProductImagePlaceholderMarkup(product, modifierClass = "") {
+  const classNames = ["product-image-placeholder", modifierClass]
+    .filter(Boolean)
+    .join(" ");
+
+  return `<div class="${classNames}" role="img" aria-label="${product.model} ${product.color} — zdjęcie do uzupełnienia"><span>Zdjęcie w przygotowaniu</span></div>`;
+}
+
+function buildProductCardImageMarkup(product) {
+  const imagePath =
+    (typeof product.mainImage === "string" && product.mainImage.trim()
+      ? product.mainImage
+      : "") || getProductGalleryImages(product)[0];
+
+  if (!imagePath) return buildProductImagePlaceholderMarkup(product);
+
+  return `<img src="${resolveAssetPath(imagePath)}" alt="${product.model} ${product.color}">`;
+}
+
+function buildProductPriceMarkup(product) {
+  const hasDiscountedPrice =
+    Number.isFinite(product.price) &&
+    Number.isFinite(product.regularPrice) &&
+    product.regularPrice > product.price;
+
+  if (!hasDiscountedPrice) {
+    return `<span class="price">${product.price} zł</span>`;
+  }
+
+  return `
+    <span class="product-prices">
+      <del class="regular-price"><span class="visually-hidden">Cena regularna: </span>${product.regularPrice} zł</del>
+      <span class="price"><span class="visually-hidden">Cena promocyjna: </span>${product.price} zł</span>
+    </span>
+  `;
+}
+
 function getProductAvailabilityLabel(product) {
   if (!isProductAvailable(product)) {
     // Jeśli produkt jest niedostępny, sprawdzamy czy na stałe, czy chwilowo
@@ -117,13 +170,13 @@ function renderModels() {
 
         productCard.innerHTML = `
           <div class="image-wrapper">
-            <img src="${resolveAssetPath(product.mainImage)}" alt="${product.model} ${product.color}">
+            ${buildProductCardImageMarkup(product)}
             ${isUnavailable ? `<span class="product-unavailable-badge">${badgeText}</span>` : ""}
           </div>
           <div class="product-info">
             <span class="color-label">kolor</span>
             <span class="color-name">${product.color}</span>
-            <span class="price">${product.price} zł</span>
+            ${buildProductPriceMarkup(product)}
           </div>
         `;
 
@@ -160,13 +213,13 @@ function renderModels() {
 
         productCard.innerHTML = `
           <div class="image-wrapper">
-            <img src="${resolveAssetPath(product.mainImage)}" alt="${product.model} ${product.color}">
+            ${buildProductCardImageMarkup(product)}
             ${isUnavailable ? `<span class="product-unavailable-badge">${badgeText}</span>` : ""}
           </div>
           <div class="product-info">
             <span class="color-label">kolor</span>
             <span class="color-name">${product.color}</span>
-            <span class="price">${product.price} zł</span>
+            ${buildProductPriceMarkup(product)}
           </div>
         `;
 
@@ -1369,11 +1422,7 @@ function changeProductLightboxImage(direction) {
 function setupProductImageZoom(product, container) {
   if (!(container instanceof HTMLElement)) return;
 
-  const images = (
-    product.galleryImages && product.galleryImages.length > 0
-      ? product.galleryImages
-      : [product.mainImage]
-  ).map((src, index) => ({
+  const images = getProductGalleryImages(product).map((src, index) => ({
     src: resolveAssetPath(src),
     alt: `${product.model} ${product.color} - zdjęcie ${index + 1}`,
   }));
@@ -1503,10 +1552,14 @@ function setupDesktopDescriptionExpand() {
 }
 
 function renderMobileView(container, product) {
-  const firstImage =
-    product.galleryImages && product.galleryImages.length > 0
-      ? product.galleryImages[0]
-      : product.mainImage;
+  const productImages = getProductGalleryImages(product);
+  const firstImage = productImages[0] || "";
+  const firstImageMarkup = firstImage
+    ? `<img src="${resolveAssetPath(firstImage)}" alt="${product.model} ${product.color} - zdjęcie 1" class="main-image" data-product-image-index="0">`
+    : buildProductImagePlaceholderMarkup(
+        product,
+        "product-image-placeholder--detail",
+      );
 
   const tabsList = [
     { id: "szczegoly-mob", label: "SZCZEGÓŁY", content: product.details },
@@ -1526,7 +1579,7 @@ function renderMobileView(container, product) {
         <span class="name">${product.model}</span>
       </div>
       <div class="product-content">
-        <img src="${resolveAssetPath(firstImage)}" alt="${product.model} ${product.color} - zdjęcie 1" class="main-image" data-product-image-index="0">
+        ${firstImageMarkup}
         <div class="color-title">
           <span class="label">kolor</span>
           <span class="name">${product.color}</span>
@@ -1536,10 +1589,10 @@ function renderMobileView(container, product) {
       </div>
     </div>
     ${
-      product.galleryImages && product.galleryImages.length > 1
+      productImages.length > 1
         ? `
       <div class="gallery">
-        ${product.galleryImages
+        ${productImages
           .slice(1)
           .map(
             (imgSrc, index) =>
@@ -1563,7 +1616,7 @@ function renderMobileView(container, product) {
       </div>
     </div>
     <div class="purchase-section">
-      <span class="price">${product.price} zł</span>
+      ${buildProductPriceMarkup(product)}
       ${buildBuyButtonMarkup(product)}
     </div>
   `;
@@ -1571,6 +1624,7 @@ function renderMobileView(container, product) {
 }
 
 function renderDesktopView(container, product) {
+  const productImages = getProductGalleryImages(product);
   const tabsList = [
     { id: "szczegoly-desk", label: "SZCZEGÓŁY", content: product.details },
     { id: "material-desk", label: "MATERIAŁ", content: product.material },
@@ -1584,15 +1638,22 @@ function renderDesktopView(container, product) {
   desktopLayout.innerHTML = `
     <div class="product-image-column">
       <div class="desktop-gallery-container">
-        ${product.galleryImages
-          .map(
-            (imgSrc, index) => `
+        ${
+          productImages.length > 0
+            ? productImages
+                .map(
+                  (imgSrc, index) => `
           <img src="${resolveAssetPath(imgSrc)}" alt="${product.model} ${product.color} - zdjęcie ${index + 1}" class="gallery-image ${index === 0 ? "active" : ""}" data-index="${index}" data-product-image-index="${index}">
         `,
-          )
-          .join("")}
+                )
+                .join("")
+            : buildProductImagePlaceholderMarkup(
+                product,
+                "product-image-placeholder--detail",
+              )
+        }
         ${
-          product.galleryImages.length > 1
+          productImages.length > 1
             ? `
           <button class="gallery-arrow prev" onclick="changeDesktopImage(-1)"><img src="${toSitePath("images/back-icon.png")}" alt="Wstecz" class="back-icon"></button>
           <button class="gallery-arrow next" onclick="changeDesktopImage(1)"><img src="${toSitePath("images/back-icon.png")}" alt="Dalej" class="back-icon back-icon-next"></button>
@@ -1613,7 +1674,7 @@ function renderDesktopView(container, product) {
       </div>
       ${buildDesktopDescriptionMarkup(product.description)}
       <div class="purchase-section">
-        <span class="price">${product.price} zł</span>
+        ${buildProductPriceMarkup(product)}
         ${buildBuyButtonMarkup(product)}
       </div>
       <div class="tabs-section">

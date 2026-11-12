@@ -66,7 +66,8 @@ Wszystkie dane są w pliku `js/data.js` w tablicy `products`. Każdy produkt zaw
   model: 'Faworyta',              // nazwa modelu
   color: 'Jagoda',               // kolor
   isAvailable: true,             // opcjonalne; false = chwilowo niedostępna
-  price: 530,                     // cena
+  price: 530,                     // cena aktualna (dla Pralinek promocyjna)
+  // regularPrice: 590,           // dodaj, aby pokazać cenę regularną i promocyjną
   mainImage: '/images/...',      // główne zdjęcie
   galleryImages: [...],          // tablica galerii
   description: '...',            // opis
