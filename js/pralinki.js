@@ -5,37 +5,37 @@
       id: "sliwka",
       slug: "pralinka-sliwka",
       color: "Śliwka",
-      productImage: "/images/pralinki/pralinka-sliwka-main.webp",
+      cardImage: "/images/pralinki/pralinka-sliwka-papilotka.png",
     },
     {
       id: "zurawina",
       slug: "pralinka-zurawina",
       color: "Żurawina",
-      productImage: "/images/pralinki/pralinka-zurawina-main.webp",
+      cardImage: "/images/pralinki/pralinka-zurawina-papilotka.png",
     },
     {
       id: "mieta",
       slug: "pralinka-mieta-w-czekoladzie",
       color: "Mięta w czekoladzie",
-      productImage: "/images/pralinki/pralinka-mieta-main.webp",
+      cardImage: "/images/pralinki/pralinka-mieta-papilotka.png",
     },
     {
       id: "landrynka",
       slug: "pralinka-landrynka",
       color: "Landrynka",
-      productImage: "/images/pralinki/pralinka-landrynka-main.webp",
+      cardImage: "/images/pralinki/pralinka-landrynka-papilotka.png",
     },
     {
       id: "makowka",
       slug: "pralinka-makowka",
       color: "Makówka",
-      productImage: "/images/pralinki/pralinka-makowka-main.webp",
+      cardImage: "/images/pralinki/pralinka-makowka-papilotka.png",
     },
     {
       id: "wisnia",
       slug: "pralinka-wisnia-w-czekoladzie",
       color: "Wiśnia w czekoladzie",
-      productImage: "/images/pralinki/pralinka-wisnia-main.webp",
+      cardImage: "/images/pralinki/pralinka-wisnia-papilotka.png",
     },
   ];
 
@@ -108,9 +108,9 @@
       priceNode.innerHTML = `
         <div class="pralinki-card-price-values">
           <del><span class="visually-hidden">Cena regularna: </span>${formatPrice(regularPrice)}</del>
-          <strong><span class="visually-hidden">Cena promocyjna: </span>${formatPrice(price)}</strong>
+          <strong><span class="visually-hidden">Cena: </span>${formatPrice(price)}</strong>
         </div>
-        <span class="pralinki-card-price-note">cena promocyjna</span>
+        <span class="pralinki-card-price-note">CENA PREORDER<br>TYLKO PRZEZ TEN<br>TYDZIEŃ</span>
       `;
     } else if (price !== null) {
       priceNode.innerHTML = `
@@ -176,7 +176,7 @@
 
     const productImage = document.createElement("img");
     productImage.className = "pralinki-card-image";
-    productImage.src = getAssetUrl(product.productImage);
+    productImage.src = getAssetUrl(product.cardImage);
     productImage.alt = "";
     productImage.loading = isActive ? "eager" : "lazy";
     productImage.decoding = "async";
