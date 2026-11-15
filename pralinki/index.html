@@ -31,7 +31,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
     <meta name="apple-mobile-web-app-title" content="CEMBORKA">
     <link rel="manifest" href="favicon/site.webmanifest">
-    <link rel="stylesheet" href="css/style.css?v=6">
+    <link rel="stylesheet" href="css/style.css?v=7">
 </head>
 <body class="pralinki-page">
     <header class="header">
@@ -50,9 +50,9 @@
         </div>
     </header>
 
-    <main class="pralinki-main">
+    <main class="pralinki-main" id="pralinkiMainView">
         <h1 class="visually-hidden">Nowa kolekcja CEMBORKA — Pralinki</h1>
-        <section class="pralinki-collection" aria-label="Kolekcja Pralinki — wybierz torebkę">
+        <section class="pralinki-collection" id="pralinkiCollectionView" aria-label="Kolekcja Pralinki — wybierz torebkę">
             <div class="pralinki-artwork">
                 <picture class="pralinki-artwork-picture">
                     <source media="(max-width: 700px)" srcset="images/PLIKI/Obszar%20kompozycji%201%20kopia%202.webp">
@@ -67,49 +67,33 @@
                     >
                 </picture>
                 <div class="pralinki-hotspots">
-                    <button class="pralinki-hotspot" type="button" data-pralinka="landrynka" aria-haspopup="dialog" aria-controls="pralinkiGallery" aria-label="Otwórz galerię: Pralinka, Landrynka" data-color="Landrynka"><span class="visually-hidden">Landrynka</span></button>
-                    <button class="pralinki-hotspot" type="button" data-pralinka="mieta" aria-haspopup="dialog" aria-controls="pralinkiGallery" aria-label="Otwórz galerię: Pralinka, Mięta w czekoladzie" data-color="Mięta w czekoladzie"><span class="visually-hidden">Mięta w czekoladzie</span></button>
-                    <button class="pralinki-hotspot" type="button" data-pralinka="zurawina" aria-haspopup="dialog" aria-controls="pralinkiGallery" aria-label="Otwórz galerię: Pralinka, Żurawina" data-color="Żurawina"><span class="visually-hidden">Żurawina</span></button>
-                    <button class="pralinki-hotspot" type="button" data-pralinka="makowka" aria-haspopup="dialog" aria-controls="pralinkiGallery" aria-label="Otwórz galerię: Pralinka, Makówka" data-color="Makówka"><span class="visually-hidden">Makówka</span></button>
-                    <button class="pralinki-hotspot" type="button" data-pralinka="sliwka" aria-haspopup="dialog" aria-controls="pralinkiGallery" aria-label="Otwórz galerię: Pralinka, Śliwka" data-color="Śliwka"><span class="visually-hidden">Śliwka</span></button>
-                    <button class="pralinki-hotspot" type="button" data-pralinka="wisnia" aria-haspopup="dialog" aria-controls="pralinkiGallery" aria-label="Otwórz galerię: Pralinka, Wiśnia w czekoladzie" data-color="Wiśnia w czekoladzie"><span class="visually-hidden">Wiśnia w czekoladzie</span></button>
+                    <button class="pralinki-hotspot" type="button" data-pralinka="landrynka" aria-controls="pralinkiSelectionScreen" aria-label="Wybierz torebkę Pralinka, Landrynka" data-color="Landrynka"><span class="visually-hidden">Landrynka</span></button>
+                    <button class="pralinki-hotspot" type="button" data-pralinka="mieta" aria-controls="pralinkiSelectionScreen" aria-label="Wybierz torebkę Pralinka, Mięta w czekoladzie" data-color="Mięta w czekoladzie"><span class="visually-hidden">Mięta w czekoladzie</span></button>
+                    <button class="pralinki-hotspot" type="button" data-pralinka="zurawina" aria-controls="pralinkiSelectionScreen" aria-label="Wybierz torebkę Pralinka, Żurawina" data-color="Żurawina"><span class="visually-hidden">Żurawina</span></button>
+                    <button class="pralinki-hotspot" type="button" data-pralinka="makowka" aria-controls="pralinkiSelectionScreen" aria-label="Wybierz torebkę Pralinka, Makówka" data-color="Makówka"><span class="visually-hidden">Makówka</span></button>
+                    <button class="pralinki-hotspot" type="button" data-pralinka="sliwka" aria-controls="pralinkiSelectionScreen" aria-label="Wybierz torebkę Pralinka, Śliwka" data-color="Śliwka"><span class="visually-hidden">Śliwka</span></button>
+                    <button class="pralinki-hotspot" type="button" data-pralinka="wisnia" aria-controls="pralinkiSelectionScreen" aria-label="Wybierz torebkę Pralinka, Wiśnia w czekoladzie" data-color="Wiśnia w czekoladzie"><span class="visually-hidden">Wiśnia w czekoladzie</span></button>
                 </div>
             </div>
         </section>
     </main>
 
-    <dialog class="pralinki-gallery-dialog" id="pralinkiGallery" aria-labelledby="pralinkiGalleryTitle pralinkiGalleryColor">
-        <div class="pralinki-gallery-frame">
-            <button class="pralinki-gallery-close" type="button" aria-label="Zamknij galerię" data-gallery-close>
-                <span aria-hidden="true">×</span>
+    <section class="pralinki-selection-screen" id="pralinkiSelectionScreen" aria-labelledby="pralinkiSelectionTitle" aria-hidden="true" hidden>
+        <h2 class="visually-hidden" id="pralinkiSelectionTitle" tabindex="-1"></h2>
+        <div class="pralinki-carousel" role="group" aria-label="Karuzela wariantów torebki Pralinka">
+            <button class="pralinki-carousel-arrow pralinki-carousel-arrow--previous" id="pralinkiCarouselPrevious" type="button" aria-label="Poprzednia torebka">
+                <span aria-hidden="true">‹</span>
             </button>
-            <div class="pralinki-gallery-stage" aria-label="Zdjęcia produktu">
-                <button class="pralinki-gallery-arrow pralinki-gallery-arrow--previous" type="button" aria-label="Poprzednie zdjęcie" data-gallery-previous>
-                    <span aria-hidden="true">‹</span>
-                </button>
-                <img class="pralinki-gallery-image" id="pralinkiGalleryImage" src="" alt="" decoding="async">
-                <button class="pralinki-gallery-arrow pralinki-gallery-arrow--next" type="button" aria-label="Następne zdjęcie" data-gallery-next>
-                    <span aria-hidden="true">›</span>
-                </button>
-            </div>
-            <aside class="pralinki-gallery-details">
-                <p class="pralinki-gallery-eyebrow">GALERIA ZDJĘĆ</p>
-                <span class="pralinki-gallery-label">model</span>
-                <h2 class="pralinki-gallery-title" id="pralinkiGalleryTitle">
-                    <img src="images/PLIKI/PRALINKA.png" alt="" aria-hidden="true">
-                    <span class="visually-hidden">Galeria zdjęć — Pralinka</span>
-                </h2>
-                <span class="pralinki-gallery-label">kolor</span>
-                <p class="pralinki-gallery-color" id="pralinkiGalleryColor"></p>
-                <p class="pralinki-gallery-help">Zobacz zdjęcia wybranego koloru.</p>
-                <div class="pralinki-gallery-divider"></div>
-                <p class="pralinki-gallery-counter" id="pralinkiGalleryCounter" aria-live="polite"></p>
-                <div class="pralinki-gallery-thumbnails" id="pralinkiGalleryThumbnails" aria-label="Wybierz zdjęcie"></div>
-            </aside>
+            <div class="pralinki-carousel-track" id="pralinkiCarouselTrack" aria-live="off"></div>
+            <button class="pralinki-carousel-arrow pralinki-carousel-arrow--next" id="pralinkiCarouselNext" type="button" aria-label="Następna torebka">
+                <span aria-hidden="true">›</span>
+            </button>
         </div>
-    </dialog>
+        <p class="visually-hidden pralinki-carousel-status" id="pralinkiCarouselStatus" aria-live="polite"></p>
+    </section>
 
+    <script src="js/data.js?v=5"></script>
     <script src="js/script.js?v=5"></script>
-    <script src="js/pralinki.js?v=2"></script>
+    <script src="js/pralinki.js?v=4"></script>
 </body>
 </html>
