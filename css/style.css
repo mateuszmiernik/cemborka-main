@@ -2931,9 +2931,9 @@ body.pralinki-selection-open {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: stretch;
-  gap: clamp(0.75rem, 1.6vw, 1.5rem);
+  gap: clamp(0.75rem, 1.4vw, 1.35rem);
   width: min(100%, 82rem);
-  height: min(64vh, 35rem, 35.4167vw);
+  height: min(64vh, 35.5rem, 35.8vw);
   min-height: 0;
   max-height: 100%;
   margin: auto;
@@ -2962,11 +2962,12 @@ body.pralinki-selection-open {
   align-items: center;
   width: 100%;
   min-height: 0;
-  padding: clamp(0.8rem, 1.5vw, 1.35rem) clamp(0.65rem, 1.5vw, 1.35rem) 0;
+  padding: clamp(2rem, 2.3vw, 2.4rem) clamp(0.65rem, 1.5vw, 1.35rem) 0;
   overflow: hidden;
   border: 0;
   color: inherit;
   background: transparent;
+  font-family: inherit;
   text-align: center;
   cursor: pointer;
   opacity: 1;
@@ -2985,7 +2986,7 @@ body.pralinki-selection-open {
   display: block;
   flex: 0 0 auto;
   color: rgba(251, 223, 203, 0.88);
-  font-size: clamp(0.68rem, 0.9vw, 0.86rem);
+  font-size: clamp(0.65rem, 0.8vw, 0.82rem);
   font-weight: 400;
   line-height: 1.1;
   text-shadow: 0 1px 0.8rem rgba(14, 1, 6, 0.9);
@@ -2998,7 +2999,7 @@ body.pralinki-selection-open {
   flex: 0 0 auto;
   width: min(56%, 13rem);
   max-height: 2.55rem;
-  margin: 0.12rem auto 0.3rem;
+  margin: 0.12rem auto 0.5rem;
   object-fit: contain;
   filter: drop-shadow(0 0.1rem 0.5rem rgba(14, 1, 6, 0.7));
 }
@@ -3010,8 +3011,8 @@ body.pralinki-selection-open {
   flex: 0 0 auto;
   max-width: 100%;
   min-height: 1.2em;
-  margin-top: 0.06rem;
-  font-size: clamp(1rem, 1.55vw, 1.52rem);
+  margin-top: 0.1rem;
+  font-size: clamp(1rem, 1.4vw, 1.4rem);
   font-weight: 400;
   line-height: 1.1;
   text-shadow: 0 1px 0.8rem rgba(14, 1, 6, 0.9);
@@ -3027,17 +3028,21 @@ body.pralinki-selection-open {
   background: transparent;
 }
 
+.pralinki-product-card[data-product-slug="pralinka-landrynka"] {
+  --pralinki-image-top: 9.5%;
+}
+
 .pralinki-card-image {
   position: absolute;
-  bottom: 0;
+  top: var(--pralinki-image-top, 3%);
   left: 50%;
   display: block;
-  width: 68%;
-  height: 88%;
+  width: 100%;
+  height: auto;
   max-width: none;
   transform: translateX(-50%);
   object-fit: contain;
-  object-position: center bottom;
+  object-position: center top;
 }
 
 .pralinki-product-card-footer {
@@ -3055,7 +3060,7 @@ body.pralinki-selection-open {
   display: grid;
   grid-template-columns: max-content minmax(0, 1fr);
   align-items: center;
-  column-gap: clamp(0.25rem, 0.55vw, 0.55rem);
+  column-gap: clamp(0.5rem, 0.9vw, 0.9rem);
   min-width: 0;
   padding: 0.35rem 0;
 }
@@ -3069,10 +3074,25 @@ body.pralinki-selection-open {
 }
 
 .pralinki-card-price-values del {
+  position: relative;
+  display: inline-block;
   color: rgba(251, 223, 203, 0.78);
   font-size: clamp(0.72rem, 1.05vw, 0.95rem);
   font-weight: 100;
+  text-decoration: none;
   white-space: nowrap;
+}
+
+.pralinki-card-price-values del::after {
+  position: absolute;
+  top: 53%;
+  left: -0.03em;
+  width: calc(100% + 0.06em);
+  height: 1px;
+  background: currentColor;
+  content: "";
+  transform: rotate(-8deg);
+  transform-origin: left center;
 }
 
 .pralinki-card-price-values strong {
@@ -3092,6 +3112,10 @@ body.pralinki-selection-open {
   font-size: clamp(0.42rem, 0.52vw, 0.58rem);
   letter-spacing: 0.035em;
   line-height: 1.08;
+}
+
+.pralinki-card-price-note-highlight {
+  color: var(--accent-red);
 }
 
 .pralinki-card-price-unavailable {
@@ -3307,7 +3331,11 @@ body.pralinki-selection-open {
   }
 
   .pralinki-card-image {
+    top: auto;
+    bottom: 0;
     width: 76%;
+    height: 88%;
+    object-position: center bottom;
   }
 
   .pralinki-card-wordmark {
@@ -3332,6 +3360,10 @@ body.pralinki-selection-open {
     min-height: 4.65rem;
     margin-right: 0.75rem;
     margin-left: 0.75rem;
+  }
+
+  .pralinki-card-price {
+    column-gap: 0.3rem;
   }
 
   .pralinki-card-price-values strong {
