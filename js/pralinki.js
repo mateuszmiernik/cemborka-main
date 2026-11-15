@@ -110,7 +110,7 @@
           <del><span class="visually-hidden">Cena regularna: </span>${formatPrice(regularPrice)}</del>
           <strong><span class="visually-hidden">Cena: </span>${formatPrice(price)}</strong>
         </div>
-        <span class="pralinki-card-price-note"><span class="pralinki-card-price-note-highlight">CENA PREORDER</span><br>TYLKO PRZEZ TEN<br>TYDZIEŃ</span>
+        <span class="pralinki-card-price-note">CENA PREORDER<br>TYLKO PRZEZ TEN<br>TYDZIEŃ</span>
       `;
     } else if (price !== null) {
       priceNode.innerHTML = `

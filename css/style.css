@@ -2962,7 +2962,7 @@ body.pralinki-selection-open {
   align-items: center;
   width: 100%;
   min-height: 0;
-  padding: clamp(2rem, 2.3vw, 2.4rem) clamp(0.65rem, 1.5vw, 1.35rem) 0;
+  padding: clamp(2rem, 2.25vw, 2.35rem) clamp(0.65rem, 1.5vw, 1.35rem) 0;
   overflow: hidden;
   border: 0;
   color: inherit;
@@ -2985,11 +2985,11 @@ body.pralinki-selection-open {
   z-index: 1;
   display: block;
   flex: 0 0 auto;
-  color: rgba(251, 223, 203, 0.88);
-  font-size: clamp(0.65rem, 0.8vw, 0.82rem);
-  font-weight: 400;
-  line-height: 1.1;
-  text-shadow: 0 1px 0.8rem rgba(14, 1, 6, 0.9);
+  font-size: 0.875rem;
+  font-weight: 100;
+  letter-spacing: 0.0313rem;
+  line-height: 1;
+  text-transform: lowercase;
 }
 
 .pralinki-card-wordmark {
@@ -3012,10 +3012,9 @@ body.pralinki-selection-open {
   max-width: 100%;
   min-height: 1.2em;
   margin-top: 0.1rem;
-  font-size: clamp(1rem, 1.4vw, 1.4rem);
-  font-weight: 400;
+  font-size: clamp(1rem, 1.3vw, 1.3rem);
+  font-weight: 100;
   line-height: 1.1;
-  text-shadow: 0 1px 0.8rem rgba(14, 1, 6, 0.9);
   text-wrap: balance;
 }
 
@@ -3030,6 +3029,14 @@ body.pralinki-selection-open {
 
 .pralinki-product-card[data-product-slug="pralinka-landrynka"] {
   --pralinki-image-top: 9.5%;
+}
+
+.pralinki-product-card[data-product-slug="pralinka-sliwka"] {
+  --pralinki-image-top: 1.5%;
+}
+
+.pralinki-product-card[data-product-slug="pralinka-mieta-w-czekoladzie"] {
+  --pralinki-image-top: 4%;
 }
 
 .pralinki-card-image {
@@ -3076,9 +3083,11 @@ body.pralinki-selection-open {
 .pralinki-card-price-values del {
   position: relative;
   display: inline-block;
-  color: rgba(251, 223, 203, 0.78);
+  color: var(--text-color);
   font-size: clamp(0.72rem, 1.05vw, 0.95rem);
   font-weight: 100;
+  letter-spacing: 0.025rem;
+  opacity: 0.68;
   text-decoration: none;
   white-space: nowrap;
 }
@@ -3098,7 +3107,8 @@ body.pralinki-selection-open {
 .pralinki-card-price-values strong {
   color: var(--accent-red);
   font-size: clamp(1.4rem, 2.4vw, 2rem);
-  font-weight: 400;
+  font-weight: 100;
+  letter-spacing: 0.05rem;
   white-space: nowrap;
 }
 
@@ -3108,14 +3118,10 @@ body.pralinki-selection-open {
   align-self: center;
   min-width: 0;
   margin: 0;
-  color: rgba(251, 223, 203, 0.76);
-  font-size: clamp(0.42rem, 0.52vw, 0.58rem);
-  letter-spacing: 0.035em;
-  line-height: 1.08;
-}
-
-.pralinki-card-price-note-highlight {
   color: var(--accent-red);
+  font-size: clamp(0.42rem, 0.52vw, 0.58rem);
+  letter-spacing: 0.0313rem;
+  line-height: 1.08;
 }
 
 .pralinki-card-price-unavailable {
@@ -3129,10 +3135,10 @@ body.pralinki-selection-open {
   min-height: 2.8rem;
   align-items: center;
   justify-content: flex-end;
-  color: rgba(251, 223, 203, 0.92);
-  font-size: clamp(0.65rem, 0.82vw, 0.82rem);
-  font-weight: 400;
-  letter-spacing: 0.015em;
+  color: var(--text-color);
+  font-size: clamp(0.75rem, 0.85vw, 0.875rem);
+  font-weight: 100;
+  letter-spacing: 0.0313rem;
   line-height: 1.12;
   text-align: right;
   text-wrap: balance;
@@ -3195,6 +3201,11 @@ body.pralinki-selection-open {
 @media (min-width: 1024px) {
   body.pralinki-page .header {
     flex-basis: 5rem;
+  }
+
+  .pralinki-card-model-label,
+  .pralinki-card-color-label {
+    font-size: 0.9375rem;
   }
 }
 
@@ -3343,11 +3354,6 @@ body.pralinki-selection-open {
     max-height: 2.15rem;
     margin-top: 0.08rem;
     margin-bottom: 0.22rem;
-  }
-
-  .pralinki-card-model-label,
-  .pralinki-card-color-label {
-    font-size: 0.72rem;
   }
 
   .pralinki-card-color-name {
