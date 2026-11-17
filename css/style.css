@@ -3219,9 +3219,10 @@ body.pralinki-selection-open {
   --hotspot-height: 14%;
 }
 
+/* The artwork bottom row is Wiśnia in the middle, then Śliwka. */
 .pralinki-hotspot[data-pralinka="sliwka"] {
   --hotspot-image: url("../images/pralinki/pralinka-sliwka-papilotka.png");
-  --hotspot-x: 40.3%;
+  --hotspot-x: 44.9%;
   --hotspot-y: 68.7%;
   --hotspot-width: 5%;
   --hotspot-height: 14%;
@@ -3229,7 +3230,7 @@ body.pralinki-selection-open {
 
 .pralinki-hotspot[data-pralinka="wisnia"] {
   --hotspot-image: url("../images/pralinki/pralinka-wisnia-papilotka.png");
-  --hotspot-x: 44.9%;
+  --hotspot-x: 40.3%;
   --hotspot-y: 68.7%;
   --hotspot-width: 5%;
   --hotspot-height: 14%;
@@ -3265,16 +3266,16 @@ body.pralinki-selection-open {
   }
 
   .pralinki-hotspot[data-pralinka="sliwka"] {
-    --hotspot-x: 38.9%;
+    --hotspot-x: 49.5%;
     --hotspot-y: 75.8%;
-    --hotspot-width: 9.5%;
+    --hotspot-width: 9%;
     --hotspot-height: 16%;
   }
 
   .pralinki-hotspot[data-pralinka="wisnia"] {
-    --hotspot-x: 49.5%;
+    --hotspot-x: 38.9%;
     --hotspot-y: 75.8%;
-    --hotspot-width: 9%;
+    --hotspot-width: 9.5%;
     --hotspot-height: 16%;
   }
 
