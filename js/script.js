@@ -122,6 +122,8 @@ function renderModels() {
       "Duża, wyrazista torba typu statement, która pomieści wszystkie Twoje historie i zdefiniuje każdą stylizację.",
     Faworytka:
       "Mniejsza siostra FAWORYTY, to ten sam silny charakter, ale w bardziej kompaktowym rozmiarze.",
+    Pralinka:
+      "To najmniejsza i najsłodsza spośród naszych modeli.",
   };
 
   container.innerHTML = "";

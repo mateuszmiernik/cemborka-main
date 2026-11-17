@@ -14,7 +14,11 @@ function buildProductDetails(materialType) {
 }
 
 function buildDeliveryDetails(model) {
-  const productName = model === 'Faworytka' ? 'FAWORYTKĘ' : 'FAWORYTĘ';
+  const productName = model === 'Faworytka'
+    ? 'FAWORYTKĘ'
+    : model === 'Pralinka'
+      ? 'PRALINKĘ'
+      : 'FAWORYTĘ';
   const items = [
     'Automat DPD - 13 zł / Kurier InPost - 22 zł / Kurier DPD - 24 zł / Paczkomat InPost - 19 zł',
     `Wysyłka zagraniczna: Napisz do nas na maila - chętnie wyślemy ${productName} w dowolne miejsce na świecie.`
@@ -97,6 +101,23 @@ function buildModelDescription(model, materialType) {
   `;
 }
 
+
+const pralinkaContent = {
+  description: `PRALINKA to najmniejsza i najsłodsza spośród naszych modeli – stworzona z aksamitnie miękkiej, przyjemnej w dotyku tkaniny, co sprawia, że jeszcze trudniej jej się oprzeć.<span class="model-desc-break"></span>Niech jednak nie zwiedzie Cię jej deserowa delikatność – ten szlachetny welur jest wyjątkowo odporny na zabrudzenia, płyny i ścieranie, a ewentualne plamy usuwają się z niego z łatwością, dzięki czemu bez szwanku przetrwa każdą codzienną przygodę. Całość dopełnia dekoracyjna rączka, która łączy biżuteryjną formę z funkcjonalnością, dyskretnie skrywając wewnątrz mechanizm regulacji długości paska. Zaprojektowana i uszyta w Polsce.`,
+  details: `
+    <ul>
+      <li><strong>Regulacja:</strong> mechanizm rączki opiera się na ozdobnej kokardzie. Aby zmienić długość, wystarczy ją rozwiązać, ściągnąć lub rozciągnąć rączkę do dowolnej długości i ponownie zawiązać.</li>
+      <li><strong>Komfort:</strong> rączka torby posiada miękkie wypełnienie, co nadaje dodatkowego komfortu przy noszeniu.</li>
+      <li><strong>Wnętrze:</strong> torebka posiada kieszonkę otwartą na drobiazgi.</li>
+      <li><strong>Produkcja:</strong> zaprojektowana i uszyta w Polsce</li>
+    </ul>
+  `,
+  material: `
+    <p style="margin: 0 0 8px 0;"><strong>Skład:</strong> poliester + bawełna</p>
+    <p style="margin: 0 0 8px 0;">W kolekcji PRALINKA celowo postawiliśmy na tę konkretną tkaninę. Zależało nam na połączeniu szlachetnej, aksamitnej miękkości z maksymalną trwałością. Ten welur posiada certyfikat OEKO-TEX Standard 100 oraz powłokę hydrofobową, jest wyjątkowo łatwy w czyszczeniu i odporny na codzienne ścieranie. Dzięki temu torebka nie tylko zachwyca wyglądem, ale zachowuje nieskazitelną formę przez długi czas.</p>
+  `,
+  care: `Dzięki powłoce hydrofobowej ewentualne zabrudzenia usuniesz z łatwością. Rozlane płyny wystarczy natychmiast odsączyć ręcznikiem papierowym, unikając mocnego pocierania. Miejscowe plamy przetrzyj miękką ściereczką zwilżoną letnią wodą z dodatkiem delikatnego mydła – pamiętaj, aby zawsze czyścić tkaninę delikatnie i zgodnie z kierunkiem układania się włosa. Pozostaw torebkę do całkowitego wyschnięcia w temperaturze pokojowej, a na koniec przeczesz czyszczone miejsce miękką szczoteczką (np. do ubrań), aby rozdzielić włoski i przywrócić im pierwotną puszystość. Nie prać w pralce, nie stosować wybielaczy ani nie suszyć na źródłach ciepła (np. na kaloryferze czy suszarką).`,
+};
 
 // Dane produktów
 const products = [
@@ -394,11 +415,11 @@ const products = [
       '/images/pralinki/wymiarowanie_pralinka_1.webp',
       '/images/pralinki/wymiarowanie_pralinka_2.webp',
     ],
-    description: '',
-    details: '',
-    material: '',
-    delivery: '',
-    care: '',
+    description: pralinkaContent.description,
+    details: pralinkaContent.details,
+    material: pralinkaContent.material,
+    delivery: buildDeliveryDetails('Pralinka'),
+    care: pralinkaContent.care,
   },
   {
     id: 'pralinka-wisnia-w-czekoladzie',
@@ -417,11 +438,11 @@ const products = [
       '/images/pralinki/wymiarowanie_pralinka_1.webp',
       '/images/pralinki/wymiarowanie_pralinka_2.webp',
     ],
-    description: '',
-    details: '',
-    material: '',
-    delivery: '',
-    care: '',
+    description: pralinkaContent.description,
+    details: pralinkaContent.details,
+    material: pralinkaContent.material,
+    delivery: buildDeliveryDetails('Pralinka'),
+    care: pralinkaContent.care,
   },
   {
     id: 'pralinka-makowka',
@@ -440,11 +461,11 @@ const products = [
       '/images/pralinki/wymiarowanie_pralinka_1.webp',
       '/images/pralinki/wymiarowanie_pralinka_2.webp',
     ],
-    description: '',
-    details: '',
-    material: '',
-    delivery: '',
-    care: '',
+    description: pralinkaContent.description,
+    details: pralinkaContent.details,
+    material: pralinkaContent.material,
+    delivery: buildDeliveryDetails('Pralinka'),
+    care: pralinkaContent.care,
   },
   {
     id: 'pralinka-mieta-w-czekoladzie',
@@ -463,11 +484,11 @@ const products = [
       '/images/pralinki/wymiarowanie_pralinka_1.webp',
       '/images/pralinki/wymiarowanie_pralinka_2.webp',
     ],
-    description: '',
-    details: '',
-    material: '',
-    delivery: '',
-    care: '',
+    description: pralinkaContent.description,
+    details: pralinkaContent.details,
+    material: pralinkaContent.material,
+    delivery: buildDeliveryDetails('Pralinka'),
+    care: pralinkaContent.care,
   },
   {
     id: 'pralinka-landrynka',
@@ -486,11 +507,11 @@ const products = [
       '/images/pralinki/wymiarowanie_pralinka_1.webp',
       '/images/pralinki/wymiarowanie_pralinka_2.webp',
     ],
-    description: '',
-    details: '',
-    material: '',
-    delivery: '',
-    care: '',
+    description: pralinkaContent.description,
+    details: pralinkaContent.details,
+    material: pralinkaContent.material,
+    delivery: buildDeliveryDetails('Pralinka'),
+    care: pralinkaContent.care,
   },
   {
     id: 'pralinka-sliwka',
@@ -509,11 +530,11 @@ const products = [
       '/images/pralinki/wymiarowanie_pralinka_1.webp',
       '/images/pralinki/wymiarowanie_pralinka_2.webp',
     ],
-    description: '',
-    details: '',
-    material: '',
-    delivery: '',
-    care: '',
+    description: pralinkaContent.description,
+    details: pralinkaContent.details,
+    material: pralinkaContent.material,
+    delivery: buildDeliveryDetails('Pralinka'),
+    care: pralinkaContent.care,
   },
   {
     id: 'pralinka-malwa',
@@ -528,11 +549,11 @@ const products = [
     regularPrice: 439,
     mainImage: '', // brak zdjęcia Malwy w images/pralinki — do uzupełnienia
     galleryImages: [],
-    description: '',
-    details: '',
-    material: '',
-    delivery: '',
-    care: '',
+    description: pralinkaContent.description,
+    details: pralinkaContent.details,
+    material: pralinkaContent.material,
+    delivery: buildDeliveryDetails('Pralinka'),
+    care: pralinkaContent.care,
   }
 ];
 
