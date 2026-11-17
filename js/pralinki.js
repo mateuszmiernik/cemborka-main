@@ -170,20 +170,20 @@
     colorName.className = "pralinki-card-color-name";
     colorName.textContent = product.color;
 
-    const imageFrame = document.createElement("span");
+    const imageFrame = document.createElement("a");
     imageFrame.className = "pralinki-card-image-frame";
-    imageFrame.setAttribute("aria-hidden", "true");
+    imageFrame.href = getProductDetailsUrl(product);
 
     const productImage = document.createElement("img");
     productImage.className = "pralinki-card-image";
     productImage.src = getAssetUrl(product.cardImage);
-    productImage.alt = "";
+    productImage.alt = `Pralinka ${product.color}`;
     productImage.loading = isActive ? "eager" : "lazy";
     productImage.decoding = "async";
     productImage.draggable = false;
     imageFrame.appendChild(productImage);
 
-    selector.append(imageFrame, modelLabel, wordmark, colorLabel, colorName);
+    selector.append(modelLabel, wordmark, colorLabel, colorName);
 
     const footer = document.createElement("div");
     footer.className = "pralinki-product-card-footer";
@@ -196,7 +196,7 @@
     detailsLink.setAttribute("aria-label", `Dowiedz się więcej o torebce Pralinka ${product.color}`);
     footer.appendChild(detailsLink);
 
-    card.append(selector, footer);
+    card.append(imageFrame, selector, footer);
     card.dataset.productIndex = String(productIndex);
     card.dataset.productSlug = productData?.slug || product.slug;
     return card;

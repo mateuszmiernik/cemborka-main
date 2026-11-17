@@ -167,6 +167,7 @@ function renderModels() {
         productCard.className = cardClass;
 
         productCard.href = `${toSitePath("produkt/")}?slug=${encodeURIComponent(product.slug)}`;
+        productCard.dataset.productSlug = product.slug;
 
         const badgeText = product.isPermanentlyUnavailable === true ? "niedostępna" : "chwilowo niedostępna";
 
@@ -210,6 +211,7 @@ function renderModels() {
         productCard.className = cardClass;
 
         productCard.href = `${toSitePath("produkt/")}?slug=${encodeURIComponent(product.slug)}`;
+        productCard.dataset.productSlug = product.slug;
 
         const badgeText = product.isPermanentlyUnavailable === true ? "niedostępna" : "chwilowo niedostępna";
 

@@ -3,15 +3,15 @@ strona glowna:
 ~~-> PRALINKA --> PRALINKI NOWE ZDJECIE~~
 
 PRALINKI PODSTRONA:
--> HOVER NA DANA TOREBKE - NANIESC .PNG I ZEBY SIE POWIEKSZALA 
+~~-> HOVER NA DANA TOREBKE - NANIESC .PNG I ZEBY SIE POWIEKSZALA~~
 
 KARUZELA PRALINKI:
--> STRZALKI W BOK --> TAKIE JAK SA PRZY DANYM MODELU 
--> PRZY KLIKNIECIU WCHODZI NA PODSTRONE WYBRANEGO MODELU 
+~~-> STRZALKI W BOK --> TAKIE JAK SA PRZY DANYM MODELU~~
+~~-> PRZY KLIKNIECIU WCHODZI NA PODSTRONE WYBRANEGO MODELU~~
 
 PODSTRONA MODELE:
--> NOWE ZDJECIA --> w galleryImages: ma byc bez main, tylko po kolei zgodnie z numeracja
--> cena na wysokosci wiersza pierwszego nazwy 
+~~-> NOWE ZDJECIA --> galleryImages: -1.webp, -main.webp, potem wymiarowanie 1 i 2~~
+~~-> cena na wysokosci wiersza pierwszego nazwy~~
 
 podstrona konkretnego modelu:
 -> zdjecie jedno jest za duzo, ma byc jak w faworytkach np. ze rozmiary sa zawsze takie same 

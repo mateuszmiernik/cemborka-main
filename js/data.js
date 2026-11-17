@@ -14,11 +14,7 @@ function buildProductDetails(materialType) {
 }
 
 function buildDeliveryDetails(model) {
-  const productName = model === 'Faworytka'
-    ? 'FAWORYTKĘ'
-    : model === 'Pralinka'
-      ? 'PRALINKĘ'
-      : 'FAWORYTĘ';
+  const productName = model === 'Faworytka' ? 'FAWORYTKĘ' : 'FAWORYTĘ';
   const items = [
     'Automat DPD - 13 zł / Kurier InPost - 22 zł / Kurier DPD - 24 zł / Paczkomat InPost - 19 zł',
     `Wysyłka zagraniczna: Napisz do nas na maila - chętnie wyślemy ${productName} w dowolne miejsce na świecie.`
@@ -419,7 +415,7 @@ const products = [
     description: pralinkaContent.description,
     details: pralinkaContent.details,
     material: pralinkaContent.material,
-    delivery: buildDeliveryDetails('Pralinka'),
+    delivery: '',
     care: pralinkaContent.care,
   },
   {
@@ -435,6 +431,7 @@ const products = [
     regularPrice: 479,
     mainImage: '/images/pralinki/pralinka-wisnia-main.webp',
     galleryImages: [
+      '/images/pralinki/pralinka-wisnia-1.webp',
       '/images/pralinki/pralinka-wisnia-main.webp',
       '/images/pralinki/wymiarowanie_pralinka_1.webp',
       '/images/pralinki/wymiarowanie_pralinka_2.webp',
@@ -442,7 +439,7 @@ const products = [
     description: pralinkaContent.description,
     details: pralinkaContent.details,
     material: pralinkaContent.material,
-    delivery: buildDeliveryDetails('Pralinka'),
+    delivery: '',
     care: pralinkaContent.care,
   },
   {
@@ -458,6 +455,7 @@ const products = [
     regularPrice: 479,
     mainImage: '/images/pralinki/pralinka-makowka-main.webp',
     galleryImages: [
+      '/images/pralinki/pralinka-makowka-1.webp',
       '/images/pralinki/pralinka-makowka-main.webp',
       '/images/pralinki/wymiarowanie_pralinka_1.webp',
       '/images/pralinki/wymiarowanie_pralinka_2.webp',
@@ -465,7 +463,7 @@ const products = [
     description: pralinkaContent.description,
     details: pralinkaContent.details,
     material: pralinkaContent.material,
-    delivery: buildDeliveryDetails('Pralinka'),
+    delivery: '',
     care: pralinkaContent.care,
   },
   {
@@ -481,6 +479,7 @@ const products = [
     regularPrice: 479,
     mainImage: '/images/pralinki/pralinka-mieta-main.webp',
     galleryImages: [
+      '/images/pralinki/pralinka-mieta-1.webp',
       '/images/pralinki/pralinka-mieta-main.webp',
       '/images/pralinki/wymiarowanie_pralinka_1.webp',
       '/images/pralinki/wymiarowanie_pralinka_2.webp',
@@ -488,7 +487,7 @@ const products = [
     description: pralinkaContent.description,
     details: pralinkaContent.details,
     material: pralinkaContent.material,
-    delivery: buildDeliveryDetails('Pralinka'),
+    delivery: '',
     care: pralinkaContent.care,
   },
   {
@@ -504,6 +503,7 @@ const products = [
     regularPrice: 479,
     mainImage: '/images/pralinki/pralinka-landrynka-main.webp',
     galleryImages: [
+      '/images/pralinki/pralinka-landrynka-1.webp',
       '/images/pralinki/pralinka-landrynka-main.webp',
       '/images/pralinki/wymiarowanie_pralinka_1.webp',
       '/images/pralinki/wymiarowanie_pralinka_2.webp',
@@ -511,7 +511,7 @@ const products = [
     description: pralinkaContent.description,
     details: pralinkaContent.details,
     material: pralinkaContent.material,
-    delivery: buildDeliveryDetails('Pralinka'),
+    delivery: '',
     care: pralinkaContent.care,
   },
   {
@@ -527,6 +527,7 @@ const products = [
     regularPrice: 439,
     mainImage: '/images/pralinki/pralinka-sliwka-main.webp',
     galleryImages: [
+      '/images/pralinki/pralinka-sliwka-1.webp',
       '/images/pralinki/pralinka-sliwka-main.webp',
       '/images/pralinki/wymiarowanie_pralinka_1.webp',
       '/images/pralinki/wymiarowanie_pralinka_2.webp',
@@ -534,7 +535,7 @@ const products = [
     description: pralinkaContent.description,
     details: pralinkaContent.details,
     material: pralinkaContent.material,
-    delivery: buildDeliveryDetails('Pralinka'),
+    delivery: '',
     care: pralinkaContent.care,
   },
   {
@@ -548,12 +549,17 @@ const products = [
     materialType: '',
     price: 410,
     regularPrice: 439,
-    mainImage: '', // brak zdjęcia Malwy w images/pralinki — do uzupełnienia
-    galleryImages: [],
+    mainImage: '/images/pralinki/pralinka-malwa-main.webp',
+    galleryImages: [
+      '/images/pralinki/pralinka-malwa-1.webp',
+      '/images/pralinki/pralinka-malwa-main.webp',
+      '/images/pralinki/wymiarowanie_pralinka_1.webp',
+      '/images/pralinki/wymiarowanie_pralinka_2.webp',
+    ],
     description: pralinkaContent.description,
     details: pralinkaContent.details,
     material: pralinkaContent.material,
-    delivery: buildDeliveryDetails('Pralinka'),
+    delivery: '',
     care: pralinkaContent.care,
   }
 ];
