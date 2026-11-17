@@ -966,11 +966,26 @@ body.home-page .home-container {
   gap: 0.1875rem;
 }
 
+/* Keep the red preorder price aligned with the first line of long color names. */
 .product-card[data-product-slug="pralinka-wisnia-w-czekoladzie"] .product-prices,
 .product-card[data-product-slug="pralinka-mieta-w-czekoladzie"] .product-prices {
+  position: relative;
+  display: block;
   grid-row: 2;
   align-self: start;
-  justify-content: flex-start;
+}
+
+.product-card[data-product-slug="pralinka-wisnia-w-czekoladzie"] .product-prices .regular-price,
+.product-card[data-product-slug="pralinka-mieta-w-czekoladzie"] .product-prices .regular-price {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 0.125rem);
+  white-space: nowrap;
+}
+
+.product-card[data-product-slug="pralinka-wisnia-w-czekoladzie"] .product-prices .price,
+.product-card[data-product-slug="pralinka-mieta-w-czekoladzie"] .product-prices .price {
+  display: block;
 }
 
 .regular-price {
@@ -1135,6 +1150,20 @@ body.home-page .home-container {
   aspect-ratio: 3 / 4;
   margin-bottom: 1.40625rem;
   object-fit: cover;
+}
+
+.product-wrapper--pralinka .main-image,
+.product-wrapper--pralinka .gallery-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: contain;
+  object-position: center;
+}
+
+.product-layout-grid--pralinka .desktop-gallery-container .gallery-image {
+  object-fit: contain;
+  object-position: center;
 }
 
 .product-wrapper .gallery > .gallery-image:nth-last-child(-n + 3) {
@@ -1495,7 +1524,7 @@ body.product-lightbox-open {
   }
 
   .purchase-section .regular-price {
-    font-size: 0.8125rem;
+    font-size: 0.9375rem;
   }
 }
 
@@ -3329,8 +3358,8 @@ body.pralinki-selection-open {
   .pralinki-card-image {
     top: auto;
     bottom: 0;
-    width: 76%;
-    height: 88%;
+    width: 88%;
+    height: 94%;
     object-position: center bottom;
   }
 

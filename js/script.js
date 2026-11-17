@@ -1574,7 +1574,7 @@ function renderMobileView(container, product) {
 
   // Kontener dla widoku mobilnego
   const mobileWrapper = document.createElement("div");
-  mobileWrapper.className = "product-wrapper"; // Ten kontener będzie ukryty na desktopie
+  mobileWrapper.className = `product-wrapper${product.model === "Pralinka" ? " product-wrapper--pralinka" : ""}`; // Ten kontener będzie ukryty na desktopie
 
   mobileWrapper.innerHTML = `
     <div class="main-info">
@@ -1637,7 +1637,7 @@ function renderDesktopView(container, product) {
   ];
 
   const desktopLayout = document.createElement("div");
-  desktopLayout.className = "product-layout-grid"; // Ten layout jest widoczny tylko na desktopie
+  desktopLayout.className = `product-layout-grid${product.model === "Pralinka" ? " product-layout-grid--pralinka" : ""}`; // Ten layout jest widoczny tylko na desktopie
 
   desktopLayout.innerHTML = `
     <div class="product-image-column">

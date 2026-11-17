@@ -14,7 +14,7 @@ PODSTRONA MODELE:
 ~~-> cena na wysokosci wiersza pierwszego nazwy~~
 
 podstrona konkretnego modelu:
--> zdjecie jedno jest za duzo, ma byc jak w faworytkach np. ze rozmiary sa zawsze takie same 
+~~-> zdjecie jedno jest za duzo, ma byc jak w faworytkach np. ze rozmiary sa zawsze takie same~~
 
 
 formularz:
@@ -27,7 +27,7 @@ Regulamin i Polityka Prywatnosci
     MOBILKA:
 
 KARUZELA PRALINKI:
--> proporcje - zdjecie pralinki za male
+~~-> proporcje - zdjecie pralinki za male~~
 
 podstrona konkretnego modelu:
--> cena przekreslona troche za mala
+~~-> cena przekreslona troche za mala~~
