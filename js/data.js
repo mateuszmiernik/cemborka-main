@@ -411,6 +411,7 @@ const products = [
     regularPrice: 479,
     mainImage: '/images/pralinki/pralinka-zurawina-main.webp',
     galleryImages: [
+      '/images/pralinki/pralinka-zurawina-1.webp',
       '/images/pralinki/pralinka-zurawina-main.webp',
       '/images/pralinki/wymiarowanie_pralinka_1.webp',
       '/images/pralinki/wymiarowanie_pralinka_2.webp',

@@ -65,7 +65,7 @@
     return;
   }
 
-  const wordmarkPath = "/images/PLIKI/PRALINKA.png";
+  const wordmarkPath = "/images/logo-pralinki.png";
   let activeIndex = 0;
   let lastTrigger = null;
   let touchStartX = null;
