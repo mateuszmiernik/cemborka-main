@@ -1152,13 +1152,29 @@ body.home-page .home-container {
   object-fit: cover;
 }
 
-.product-wrapper--pralinka .main-image,
-.product-wrapper--pralinka .gallery-image {
-  display: block;
+.product-wrapper--pralinka .pralinka-detail-image-frame {
+  position: relative;
   width: 100%;
   aspect-ratio: 3 / 4;
+  margin-bottom: 1.40625rem;
+  overflow: hidden;
+}
+
+.product-wrapper--pralinka .pralinka-detail-image-frame > .main-image,
+.product-wrapper--pralinka .pralinka-detail-image-frame > .gallery-image {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  margin: 0;
   object-fit: contain;
   object-position: center;
+}
+
+.product-wrapper--pralinka .gallery > .pralinka-detail-image-frame:nth-last-child(-n + 3) {
+  margin-bottom: 0;
 }
 
 .product-layout-grid--pralinka .desktop-gallery-container .gallery-image {
@@ -1176,6 +1192,14 @@ body.home-page .home-container {
   }
 
   .product-wrapper .gallery > .gallery-image:last-child {
+    margin-bottom: 1.40625rem;
+  }
+
+  .product-wrapper--pralinka .gallery > .pralinka-detail-image-frame:nth-last-child(2) {
+    margin-bottom: -1.5625rem;
+  }
+
+  .product-wrapper--pralinka .gallery > .pralinka-detail-image-frame:last-child {
     margin-bottom: 1.40625rem;
   }
 }
