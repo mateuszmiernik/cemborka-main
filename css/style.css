@@ -14,7 +14,7 @@
 
 @font-face {
   font-family: 'Degular';
-  src: url('../fonts/Degular-thin.otf') format('opentype');
+  src: url('../fonts/Degular-Thin.otf') format('opentype');
   font-weight: 100;
   font-style: normal;
 }
@@ -3354,16 +3354,23 @@ body.pralinki-selection-open {
 
 @media (max-width: 900px) {
   .pralinki-carousel {
-    padding: 1rem 3rem;
+    display: grid;
+    grid-template-columns: 2.75rem minmax(0, 24rem) 2.75rem;
+    column-gap: 0.625rem;
+    justify-content: center;
+    padding: 1rem max(0.75rem, env(safe-area-inset-right)) 1rem max(0.75rem, env(safe-area-inset-left));
   }
 
   .pralinki-carousel-track {
+    grid-column: 2;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    width: min(24rem, 100%);
+    width: 100%;
     height: min(72vh, 42rem);
+    height: min(72dvh, 42rem);
     min-height: 0;
-    aspect-ratio: 0.68;
+    aspect-ratio: auto;
+    margin: 0;
   }
 
   .pralinki-product-card[data-position="previous"],
@@ -3371,23 +3378,40 @@ body.pralinki-selection-open {
     display: none;
   }
 
+  .pralinki-carousel-arrow {
+    position: relative;
+    inset: auto;
+    z-index: 4;
+    width: 2.75rem;
+    height: 2.75rem;
+    align-self: center;
+    justify-self: center;
+    border: 1px solid rgba(251, 223, 203, 0.42);
+    border-radius: 50%;
+    background: rgba(27, 6, 16, 0.72);
+    transform: none;
+    opacity: 0.9;
+    touch-action: manipulation;
+  }
+
   .pralinki-carousel-arrow--previous {
-    left: max(0.35rem, calc((100vw - 24rem) / 2 - 2.75rem));
+    grid-column: 1;
   }
 
   .pralinki-carousel-arrow--next {
-    right: max(0.35rem, calc((100vw - 24rem) / 2 - 2.75rem));
+    grid-column: 3;
   }
 }
 
 @media (max-width: 700px) {
   .pralinki-carousel {
-    padding: 0.75rem 2.65rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
   }
 
   .pralinki-carousel-track {
-    width: min(24rem, 100%);
     height: min(74vh, 42rem);
+    height: min(74dvh, 42rem);
   }
 
   .pralinki-product-card-select {
@@ -3395,11 +3419,20 @@ body.pralinki-selection-open {
   }
 
   .pralinki-card-image {
-    top: auto;
+    top: 0;
+    right: 0;
     bottom: 0;
-    width: 88%;
-    height: 94%;
-    object-position: center bottom;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: translateY(1.5rem) scale(1.08);
+    object-fit: cover;
+    object-position: center center;
+  }
+
+  /* Landrynka's cutout is taller; keep its visible bag size aligned with the other colors. */
+  .pralinki-product-card[data-product-slug="pralinka-landrynka"] .pralinki-card-image {
+    transform: translateY(1.5rem) scale(1.02);
   }
 
   .pralinki-card-wordmark {
@@ -3430,30 +3463,25 @@ body.pralinki-selection-open {
   }
 
   .pralinki-card-price-values strong {
-    font-size: clamp(1.45rem, 6vw, 1.8rem);
+    font-size: clamp(1.3rem, 5.5vw, 1.6rem);
   }
 
   .pralinki-card-price-note {
-    font-size: 0.45rem;
+    font-size: 0.5rem;
   }
 
   .pralinki-card-details-link {
     min-height: 2.6rem;
-    font-size: clamp(0.7rem, 2.8vw, 0.84rem);
+    font-size: clamp(0.75rem, 3vw, 0.85rem);
   }
 
   .pralinki-carousel-arrow {
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2.75rem;
+    height: 2.75rem;
   }
 }
 
 @media (max-width: 360px) {
-  .pralinki-carousel {
-    padding-right: 2.35rem;
-    padding-left: 2.35rem;
-  }
-
   .pralinki-product-card-footer {
     gap: 0.25rem;
     margin-right: 0.5rem;
@@ -3461,11 +3489,11 @@ body.pralinki-selection-open {
   }
 
   .pralinki-card-price-note {
-    font-size: 0.4rem;
+    font-size: 0.45rem;
   }
 
   .pralinki-card-details-link {
-    font-size: 0.66rem;
+    font-size: 0.7rem;
   }
 }
 
