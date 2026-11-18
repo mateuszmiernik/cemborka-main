@@ -1169,8 +1169,12 @@ body.home-page .home-container {
   height: 100%;
   aspect-ratio: auto;
   margin: 0;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
+}
+
+.product-wrapper--pralinka .pralinka-detail-image-frame > .gallery-image[src*="wymiarowanie_pralinka"] {
+  object-fit: contain;
 }
 
 .product-wrapper--pralinka .gallery > .pralinka-detail-image-frame:nth-last-child(-n + 3) {
@@ -1180,6 +1184,17 @@ body.home-page .home-container {
 .product-layout-grid--pralinka .desktop-gallery-container .gallery-image {
   object-fit: contain;
   object-position: center;
+}
+
+/* Desktop product photos use the same 4:5 image area as Faworyta/Faworytka sources.
+   Crop only Pralinka product-photo backgrounds; keep measurement diagrams uncropped. */
+.product-layout-grid--pralinka .desktop-gallery-container .gallery-image:not([src*="wymiarowanie_pralinka"]) {
+  top: 50%;
+  height: auto;
+  max-height: 100%;
+  aspect-ratio: 4 / 5;
+  transform: translateY(-50%);
+  object-fit: cover;
 }
 
 .product-wrapper .gallery > .gallery-image:nth-last-child(-n + 3) {
