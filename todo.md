@@ -17,7 +17,7 @@ PODSTRONA MODELE:
 ~~-> NOWE ZDJECIA --> galleryImages: -1.webp, -main.webp, potem wymiarowanie 1 i 2~~
 
 podstrona konkretnego modelu:
--> zdjecie jedno jest za duzo, ma byc jak w faworytkach np. ze rozmiary sa zawsze takie same (nadal to smao)
+~~-> zdjecie jedno jest za duzo, ma byc jak w faworytkach np. ze rozmiary sa zawsze takie same (nadal to smao)~~
 
 
 formularz:
