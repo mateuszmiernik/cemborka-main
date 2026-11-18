@@ -14,7 +14,7 @@
 
 @font-face {
   font-family: 'Degular';
-  src: url('../fonts/Degular-thin.otf') format('opentype');
+  src: url('../fonts/Degular-Thin.otf') format('opentype');
   font-weight: 100;
   font-style: normal;
 }
@@ -966,11 +966,26 @@ body.home-page .home-container {
   gap: 0.1875rem;
 }
 
+/* Keep the red preorder price aligned with the first line of long color names. */
 .product-card[data-product-slug="pralinka-wisnia-w-czekoladzie"] .product-prices,
 .product-card[data-product-slug="pralinka-mieta-w-czekoladzie"] .product-prices {
+  position: relative;
+  display: block;
   grid-row: 2;
   align-self: start;
-  justify-content: flex-start;
+}
+
+.product-card[data-product-slug="pralinka-wisnia-w-czekoladzie"] .product-prices .regular-price,
+.product-card[data-product-slug="pralinka-mieta-w-czekoladzie"] .product-prices .regular-price {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 0.125rem);
+  white-space: nowrap;
+}
+
+.product-card[data-product-slug="pralinka-wisnia-w-czekoladzie"] .product-prices .price,
+.product-card[data-product-slug="pralinka-mieta-w-czekoladzie"] .product-prices .price {
+  display: block;
 }
 
 .regular-price {
@@ -1137,6 +1152,51 @@ body.home-page .home-container {
   object-fit: cover;
 }
 
+.product-wrapper--pralinka .pralinka-detail-image-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  margin-bottom: 1.40625rem;
+  overflow: hidden;
+}
+
+.product-wrapper--pralinka .pralinka-detail-image-frame > .main-image,
+.product-wrapper--pralinka .pralinka-detail-image-frame > .gallery-image {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  margin: 0;
+  object-fit: cover;
+  object-position: center;
+}
+
+.product-wrapper--pralinka .pralinka-detail-image-frame > .gallery-image[src*="wymiarowanie_pralinka"] {
+  object-fit: contain;
+}
+
+.product-wrapper--pralinka .gallery > .pralinka-detail-image-frame:nth-last-child(-n + 3) {
+  margin-bottom: 0;
+}
+
+.product-layout-grid--pralinka .desktop-gallery-container .gallery-image {
+  object-fit: contain;
+  object-position: center;
+}
+
+/* Desktop product photos use the same 4:5 image area as Faworyta/Faworytka sources.
+   Crop only Pralinka product-photo backgrounds; keep measurement diagrams uncropped. */
+.product-layout-grid--pralinka .desktop-gallery-container .gallery-image:not([src*="wymiarowanie_pralinka"]) {
+  top: 50%;
+  height: auto;
+  max-height: 100%;
+  aspect-ratio: 4 / 5;
+  transform: translateY(-50%);
+  object-fit: cover;
+}
+
 .product-wrapper .gallery > .gallery-image:nth-last-child(-n + 3) {
   margin-bottom: 0;
 }
@@ -1147,6 +1207,14 @@ body.home-page .home-container {
   }
 
   .product-wrapper .gallery > .gallery-image:last-child {
+    margin-bottom: 1.40625rem;
+  }
+
+  .product-wrapper--pralinka .gallery > .pralinka-detail-image-frame:nth-last-child(2) {
+    margin-bottom: -1.5625rem;
+  }
+
+  .product-wrapper--pralinka .gallery > .pralinka-detail-image-frame:last-child {
     margin-bottom: 1.40625rem;
   }
 }
@@ -1495,7 +1563,7 @@ body.product-lightbox-open {
   }
 
   .purchase-section .regular-price {
-    font-size: 0.8125rem;
+    font-size: 0.9375rem;
   }
 }
 
@@ -3219,9 +3287,10 @@ body.pralinki-selection-open {
   --hotspot-height: 14%;
 }
 
+/* The artwork bottom row is Wiśnia in the middle, then Śliwka. */
 .pralinki-hotspot[data-pralinka="sliwka"] {
   --hotspot-image: url("../images/pralinki/pralinka-sliwka-papilotka.png");
-  --hotspot-x: 40.3%;
+  --hotspot-x: 44.9%;
   --hotspot-y: 68.7%;
   --hotspot-width: 5%;
   --hotspot-height: 14%;
@@ -3229,7 +3298,7 @@ body.pralinki-selection-open {
 
 .pralinki-hotspot[data-pralinka="wisnia"] {
   --hotspot-image: url("../images/pralinki/pralinka-wisnia-papilotka.png");
-  --hotspot-x: 44.9%;
+  --hotspot-x: 40.3%;
   --hotspot-y: 68.7%;
   --hotspot-width: 5%;
   --hotspot-height: 14%;
@@ -3265,16 +3334,16 @@ body.pralinki-selection-open {
   }
 
   .pralinki-hotspot[data-pralinka="sliwka"] {
-    --hotspot-x: 38.9%;
+    --hotspot-x: 49.5%;
     --hotspot-y: 75.8%;
-    --hotspot-width: 9.5%;
+    --hotspot-width: 9%;
     --hotspot-height: 16%;
   }
 
   .pralinki-hotspot[data-pralinka="wisnia"] {
-    --hotspot-x: 49.5%;
+    --hotspot-x: 38.9%;
     --hotspot-y: 75.8%;
-    --hotspot-width: 9%;
+    --hotspot-width: 9.5%;
     --hotspot-height: 16%;
   }
 
@@ -3285,16 +3354,23 @@ body.pralinki-selection-open {
 
 @media (max-width: 900px) {
   .pralinki-carousel {
-    padding: 1rem 3rem;
+    display: grid;
+    grid-template-columns: 2.75rem minmax(0, 24rem) 2.75rem;
+    column-gap: 0.625rem;
+    justify-content: center;
+    padding: 1rem max(0.75rem, env(safe-area-inset-right)) 1rem max(0.75rem, env(safe-area-inset-left));
   }
 
   .pralinki-carousel-track {
+    grid-column: 2;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    width: min(24rem, 100%);
+    width: 100%;
     height: min(72vh, 42rem);
+    height: min(72dvh, 42rem);
     min-height: 0;
-    aspect-ratio: 0.68;
+    aspect-ratio: auto;
+    margin: 0;
   }
 
   .pralinki-product-card[data-position="previous"],
@@ -3302,23 +3378,40 @@ body.pralinki-selection-open {
     display: none;
   }
 
+  .pralinki-carousel-arrow {
+    position: relative;
+    inset: auto;
+    z-index: 4;
+    width: 2.75rem;
+    height: 2.75rem;
+    align-self: center;
+    justify-self: center;
+    border: 1px solid rgba(251, 223, 203, 0.42);
+    border-radius: 50%;
+    background: rgba(27, 6, 16, 0.72);
+    transform: none;
+    opacity: 0.9;
+    touch-action: manipulation;
+  }
+
   .pralinki-carousel-arrow--previous {
-    left: max(0.35rem, calc((100vw - 24rem) / 2 - 2.75rem));
+    grid-column: 1;
   }
 
   .pralinki-carousel-arrow--next {
-    right: max(0.35rem, calc((100vw - 24rem) / 2 - 2.75rem));
+    grid-column: 3;
   }
 }
 
 @media (max-width: 700px) {
   .pralinki-carousel {
-    padding: 0.75rem 2.65rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
   }
 
   .pralinki-carousel-track {
-    width: min(24rem, 100%);
     height: min(74vh, 42rem);
+    height: min(74dvh, 42rem);
   }
 
   .pralinki-product-card-select {
@@ -3326,11 +3419,20 @@ body.pralinki-selection-open {
   }
 
   .pralinki-card-image {
-    top: auto;
+    top: 0;
+    right: 0;
     bottom: 0;
-    width: 76%;
-    height: 88%;
-    object-position: center bottom;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: translateY(1.5rem) scale(1.08);
+    object-fit: cover;
+    object-position: center center;
+  }
+
+  /* Landrynka's cutout is taller; keep its visible bag size aligned with the other colors. */
+  .pralinki-product-card[data-product-slug="pralinka-landrynka"] .pralinki-card-image {
+    transform: translateY(1.5rem) scale(1.02);
   }
 
   .pralinki-card-wordmark {
@@ -3361,30 +3463,25 @@ body.pralinki-selection-open {
   }
 
   .pralinki-card-price-values strong {
-    font-size: clamp(1.45rem, 6vw, 1.8rem);
+    font-size: clamp(1.3rem, 5.5vw, 1.6rem);
   }
 
   .pralinki-card-price-note {
-    font-size: 0.45rem;
+    font-size: 0.5rem;
   }
 
   .pralinki-card-details-link {
     min-height: 2.6rem;
-    font-size: clamp(0.7rem, 2.8vw, 0.84rem);
+    font-size: clamp(0.75rem, 3vw, 0.85rem);
   }
 
   .pralinki-carousel-arrow {
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2.75rem;
+    height: 2.75rem;
   }
 }
 
 @media (max-width: 360px) {
-  .pralinki-carousel {
-    padding-right: 2.35rem;
-    padding-left: 2.35rem;
-  }
-
   .pralinki-product-card-footer {
     gap: 0.25rem;
     margin-right: 0.5rem;
@@ -3392,11 +3489,11 @@ body.pralinki-selection-open {
   }
 
   .pralinki-card-price-note {
-    font-size: 0.4rem;
+    font-size: 0.45rem;
   }
 
   .pralinki-card-details-link {
-    font-size: 0.66rem;
+    font-size: 0.7rem;
   }
 }
 

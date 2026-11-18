@@ -14,7 +14,13 @@ function buildProductDetails(materialType) {
 }
 
 function buildDeliveryDetails(model) {
-  const productName = model === 'Faworytka' ? 'FAWORYTKĘ' : 'FAWORYTĘ';
+  const productNames = {
+    Faworytka: 'FAWORYTKĘ',
+    Faworyta: 'FAWORYTĘ',
+    Pralinka: 'PRALINKĘ'
+  };
+  
+  const productName = productNames[model] || 'FAWORYTĘ';
   const items = [
     'Automat DPD - 13 zł / Kurier InPost - 22 zł / Kurier DPD - 24 zł / Paczkomat InPost - 19 zł',
     `Wysyłka zagraniczna: Napisz do nas na maila - chętnie wyślemy ${productName} w dowolne miejsce na świecie.`
@@ -415,7 +421,7 @@ const products = [
     description: pralinkaContent.description,
     details: pralinkaContent.details,
     material: pralinkaContent.material,
-    delivery: '',
+    delivery: buildDeliveryDetails('Pralinka'),
     care: pralinkaContent.care,
   },
   {
@@ -439,7 +445,7 @@ const products = [
     description: pralinkaContent.description,
     details: pralinkaContent.details,
     material: pralinkaContent.material,
-    delivery: '',
+    delivery: buildDeliveryDetails('Pralinka'),
     care: pralinkaContent.care,
   },
   {
@@ -463,7 +469,7 @@ const products = [
     description: pralinkaContent.description,
     details: pralinkaContent.details,
     material: pralinkaContent.material,
-    delivery: '',
+    delivery: buildDeliveryDetails('Pralinka'),
     care: pralinkaContent.care,
   },
   {
@@ -487,7 +493,7 @@ const products = [
     description: pralinkaContent.description,
     details: pralinkaContent.details,
     material: pralinkaContent.material,
-    delivery: '',
+    delivery: buildDeliveryDetails('Pralinka'),
     care: pralinkaContent.care,
   },
   {
@@ -511,7 +517,7 @@ const products = [
     description: pralinkaContent.description,
     details: pralinkaContent.details,
     material: pralinkaContent.material,
-    delivery: '',
+    delivery: buildDeliveryDetails('Pralinka'),
     care: pralinkaContent.care,
   },
   {
@@ -535,7 +541,7 @@ const products = [
     description: pralinkaContent.description,
     details: pralinkaContent.details,
     material: pralinkaContent.material,
-    delivery: '',
+    delivery: buildDeliveryDetails('Pralinka'),
     care: pralinkaContent.care,
   },
   {
@@ -559,7 +565,7 @@ const products = [
     description: pralinkaContent.description,
     details: pralinkaContent.details,
     material: pralinkaContent.material,
-    delivery: '',
+    delivery: buildDeliveryDetails('Pralinka'),
     care: pralinkaContent.care,
   }
 ];

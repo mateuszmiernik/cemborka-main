@@ -1564,6 +1564,9 @@ function renderMobileView(container, product) {
         product,
         "product-image-placeholder--detail",
       );
+  const firstImageDisplayMarkup = product.model === "Pralinka"
+    ? `<div class="pralinka-detail-image-frame">${firstImageMarkup}</div>`
+    : firstImageMarkup;
 
   const tabsList = [
     { id: "szczegoly-mob", label: "SZCZEGÓŁY", content: product.details },
@@ -1574,7 +1577,7 @@ function renderMobileView(container, product) {
 
   // Kontener dla widoku mobilnego
   const mobileWrapper = document.createElement("div");
-  mobileWrapper.className = "product-wrapper"; // Ten kontener będzie ukryty na desktopie
+  mobileWrapper.className = `product-wrapper${product.model === "Pralinka" ? " product-wrapper--pralinka" : ""}`; // Ten kontener będzie ukryty na desktopie
 
   mobileWrapper.innerHTML = `
     <div class="main-info">
@@ -1583,7 +1586,7 @@ function renderMobileView(container, product) {
         <span class="name">${product.model}</span>
       </div>
       <div class="product-content">
-        ${firstImageMarkup}
+        ${firstImageDisplayMarkup}
         <div class="color-title">
           <span class="label">kolor</span>
           <span class="name">${product.color}</span>
@@ -1598,10 +1601,12 @@ function renderMobileView(container, product) {
       <div class="gallery">
         ${productImages
           .slice(1)
-          .map(
-            (imgSrc, index) =>
-              `<img src="${resolveAssetPath(imgSrc)}" alt="${product.model} ${product.color} - zdjęcie ${index + 2}" class="gallery-image" data-product-image-index="${index + 1}">`,
-          )
+          .map((imgSrc, index) => {
+            const imageMarkup = `<img src="${resolveAssetPath(imgSrc)}" alt="${product.model} ${product.color} - zdjęcie ${index + 2}" class="gallery-image" data-product-image-index="${index + 1}">`;
+            return product.model === "Pralinka"
+              ? `<div class="pralinka-detail-image-frame">${imageMarkup}</div>`
+              : imageMarkup;
+          })
           .join("")}
       </div>
     `
@@ -1637,7 +1642,7 @@ function renderDesktopView(container, product) {
   ];
 
   const desktopLayout = document.createElement("div");
-  desktopLayout.className = "product-layout-grid"; // Ten layout jest widoczny tylko na desktopie
+  desktopLayout.className = `product-layout-grid${product.model === "Pralinka" ? " product-layout-grid--pralinka" : ""}`; // Ten layout jest widoczny tylko na desktopie
 
   desktopLayout.innerHTML = `
     <div class="product-image-column">
